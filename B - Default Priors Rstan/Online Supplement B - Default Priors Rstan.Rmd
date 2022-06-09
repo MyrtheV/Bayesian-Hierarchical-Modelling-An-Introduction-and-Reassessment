@@ -1,0 +1,211 @@
+---
+title             : "Online Supplement B: Default Priors Rstan"
+author            : "" 
+bibliography      : ["r-references.bib"]
+header-includes   :
+   - \usepackage{bm}
+   - \usepackage{amsmath}
+   - \usepackage{setspace}
+   - \usepackage{xcolor}
+   - \definecolor{mypink}{RGB}{255, 230, 255}
+   - \usepackage{todonotes}
+   - \usepackage{graphicx}
+   - \usepackage{float}
+   - \renewcommand{\figurename}{Figure B}
+   - \makeatletter
+   - \def\fnum@figure{\figurename\thefigure}
+   - \makeatother
+
+csl               : apa6.csl
+output            : pdf_document
+---
+\spacing{1.5}
+\fontsize{12}{12}
+
+```{r setup, include=FALSE}
+def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(chunk = function(x, options) {
+  x <- def.chunk.hook(x, options)
+  ifelse(options$size != "normalsize", paste0("\n \\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
+})
+
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=40), tidy=TRUE, echo = TRUE, message = FALSE, warning = FALSE, fig.pos = "H")
+```
+
+\scriptsize 
+
+```{R loadpackages, message = FALSE, warning = FALSE, echo = FALSE}
+# Load the packages
+library("papaja")
+library("LaplacesDemon")
+library("rstan")
+library("brms")
+library("plyr")
+library("lattice")
+library("ggplot2")
+library("dplyr")
+library("readr")
+library("rmarkdown")
+library("Rmisc")
+library("devtools")
+library("gghalves") 
+library("bayesplot")
+library("bridgesampling") 
+library("gridExtra") 
+library("tibble") 
+library("kableExtra") 
+library("truncnorm")
+library("ggbeeswarm")
+```
+\normalsize 
+
+Software packages have default prior settings that ensure estimation of the results even if the users do not choose priors themselves. It is important to realize that many of these default priors do not take the complexity of the hierarchical models into account (i.e., the hierarchical structure and the resulting number of parameters), therefore, it is *not* recommended to use the default priors for Bayesian hierarchical modeling. Here, we will provide details on the default priors for `rstan`, show predictions for data from these priors, and highlight resulting issues. 
+
+### Rstan 
+When no prior is specified in `rstan` [@R-rstan], a uniform distribution is applied using the defined range of the variable [@carpenter2017stan]. The uniform distribution is shown in the figure below.  
+
+```{r uniformdistributionplot, fig.cap="Different uniform distributions that vary in range (i.e., minimum and maximum).", fig.align = "left", fig.height = 3, fig.width = 6, echo = FALSE}
+# all set 1, 1 
+
+parametersunidistrplot <- c("Min = 0, Max = 1" = "#D95F02", "Min = 0, Max = 3" = "#1B9E77", "Min = 0, Max = 10" = "#E7298A")
+
+unidistriplot <- ggplot(data = data.frame(x = c(-5, 5)), aes(x)) +
+  stat_function(fun = dunif, n = 1001, args = list(min = 0, max = 1), linetype = 2, geom = "area", alpha = 0.3, position = "identity", aes(color = "Min = 0, Max = 1", fill = "Min = 0, Max = 1")) +  ylab("Density") +
+  stat_function(fun = dunif, n = 1001, args = list(0, 3), linetype = 3, geom = "area", alpha = 0.3, position = "identity", aes(color = "Min = 0, Max = 3", fill = "Min = 0, Max = 3")) + 
+  stat_function(fun = dunif, n = 1001, args = list(0, 10), geom = "area", alpha = 0.3, position = "identity", aes(color = "Min = 0, Max = 10", fill = "Min = 0, Max = 10")) + geom_hline(yintercept=0, colour="white", size=1) + scale_color_manual(name = "Settings", values = parametersunidistrplot, aesthetics = c("colour", "fill")) + xlim(-1, 10) + theme(legend.title = element_text(size = 8), legend.key.width=unit(0.45,"cm"), legend.key.height=unit(0.5,"cm")) + xlab("Parameter value")
+
+
+theme_set(theme_apa(base_size = 9))
+unidistriplot
+
+```
+
+The figure shows the uniform distribution for different settings of the minimum and maximum. The minimum and maximum define the range of the distribution where the minimum represents the lower bound and the maximum the upper bound. The figure illustrates that increasing the range, would result in wider distribution (i.e., the pink distribution is much wider than the green and orange distribution). In contrast, decreasing the range would result in a very specific prior with the probability spread out over a narrow range of values (i.e., the orange distribution is very narrow compared to the green and pink distribution).  
+
+However, if the range of the variable is not defined in `Stan`, the bounds will revert to $-\infty$ and $\infty$, resulting in an improper prior. This means that the probability distribution is not proper: integrating over a range of $-\infty$ to $\infty$ does not result in 1.  
+
+What would happen if these default priors were applied to the symbolic distance effect? In our scenario, we do not have a specified range for the parameters. Only the lower bound of the variances is specified as 0 (i.e., only positive variances are possible). Therefore, $\sigma^2$ and the hyperpriors can be defined in the following way: 
+
+\begin{equation}
+\begin{aligned}
+\mu_{\gamma}, \mu_{\beta}, \mu_{\delta}, \sigma^2, \sigma^2_{\gamma}, \sigma^2_{\beta}, \sigma^2_{\delta}, &\sim \text{U}(-\infty, \infty), \\ 
+\sigma^2, \sigma^2_{\gamma}, \sigma^2_{\beta}, \sigma^2_{\delta}, &\sim \text{U}(0, \infty). 
+\end{aligned}
+\end{equation}
+
+All mean parameters have a flat prior, ranging from minus  $-\infty$ to $\infty$, while the prior on the variances ranges from zero to $\infty$. Since at least one of the bounds (i.e., minimum or maximum) is not defined, the priors are improper. We cannot sample from $-\infty$ to $\infty$. As a result, prior visualization and prior prediction is impossible. However, `rstan` would still provide results as it does not identify improper priors [@stan2018a, section 24.3]. 
+
+```{r priorvisualizationstan, fig.cap="Visualization of \\textit{rstan} default prior setting for our model. On the left, for every parameter the prior distribution is presented. On the right, the prior distribution for prior parameters of the parameters is shown.", fig.align = "left", fig.height=6, fig.width=8, warning=FALSE, message=FALSE, eval = FALSE, echo = FALSE}
+
+# Plots 
+x <- seq(-3, 3, by=.01)
+# color codes: https://flaviocopes.com/rgb-color-codes/
+
+
+# Instead do this, take integral  
+Nplotst <- 1000000
+mugammaplotst <- runif(Nplotst, -Inf, Inf)
+vargammaplotst <- runif(Nplotst, 0, Inf)
+betaplot2st <- rnorm(Nplotst, mugammaplotst, sqrt(vargammaplotst))
+
+# library(ggridges)
+pgamma2datast <- data.frame(betaplot2st)
+pgamma2st <- ggplot(pgamma2datast, aes(x = betaplot2st)) + geom_density_line(color = "#0072B2", fill = "#0072B2", alpha = 0.1, position = "identity") + ylab("Density") + xlab("x") + labs(title = expression(~gamma[i])) + theme(plot.title = element_text(size = 18)) + xlim(-5, 5)
+
+parametersgammast <- c("Mean" = "#D95F02", "Variance" = "#1B9E77")
+
+ptogethergamma2st <- ggplot(data = data.frame(x = c(-5, 5)), aes(x)) +
+  stat_function(fun = dunif, n = 1001, args = list(min = 0, max = 1), aes(color = "Mean", fill = "Mean"), geom = "area", alpha = 0.3) + ylab("Density") +
+  stat_function(fun = dunif, n = 1001, args = list(min = 0, max = 1), geom = "area", aes(color = "Variance", fill = "Variance"), alpha = 0.3, position = "identity") + geom_hline(yintercept=0, colour="white", size=1) + scale_color_manual(name = "Prior parameters", values = parametersgammast, aesthetics = c("colour", "fill"), labels = c(expression(~mu[~gamma]), expression(~sigma[~gamma]^2))) + 
+  theme(legend.text=element_text(size = 9), legend.title = element_text(size = 7), legend.key.width=unit(0.45,"cm"), legend.key.height=unit(0.5,"cm"))
+
+
+# Beta 
+mubetaplotst <- runif(Nplotst, 0, 1)
+varbetaplotst <- runif(Nplotst, 0, 1)
+betaplot22st <- rnorm(Nplotst, mubetaplotst, sqrt(varbetaplotst))
+
+pbeta2datast <- data.frame(betaplot22st)
+pbeta2st <- ggplot(pbeta2datast, aes(x = betaplot22st)) + geom_density_line(color = "#0072B2", fill = "#0072B2", alpha = 0.1, position = "identity") + ylab("Density") + xlab("x") + labs(title = expression(~beta["side, i"])) + theme(plot.title = element_text(size = 18)) + xlim(-5, 5)
+
+ptogetherbeta2st <- ggplot(data = data.frame(x = c(-5, 5)), aes(x)) +
+  stat_function(fun = dunif, n = 1001, args = list(min = 0, max = 1), aes(color = "Mean", fill = "Mean"), geom = "area", alpha = 0.3) + ylab("Density") +
+  stat_function(fun = dunif, n = 1001, args = list(min = 0, max = 1), geom = "area", aes(color = "Variance", fill = "Variance"), alpha = 0.3, position = "identity") + geom_hline(yintercept=0, colour="white", size=1) + scale_color_manual(name = "Prior parameters", values = parametersgamma, aesthetics = c("colour", "fill"), labels = c(expression(~mu[~beta]), expression(~sigma[~beta]^2))) + 
+  theme(legend.text=element_text(size = 9), legend.title = element_text(size = 7), legend.key.width=unit(0.45,"cm"), legend.key.height=unit(0.5,"cm"))
+
+# Delta's 
+
+mudeltaplotst <- runif(Nplotst, 0, 1)
+vardeltaplotst <- runif(Nplotst, 0, 1)
+deltaplot2st <- rnorm(Nplotst, mudeltaplotst, sqrt(vardeltaplotst))
+
+pdelta2datast <- data.frame(deltaplot2st)
+pdelta2st <- ggplot(pdelta2datast, aes(x = deltaplot2st)) + geom_density_line(color = "#0072B2", fill = "#0072B2", alpha = 0.1, position = "identity") + ylab("Density") + xlab("x") + labs(title = expression(~delta[i])) + theme(plot.title = element_text(size = 18)) + xlim(-5, 5)
+
+ptogetherdelta2st <- ggplot(data = data.frame(x = c(-5, 5)), aes(x)) +
+  stat_function(fun = dunif, n = 1001, args = list(min = 0, max = 1), aes(color = "Mean", fill = "Mean"), geom = "area", alpha = 0.3) + ylab("Density") +
+  stat_function(fun = dunif, n = 1001, args = list(min = 0, max = 1), geom = "area", aes(color = "Variance", fill = "Variance"), alpha = 0.3, position = "identity") + geom_hline(yintercept=0, colour="white", size=1) + scale_color_manual(name = "Prior parameters", values = parametersgammast, aesthetics = c("colour", "fill"), labels = c(expression(~mu[~delta]), expression(~sigma[~delta]^2))) + 
+  theme(legend.text=element_text(size = 9), legend.title = element_text(size = 7), legend.key.width=unit(0.45,"cm"), legend.key.height=unit(0.5,"cm"))
+
+
+theme_set(theme_apa(base_size = 9))
+#ptogether
+
+# Final figure 
+# grid.arrange(pgamma2st, ptogethergamma2st, pbeta2st, ptogetherbeta2st, pdelta2st, ptogetherdelta2st, nrow = 3, ncol = 2)
+
+```
+
+
+```{r priorpredictionsim4stan, warning=FALSE, message=FALSE, cache=TRUE, cache.lazy=FALSE, eval=FALSE, echo = FALSE}
+
+# Without for loop 
+set.seed(123)  # keep so people can reproduces results? 
+
+datalistpp3st <- list()
+for (i in 1:100){
+# Hyperpriors: These are not individual specific right? So only sample 1? 
+mugammappst <- runif(1, 0, 1)
+vargammappst <- runif(1, 0, 1)
+mubetappst <- runif(1, 0, 1)
+varbetappst <- runif(1, 0, 1)
+mudeltappst <- runif(1, 0, 1)
+vardeltappst <- runif(1, 0, 1)
+    
+# Priors: for each person sample prior 1 time 
+gammaippst <- rnorm(Ipp, mugammappst, vargammappst)
+betaippst <-  rnorm(Ipp, mubetappst, varbetappst)
+delta1ppst <- rnorm(Ipp, mudeltappst, vardeltappst)
+delta2ppst <- rnorm(Ipp, mudeltappst, vardeltappst)
+delta3ppst <- rnorm(Ipp, mudeltappst, vardeltappst)
+delta4ppst <- rnorm(Ipp, mudeltappst, vardeltappst)
+
+sigmappst <- runif(Ipp, 0, 1)  # Only 1 because not individual specific? 
+
+# Or start for loop here? Or do we want to vary persons as well? 
+# data
+Yppst <- rnorm(Ipp*Jpp*Kpp, gammaippst[exppp] + xjpp * betaippst[exppp] + 
+              ujpp * delta1ppst[exppp] + vjpp * delta2ppst[exppp] +
+              wjpp * delta3ppst[exppp] + zjpp * delta4ppst[exppp],
+              sqrt(sigmappst))
+datartppst <- data.frame(exppp, condpp, subpp, repetition = rep(i, length(exppp)), gammaippst[exppp], betaippst[exppp], delta1ppst[exppp], delta2ppst[exppp], delta3ppst[exppp], delta4ppst[exppp], Yppst)
+datalistpp3st[[i]] <- datartppst
+} 
+
+# Add datasets under each other 
+bigdatapp3st <- do.call(rbind, datalistpp3st)
+# hist(bigdatapp3st$Ypp)
+
+# histpp <- NA
+# for (i in 1:100){
+#  histpp[i] <- hist(bigdatapp3$Ypp[bigdatapp3$repetition==i])
+# }
+```
+
+
+
+# References 
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+&nbsp; 

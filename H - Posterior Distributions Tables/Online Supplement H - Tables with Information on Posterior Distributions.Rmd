@@ -1,0 +1,387 @@
+---
+title             : "Online Supplement H: Tables with Information on Posterior Distributions"
+author            : " "
+bibliography      : ["r-references.bib"]
+
+header-includes   :
+   - \usepackage{bm}
+   - \usepackage{amsmath}
+   - \usepackage{setspace}
+   - \usepackage{xcolor}
+   - \definecolor{mypink}{RGB}{255, 230, 255}
+   - \usepackage{todonotes}
+   - \usepackage{graphicx}
+   - \usepackage{float}
+   - \renewcommand{\tablename}{Table G}
+   - \makeatletter
+   - \def\tnum@table{\tablename\thetable}
+   - \makeatother
+
+csl               : apa6.csl
+output            : pdf_document
+---
+\spacing{1.5}
+\fontsize{12}{12}
+
+```{r setup, include=FALSE}
+def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(chunk = function(x, options) {
+  x <- def.chunk.hook(x, options)
+  ifelse(options$size != "normalsize", paste0("\n \\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
+})
+
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=40), tidy=TRUE, echo = TRUE, message = FALSE, warning = FALSE, fig.pos = "H")
+```
+
+
+
+\scriptsize 
+```{R loadpackages, message = FALSE, warning = FALSE, echo = FALSE}
+# Load the packages
+library("papaja")
+library("LaplacesDemon")
+library("rstan")
+library("brms")
+library("plyr")
+library("lattice")
+library("ggplot2")
+library("dplyr")
+library("readr")
+library("rmarkdown")
+library("Rmisc")
+library("devtools")
+library("gghalves") 
+library("bayesplot")
+library("bridgesampling") 
+library("gridExtra") 
+library("tibble") 
+library("kableExtra") 
+library("bayestestR")
+library("ggridges")
+library("truncnorm")
+library("ggbeeswarm")
+```
+\normalsize 
+
+|    This Online Supplement contains information on the posterior distributions of the general effects and individual variation estimated by `rstan` and `brms` for the normal and log-normal models. In the first table, the estimated mean of the posterior distribution, the standard error of this mean, the lower and upper bound of the 95% credible interval, the $\hat{R}$ and the number of effective samples are provided. In the second table, the estimated variance of the posterior distribution, the standard error of this variance, the lower and upper bound of the 95% credible interval, the $\hat{R}$ and the number of effective samples are provided. 
+&nbsp;
+
+## Normal model 
+### Rstan 
+\normalsize 
+```{r loadmodelfit1, echo = FALSE}
+setwd('..')
+model_fit <- readRDS(file = "R objects/rstan/normal model/hier_modelc_adj_07012022.rds")
+```
+
+```{r geneftable1, results = "asis", cache = TRUE, echo = FALSE}
+# Obtain the mean, standard error, 95% credible interval, rhat and number of effective samples for the intercept, and the digit and side parameters 
+fitrstanhiertable <- summary(model_fit,  # model fit 
+                             # Select parameters 
+                             pars = c("mu", "mu2", "mu3", "mu4", "mu5", 
+                                      "mu6"))$summary[,c("mean", "se_mean", 
+                                                         "2.5%", "97.5%", 
+                                                         "n_eff", "Rhat")]
+
+# The results are transformed to a dataframe that allows us to plot the results nicely in a table 
+fitrstanhiertable2 <- as.data.frame(fitrstanhiertable)
+
+# We manually set the row names of the table using latex for mathematical symbols 
+rownamesfitrstanhiertable <-  c("$\\mu_{\\gamma}$","$\\mu_{\\beta}$", "$\\mu_{\\delta_{7}}$", "$\\mu_{\\delta_{6}}$", "$\\mu_{\\delta_{4}}$", "$\\mu_{\\delta_{3}}$")
+
+# We manually set the column names of the table 
+colnames(fitrstanhiertable2) <- c("Mean", "SE", "Lower Bound", "Upper Bound", "$n_{eff}$","$\\hat{R}$")
+
+# The column with row names is added to the table 
+fitrstanhiertable3 <- add_column(fitrstanhiertable2, 
+                                 Parameters = rownamesfitrstanhiertable, 
+                                 .before = "Mean")
+
+# Using the apa_table function from the papaja package the results are presented in an apa table 
+apa_table(fitrstanhiertable3,   # Data frame with results 
+          row.names = FALSE,    # Default row names are deleted (we set them ourself)
+          caption = "Posterior Mean, Standard Error (SE) of the Mean, Lower and 
+          Upper Bound of the 95\\% Credible Interval, the Number of Effective 
+          Samples, and the $\\hat{R}$ of the General Effect Parameters as 
+          estimated by Rstan.", 
+          align = c("l", "c", "c", "c", "c", "c", "c"),   # How should results be presented, in the midle of the table or outlined left 
+          digits = 3,       # The number of digits behind the ".". 
+          placement = "h",  # Place after code 
+          escape = FALSE)   # This indicates that the results contain latex code that should be read as latex code. It is important to do this in combination with putting the results to "asis" in the {R} section above. 
+
+```
+
+```{r inddevtable1, results = "asis", cache = TRUE, echo = FALSE}
+fitrstanhiertable2 <- summary(model_fit,   # model fit 
+                              # Select variance parameters (we called them g)
+                              pars = c("g", "g2", "g3", "g4", "g5", 
+                                       "g6"))$summary[,c("mean", "se_mean", 
+                                                         "2.5%", "97.5%", 
+                                                         "n_eff", "Rhat")]
+
+# The results are transformed to a dataframe that allows us to plot the results nicely in a table 
+fitrstanhiertable22 <- as.data.frame(fitrstanhiertable2)
+
+# We manually set the row names of the table using latex for mathematical symbols 
+rownamesfitrstanhiertable2 <-  c("$\\sigma_{\\gamma}^2$","$\\sigma_{\\beta}^2$", "$\\sigma_{\\delta_{7}}^2$", "$\\sigma_{\\delta_{6}}^2$", "$\\sigma_{\\delta_{4}}^2$", "$\\sigma_{\\delta_{3}}^2$")
+
+# The column with row names is added to the table 
+colnames(fitrstanhiertable22) <- c("Mean", "SE", "Lower Bound", "Upper Bound", "$n_{eff}$","$\\hat{R}$")
+
+# The column with row names is added to the table 
+fitrstanhiertable32 <- add_column(fitrstanhiertable22, 
+                                  Parameters = rownamesfitrstanhiertable2, 
+                                  .before = "Mean")
+
+# Using the apa_table function from the papaja package the results are presented in an apa table 
+apa_table(fitrstanhiertable32,  # Data frame with results
+          row.names = FALSE,    # Default row names are deleted (we set them ourself)
+          caption = "Posterior Variance, Standard Error (SE) of the Variance, 
+          Lower and Upper Bound of the 95\\% Credible Interval, the Number of 
+          Effective Samples, and the $\\hat{R}$ of the Variance Parameters           as estimated by Rstan.", 
+          align = c("l", "c", "c", "c", "c", "c", "c"),  # How should results be presented, in the midle of the table or outlined left 
+          digits = 3,        # The number of digits behind the ".". 
+          place = "h",       # Place after code 
+          escape = FALSE)    # This indicates that the results contain latex code that should be read as latex code. It is important to do this in combination with putting the results to "asis" in the {R} section above. 
+
+```
+\newpage
+
+### brms 
+```{r loadmodelfits2, show = FALSE, echo = FALSE}
+setwd('..')
+model_fit <- readRDS(file = "R objects/brms/Truncated/BRMSmodelfit18_03012022.rds")  
+
+```
+
+\scriptsize 
+```{r geneftable2, results = "asis", cache = TRUE, echo = FALSE}
+# Obtain the mean, standard error, 95% credible interval, rhat and number of effective samples for the intercept, and the digit and side parameters 
+fitbrmshiertable <- summary(model_fit)[[14]][,c("Estimate", "Est.Error", "l-95% CI", "u-95% CI", "Bulk_ESS", "Rhat")]  # variance 
+
+# The results are transformed to a dataframe that allows us to plot the results nicely in a table 
+fitbrmshiertable2 <- as.data.frame(fitbrmshiertable)
+fitbrmshiertable2 <- rbind(fitbrmshiertable2[6,], fitbrmshiertable2[1:5,]) 
+
+# We manually set the row names of the table using latex for mathematical symbols 
+rownamesfitbrmshiertable <-  c("$\\mu_{\\gamma}$","$\\mu_{\\beta}$", "$\\mu_{\\delta_{7}}$", 
+                               "$\\mu_{\\delta_{6}}$", "$\\mu_{\\delta_{4}}$", "$\\mu_{\\delta_{3}}$")
+
+# We manually set the column names of the table 
+colnames(fitbrmshiertable2) <- c("Mean", "SE", "Lower Bound", "Upper Bound", "$n_{eff}$","$\\hat{R}$")
+
+# The column with row names is added to the table 
+fitbrmshiertable3 <- add_column(fitbrmshiertable2, 
+                                 Parameters = rownamesfitbrmshiertable, 
+                                 .before = "Mean")
+
+# Using the apa_table function from the papaja package the results are presented in an apa table 
+apa_table(fitbrmshiertable3,   # Data frame with results 
+          row.names = FALSE,    # Default row names are deleted (we set them ourself)
+          caption = "Posterior Mean, Standard Error (SE) of the Mean, Lower and 
+          Upper Bound of the 95\\% Credible Interval, the Number of Effective 
+          Samples, and the $\\hat{R}$ of the General Effect Parameters as estimated by brms. ", 
+          align = c("l", "c", "c", "c", "c", "c", "c"),   # How should results be presented, in the midle of the table or outlined left 
+          digits = 3,       # The number of digits behind the ".". 
+          placement = "h",  # Place after code 
+          escape = FALSE)   # This indicates that the results contain latex code that should be read as latex code. It is important to do this in combination with putting the results to "asis" in the {R} section above. 
+
+```
+\normalsize 
+
+\scriptsize 
+```{r inddevtable2, results = "asis", cache = TRUE, echo = FALSE}
+# Obtain standard deviation estimates 
+fitbrmshiertable2 <- summary(model_fit)[[17]]$sub1[,c("Estimate", "Est.Error", "l-95% CI", "u-95% CI", "Bulk_ESS", "Rhat")] 
+
+# The results are transformed to a dataframe that allows us to plot the results nicely in a table 
+fitbrmshiertable22 <- as.data.frame(fitbrmshiertable2)
+fitbrmshiertable22 <- rbind(fitbrmshiertable22[6,], fitbrmshiertable22[1:5,])
+
+# We manually set the row names of the table using latex for mathematical symbols 
+rownamesfitbrmshiertable2 <-  c("$\\sigma_{\\gamma}$","$\\sigma_{\\beta}$", "$\\sigma_{\\delta_{7}}$", 
+                                "$\\sigma_{\\delta_{6}}$", "$\\sigma_{\\delta_{4}}$", "$\\sigma_{\\delta_{3}}$")
+
+# The column with row names is added to the table 
+colnames(fitbrmshiertable22) <- c("Mean", "SE", "Lower Bound", "Upper Bound", "$n_{eff}$","$\\hat{R}$")
+
+# The column with row names is added to the table 
+fitbrmshiertable32 <- add_column(fitbrmshiertable22, 
+                                  Parameters = rownamesfitbrmshiertable2, 
+                                  .before = "Mean")
+
+# Using the apa_table function from the papaja package the results are presented in an apa table 
+apa_table(fitbrmshiertable32,  # Data frame with results
+          row.names = FALSE,    # Default row names are deleted (we set them ourself)
+          caption = "Posterior Standard Deviation, Standard Error (SE) of the Standard Deviation, 
+          Lower and Upper Bound of the 95\\% Credible Interval, the Number of 
+          Effective Samples, and the $\\hat{R}$ of the Standard Deviation Parameters           as estimated by brms", 
+          align = c("l", "c", "c", "c", "c", "c", "c"),  # How should results be presented, in the midle of the table or outlined left 
+          digits = 3,        # The number of digits behind the ".". 
+          place = "h",       # Place after code 
+          escape = FALSE)    # This indicates that the results contain latex code that should be read as latex code. It is important to do this in combination with putting the results to "asis" in the {R} section above. 
+
+```
+\normalsize 
+\newpage
+
+## Log normal model 
+### Rstan 
+```{r loadmodelfit3, echo = FALSE}
+setwd('..')
+logmodel_fit <- readRDS(file = "R objects/rstan/log-normal model/hier_logmodelc_adj13012022.rds")
+```
+
+\scriptsize 
+```{r geneftable3, results = "asis", cache = TRUE, echo = FALSE}
+# Obtain the mean, standard error, 95% credible interval, rhat and number of effective samples for the intercept, and the digit and side parameters 
+fitrstanhiertable <- summary(logmodel_fit,  # model fit 
+                             # Select parameters 
+                             pars = c("mu", "mu2", "mu3", "mu4", "mu5", 
+                                      "mu6"))$summary[,c("mean", "se_mean", 
+                                                         "2.5%", "97.5%", 
+                                                         "n_eff", "Rhat")]
+
+# The results are transformed to a dataframe that allows us to plot the results nicely in a table 
+fitrstanhiertable2 <- as.data.frame(fitrstanhiertable)
+
+# We manually set the row names of the table using latex for mathematical symbols 
+rownamesfitrstanhiertable <-  c("$\\mu_{\\gamma}$","$\\mu_{\\beta}$", "$\\mu_{\\delta_{7}}$", "$\\mu_{\\delta_{6}}$", "$\\mu_{\\delta_{4}}$", "$\\mu_{\\delta_{3}}$")
+
+# We manually set the column names of the table 
+colnames(fitrstanhiertable2) <- c("Mean", "SE", "Lower Bound", "Upper Bound", "$n_{eff}$","$\\hat{R}$")
+
+# The column with row names is added to the table 
+fitrstanhiertable3 <- add_column(fitrstanhiertable2, 
+                                 Parameters = rownamesfitrstanhiertable, 
+                                 .before = "Mean")
+
+# Using the apa_table function from the papaja package the results are presented in an apa table 
+apa_table(fitrstanhiertable3,   # Data frame with results 
+          row.names = FALSE,    # Default row names are deleted (we set them ourself)
+          caption = "Posterior Mean, Standard Error (SE) of the Mean, Lower and 
+          Upper Bound of the 95\\% Credible Interval, the Number of Effective 
+          Samples, and the $\\hat{R}$ of the General Effect Parameters as 
+          estimated by Rstan.", 
+          align = c("l", "c", "c", "c", "c", "c", "c"),   # How should results be presented, in the midle of the table or outlined left 
+          digits = 3,       # The number of digits behind the ".". 
+          placement = "h",  # Place after code 
+          escape = FALSE)   # This indicates that the results contain latex code that should be read as latex code. It is important to do this in combination with putting the results to "asis" in the {R} section above. 
+
+```
+\normalsize 
+
+\scriptsize 
+```{r inddevtable3, results = "asis", cache = TRUE, echo = FALSE}
+fitrstanhiertable2 <- summary(logmodel_fit,   # model fit 
+                              # Select variance parameters (we called them g)
+                              pars = c("g", "g2", "g3", "g4", "g5", 
+                                       "g6"))$summary[,c("mean", "se_mean", 
+                                                         "2.5%", "97.5%", 
+                                                         "n_eff", "Rhat")]
+
+# The results are transformed to a dataframe that allows us to plot the results nicely in a table 
+fitrstanhiertable22 <- as.data.frame(fitrstanhiertable2)
+
+# We manually set the row names of the table using latex for mathematical symbols 
+rownamesfitrstanhiertable2 <-  c("$\\sigma_{\\gamma}^2$","$\\sigma_{\\beta}^2$", "$\\sigma_{\\delta_{7}}^2$", "$\\sigma_{\\delta_{6}}^2$", "$\\sigma_{\\delta_{4}}^2$", "$\\sigma_{\\delta_{3}}^2$")
+
+# The column with row names is added to the table 
+colnames(fitrstanhiertable22) <- c("Mean", "SE", "Lower Bound", "Upper Bound", "$n_{eff}$","$\\hat{R}$")
+
+# The column with row names is added to the table 
+fitrstanhiertable32 <- add_column(fitrstanhiertable22, 
+                                  Parameters = rownamesfitrstanhiertable2, 
+                                  .before = "Mean")
+
+# Using the apa_table function from the papaja package the results are presented in an apa table 
+apa_table(fitrstanhiertable32,  # Data frame with results
+          row.names = FALSE,    # Default row names are deleted (we set them ourself)
+          caption = "Posterior Variance, Standard Error (SE) of the Variance, 
+          Lower and Upper Bound of the 95\\% Credible Interval, the Number of 
+          Effective Samples, and the $\\hat{R}$ of the Variance Parameters           as estimated by Rstan.", 
+          align = c("l", "c", "c", "c", "c", "c", "c"),  # How should results be presented, in the midle of the table or outlined left 
+          digits = 3,        # The number of digits behind the ".". 
+          place = "h",       # Place after code 
+          escape = FALSE)    # This indicates that the results contain latex code that should be read as latex code. It is important to do this in combination with putting the results to "asis" in the {R} section above. 
+
+```
+\normalsize 
+\newpage
+
+### brms 
+
+\scriptsize 
+```{r loadmodelfits4, show = FALSE, echo = FALSE}
+# Log model brms 
+setwd('..')
+logmodel_fit <- readRDS(file = "R objects/brms/log-normal/brmmodel8log13012022.rds")  
+
+
+```
+\normalsize 
+
+\scriptsize 
+```{r geneftable4, results = "asis", cache = TRUE, echo = FALSE}
+# Obtain the mean, standard error, 95% credible interval, rhat and number of effective samples for the intercept, and the digit and side parameters 
+fitbrmshiertable <- summary(logmodel_fit)[[14]][,c("Estimate", "Est.Error", "l-95% CI", "u-95% CI", "Bulk_ESS", "Rhat")]  # variance 
+
+# The results are transformed to a dataframe that allows us to plot the results nicely in a table 
+fitbrmshiertable2 <- as.data.frame(fitbrmshiertable)
+
+# We manually set the row names of the table using latex for mathematical symbols 
+rownamesfitbrmshiertable <-  c("$\\mu_{\\gamma}$","$\\mu_{\\beta}$", "$\\mu_{\\delta_{7}}$", 
+                               "$\\mu_{\\delta_{6}}$", "$\\mu_{\\delta_{4}}$", "$\\mu_{\\delta_{3}}$")
+
+# We manually set the column names of the table 
+colnames(fitbrmshiertable2) <- c("Mean", "SE", "Lower Bound", "Upper Bound", "$n_{eff}$","$\\hat{R}$")
+
+# The column with row names is added to the table 
+fitbrmshiertable3 <- add_column(fitbrmshiertable2, 
+                                 Parameters = rownamesfitbrmshiertable, 
+                                 .before = "Mean")
+
+# Using the apa_table function from the papaja package the results are presented in an apa table 
+apa_table(fitbrmshiertable3,   # Data frame with results 
+          row.names = FALSE,    # Default row names are deleted (we set them ourself)
+          caption = "Posterior Mean, Standard Error (SE) of the Mean, Lower and Upper Bound of the 95\\% Credible Interval, Number of Effective Samples, and $\\hat{R}$ of the General Effect Parameters as estimated by brms. ", 
+          align = c("l", "c", "c", "c", "c", "c", "c"),   # How should results be presented, in the midle of the table or outlined left 
+          digits = 3,       # The number of digits behind the ".". 
+          placement = "h",  # Place after code 
+          escape = FALSE)   # This indicates that the results contain latex code that should be read as latex code. It is important to do this in combination with putting the results to "asis" in the {R} section above. 
+
+```
+\normalsize 
+
+\scriptsize 
+```{r inddevtable4, results = "asis", cache = TRUE, echo = FALSE}
+# Obtain standard deviation estimates 
+fitbrmshiertable2 <- summary(logmodel_fit)[[17]]$sub1[,c("Estimate", "Est.Error", "l-95% CI", "u-95% CI", "Bulk_ESS", "Rhat")] 
+
+# The results are transformed to a dataframe that allows us to plot the results nicely in a table 
+fitbrmshiertable22 <- as.data.frame(fitbrmshiertable2)
+
+# We manually set the row names of the table using latex for mathematical symbols 
+rownamesfitbrmshiertable2 <-  c("$\\sigma_{\\gamma}$","$\\sigma_{\\beta}$", "$\\sigma_{\\delta_{7}}$", 
+                                "$\\sigma_{\\delta_{6}}$", "$\\sigma_{\\delta_{4}}$", "$\\sigma_{\\delta_{3}}$")
+
+# The column with row names is added to the table 
+colnames(fitbrmshiertable22) <- c("Mean", "SE", "Lower Bound", "Upper Bound", "$n_{eff}$","$\\hat{R}$")
+
+# The column with row names is added to the table 
+fitbrmshiertable32 <- add_column(fitbrmshiertable22, 
+                                  Parameters = rownamesfitbrmshiertable2, 
+                                  .before = "Mean")
+
+# Using the apa_table function from the papaja package the results are presented in an apa table 
+apa_table(fitbrmshiertable32,  # Data frame with results
+          row.names = FALSE,    # Default row names are deleted (we set them ourself)
+          caption = "Posterior Variance, Standard Error (SE) of the Standard Deviation, Lower and Upper Bound of the 95\\% Credible Interval, Number of Effective Samples, and $\\hat{R}$ of the Variance Parameters as estimated by brms.", 
+          align = c("l", "c", "c", "c", "c", "c", "c"),  # How should results be presented, in the midle of the table or outlined left 
+          digits = 3,        # The number of digits behind the ".". 
+          place = "h",       # Place after code 
+          escape = FALSE)    # This indicates that the results contain latex code that should be read as latex code. It is important to do this in combination with putting the results to "asis" in the {R} section above. 
+
+```
+\normalsize 
+

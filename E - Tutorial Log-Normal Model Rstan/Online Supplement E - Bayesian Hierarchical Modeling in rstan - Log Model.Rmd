@@ -1,0 +1,1297 @@
+---
+title             : "Online Supplement E: Bayesian Hierarchical Modeling in rstan - Log Model"
+author            : "Myrthe Veenman" 
+bibliography      : ["r-references.bib"]
+header-includes   :
+   - \usepackage{bm}
+   - \usepackage{amsmath}
+   - \usepackage{setspace}
+   - \usepackage{xcolor}
+   - \definecolor{mypink}{RGB}{255, 230, 255}
+   - \usepackage{todonotes}
+   - \usepackage{graphicx}
+   - \usepackage{float}
+
+csl               : apa6.csl
+output            : pdf_document
+---
+\spacing{1.5}
+\fontsize{12}{12}
+
+```{r setup, include=FALSE}
+def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(chunk = function(x, options) {
+  x <- def.chunk.hook(x, options)
+  ifelse(options$size != "normalsize", paste0("\n \\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
+})
+
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=40), tidy=TRUE, echo = TRUE, message = FALSE, warning = FALSE, fig.pos = "H")
+```
+
+|    This online supplement provides a tutorial on log-normal Bayesian Hierarchical models (BHM) in `rstan` [@R-rstan]. In addition, it contains information about the Number Classification Task that could not be included in the paper. Only the fit of the full model will be shown as the fitting the others should follow logically from this tutorial. Technical details, such as explanations of statistical terms (e.g., $\hat{R}$), will not be discussed here but can be found in the paper. This tutorial will cover the following:   
+
+1. Required packages 
+2. Input  
+  2.1 Stan file   
+  2.2 Data 
+3. Fit model 
+4. Output   
+  4.1 General Effects   
+  4.2 Individual Effects 
+5. Model comparison 
+6. Additional resources 
+
+## Required Packages 
+
+|    In this practical, the following packages will be used: 
+
+- For the document layout: *rmarkdown* [Version 1.16; @R-rmarkdown], *papaja* [Version 0.1.0.9842; @R-papaja], *knitr* [Version 1.25; @R-knitr], *kableExtra* [Version 1.1.0; @R-kableExtra]
+- For data structuring: *LaplacesDemon* [Version 16.1.4; @R-LaplacesDemon], *plyr* [Version 1.8.4; @R-plyr], *dplyr* [Version 0.8.3; @R-dplyr], *readr* [Version 1.3.1; @R-readr]
+- To fit the model: *rstan* [Version 2.19.2; @R-rstan]
+- For the visualization of the results: *lattice* [Version 0.20.38; @R-lattice], *ggplot2* [Version 3.3.2; @R-ggplot2], *Rmisc* [Version 1.5; @R-Rmisc], *devtools* [Version 2.2.1; @R-devtools], *gghalves* [Version 0.1.0; @R-gghalves], *bayesplot* [Version 1.7.1; @R-bayesplot], *brms* [Version 2.13.0; @R-brms_a; @R-brms_b], *gridExtra* [Version 2.3; @R-gridExtra], *tibble* [Version 3.0.2; @R-tibble]
+- For model comparison: *bridgesamping* [Version 1.0.0; @R-bridgesampling]
+
+&nbsp; 
+
+\scriptsize 
+
+```{R loadpackages, message = FALSE, warning = FALSE}
+# Load the packages
+library("papaja")
+library("LaplacesDemon")
+library("rstan")
+library("brms")
+library("plyr")
+library("lattice")
+library("ggplot2")
+library("dplyr")
+library("readr")
+library("rmarkdown")
+library("Rmisc")
+library("devtools")
+library("gghalves") 
+library("bayesplot")
+library("bridgesampling") 
+library("gridExtra") 
+library("tibble") 
+library("kableExtra") 
+library("truncnorm")
+library("ggbeeswarm")
+```
+\normalsize 
+
+## Input 
+
+|    To fit a log-normal BHM in *rstan*, we use the *stan* function, as shown below. 
+&nbsp; 
+
+\scriptsize 
+```{r modelfitpreview, eval=FALSE, echo=TRUE}
+model_fit <- stan(file = "./myLogModel.stan",  # Stan file with model  
+                  data = myData_list,       # List with observed data and constants
+                  iter = 4000,              # Number (Nr.) of iterations per chain
+                  chains = 4,               # Nr. of chains 
+                  warmup = 1000)            # Nr. iterations for warmup per chain
+```
+\normalsize 
+
+We can see from the code above that the function requires the following input:  
+
+- Stan file 
+- A list with the data 
+
+The other options do not require coding and are discussed in the paper. 
+
+### Stan file 
+
+|  The stan file `myLogModel.stan` is used to fit the full model and can be found under R objects > rstan > linear model. It contains descriptions for every line of code. The stan file is divided in three sections (in our case): 
+
+1. Data 
+2. Parameters 
+3. Model 
+
+|    As the name says, the Data section specifies the variables we will provide with data. It contains the number of total observations, the number of groups (in our case the number of individuals), the response times, the condition for every response time (side of the digit and the digit indicator) and the prior settings. There are different types of variables. A vector indicates that the variable consists of several numbers and between `[]` the length of the vector is given. An integer indicates that the variable is one full number (i.e., no half numbers such as 0.3, 1.5, 6.33). Real means that the number can be a half number, so it allows numbers as 0.5, 1.3, 5.66, etc. With `<lower>` and `<upper>` the lower and upper bound of the parameter can be specified. For instance, for a variance it could be indicated that this variable cannot be below 0 with `<lower = 0>`.     
+|    In the Parameters section, all the parameters that need to be estimated are given. These are the general and individual effects. The specification of the parameters works in the same way as the variable specification in the Data section. Therefore, the general effects are reals, while the individual parameters are vectors with a length of the number of groups (in our case individuals, this means that there will be an estimate for every individual).  
+|    The last section, Model, contains the formula to obtain the estimates. We use the target specification as it saves the constants, necessary for model comparison later on. For example, `target += normal_lpdf(delta2 | mu4, sqrt(g4))` basically means that "delta2" is normally distributed with a mean of "mu4" and a standard deviation of "g4". Note that we want to estimate the variances, not the standard deviations. However, in the normal distribution function, the standard deviation is asked for. Therefore, we computed the square root of the variance parameters. Furthermore, it is important that you end every line with `;`, and end the stan file with an empty line. With `//` you can add a comment to the code. 
+
+### Data 
+
+|    In the function, we put a list that contains all the information corresponding to the Data section of the stan file. This means that every parameter set in the Data section of the stan file, should have an element in the list we put in the function. In our case, this should result in 23 elements in the list. 
+|  First, we will load the data and clean it according to the requirements in the paper. 
+&nbsp; 
+
+\scriptsize 
+```{r readdata}
+indat=read.table(url('https://raw.githubusercontent.com/PerceptionCognitionLab/data0/master/lexDec-dist5/ld5.all'))
+colnames(indat)=c('sub','block','trial','stim','resp','rt','error')
+
+## Cleaning the data according to criteria discussed in paper  
+# (code retrieved from Julia Haaf:
+# https://github.com/PerceptionAndCognitionLab/bf-order/blob/public/papers/submission/R-scripts/ld5.R)
+clean=function()
+{
+  indat=read.table(url('https://raw.githubusercontent.com/PerceptionCognitionLab/data0/master/lexDec-dist5/ld5.all'))
+  colnames(indat)=c('sub','block','trial','stim','resp','rt','error')
+  
+  bad1=indat$sub%in%c(34,43)
+  bad2=indat$rt<250 | indat$rt>2000
+  bad3=indat$err==1
+  bad4=indat$block==0 & indat$trial<20
+  bad5=indat$trial==0
+  
+  bad=bad1 | bad2 | bad3 |bad4 |bad5
+  dat=indat[!bad,]
+  return(dat)
+}
+
+indat1 <- clean()  # Final dataset 
+```
+\normalsize 
+
+|    Now, we will construct the list we provide the `stan` function. The first element of the list is N, corresponding to the number of groups in the data. In our case these are the number of individuals. The second element is the number of total observations in the data. Then, we specify the dependent variable/observations. In our case these are the response times (RTs). Next, we add an indicator to the list that specifies which observation belongs to which individual (or group). 
+&nbsp;
+
+\scriptsize 
+```{r}
+# Data into list and fill the list with necessary information 
+# Number of groups (individuals)
+myData_list <- list(N = length(unique(indat1$sub)))
+
+# Number of total observations 
+myData_list$All <- nrow(indat1)  
+
+# Observations 
+myData_list$y <- indat1$rt/1000  # rt in seconds instead of milliseconds
+
+# Need a variable with group number that are chronological (that doesn't skip numbers)
+for (j in 1:nrow(indat1)){
+  if (j == 1) {
+    indat1$sub1[j] <- 1}
+  else if (indat1$sub[j] == indat1$sub[j-1]) {
+    myData_list$group_inds[j] <- indat1$sub1[j-1]}
+  else myData_list$group_inds[j] <- indat1$sub1[j-1] + 1
+}
+
+# myData_list$group_inds <- indat1$sub1  # Add variable with indicator person to the list used for the analysis
+
+```
+\normalsize 
+
+|    The next step is to specify the indicators. These are the variables that specify per observation of a variable applies or not. For the side parameter this means that the side indicator is $\frac{1}{2}$ for observations where the digit was smaller than 5, and  $-\frac{1}{2}$ for observations where the digit was greater than 5. For the digit parameters it means that the digit indicator is 1 when for the observation the digit was equal to 7, 6, 4 or 3, and 0 when it was not. 
+&nbsp; 
+
+\scriptsize 
+```{r digitparameters}
+### Add variable with information of the side of the digit to the list, for parameter beta    
+# j = condition, if j > 5 than x = -1/2, if j < 5 than x = 1/2 
+# indat1$stim 0 = 2, 1=3, 2=4, 3=6, 4=7, 5=8 
+# so if bigger than 2 than 1/2, else than -1/2 
+for (j in 1:nrow(indat1)){
+  if (indat1$stim[j] < 3) {
+    myData_list$side[j] <- 1/2}
+  else myData_list$side[j] <- -1/2
+}
+
+### Add variable with information about difference between digits to the list, for parameters delta's 
+#### Difference 8 and 7 
+for (j in 1:nrow(indat1)){ 
+  if (indat1$stim[j] == 5) {  # 5 = 8 , reference: https://github.com/PerceptionCognitionLab/data0/blob/master/lexDec-dist5/ld5.txt
+    myData_list$dif1[j] <- 0}
+  else if (indat1$stim[j] == 4) {
+    myData_list$dif1[j] <- 1}
+  else myData_list$dif1[j] <- 0
+}
+
+#### Difference 7 and 6 
+for (j in 1:nrow(indat1)){ 
+  if (indat1$stim[j] == 4) {  # 4 = 7 , reference: https://github.com/PerceptionCognitionLab/data0/blob/master/lexDec-dist5/ld5.txt
+    myData_list$dif2[j] <- 0}
+  else if (indat1$stim[j] == 3) {  # 3 = 6 
+    myData_list$dif2[j] <- 1}
+  else myData_list$dif2[j] <- 0
+}
+
+#### Difference 4 and 3 
+for (j in 1:nrow(indat1)){ 
+  if (indat1$stim[j] == 1) {  # 1 = 3, 2 = 4 , reference: https://github.com/PerceptionCognitionLab/data0/blob/master/lexDec-dist5/ld5.txt
+    myData_list$dif3[j] <- 0}
+  else if (indat1$stim[j] == 2) {
+    myData_list$dif3[j] <- 1}
+  else myData_list$dif3[j] <- 0
+}
+
+#### Difference 3 and 2 
+for (j in 1:nrow(indat1)){ 
+  if (indat1$stim[j] == 0) {  # 0 = 2, 1 = 3 , reference: https://github.com/PerceptionCognitionLab/data0/blob/master/lexDec-dist5/ld5.txt
+    myData_list$dif4[j] <- 0}
+  else if (indat1$stim[j] == 1) {
+    myData_list$dif4[j] <- 1}
+  else myData_list$dif4[j] <- 0
+}
+
+# datareal$dif1 <- indat1$dif1
+# datareal$dif2 <- indat1$dif2
+# datareal$dif3 <- indat1$dif3 
+# datareal$dif4 <- indat1$dif4 
+
+```
+\normalsize 
+
+|  Finally, we specify the priors. The prior specification is discussed in the paper.
+&nbsp; 
+
+\scriptsize 
+```{r priors}
+### Set the priors and add them to the list 
+a <- -0.5        # mean for mu, mu is the mean of theta  
+b <- 1          # variance for mu 
+c <- 3          # mean for sigma 
+d <- 0.3        # variance for sigma, sigma is the variance of observations  
+e <- 3          # mean for g, g is the variance of theta   
+f <- 0.3        # variance for g 
+       
+#### Priors for beta 
+a2 <- 0        # mean for mean of beta
+b2 <- 0.005     # variance for mean of beta, used to be 1 
+e2 <- 3        # mean for variance of beta, used to be .7, adjusted 
+f2 <- 0.01      # variance for variance of beta, used to be .2., adjusted 
+
+#### Prior for deltas, same for every delta 
+a3 <- 0        # mean for mean of delta 
+b3 <- 0.005     # sd for mean of delta, 0.5, 0.3  
+dd3 <- 3       # mean for variance of delta, adjusted
+f3 <- 0.01      # variance for variance of delta, adjusted 
+
+myData_list$a <- a
+myData_list$b <- b
+myData_list$c <- c
+myData_list$d <- d
+myData_list$dd <- e
+myData_list$f <- f
+myData_list$a2 <- a2
+myData_list$b2 <- b2
+myData_list$dd2 <- e2
+myData_list$f2 <- f2
+myData_list$a3 <- a3
+myData_list$b3 <- b3
+myData_list$dd3 <- dd3
+myData_list$f3 <- f3
+```
+\normalsize 
+
+As described in the paper, we could check whether these priors are reasonable considering our expectations by performing prior prediction. 
+
+```{r priorprediction, echo = FALSE, fig.cap="Predicted mean RT difference between conditions per trial. The blue dot represents the aggregated effect. ", fig.align = "left", fig.height=4, fig.width = 5}
+set.seed(123) 
+
+Ipp <- 10  # repeat 10 times 
+Jpp <- 6   # digit 2, 3, 4, 6, 7, and 8 
+Kpp <- 60  # 60 observations per condition per person 
+
+exppp <- rep(1:Ipp, each = Jpp * Kpp)  # which row belongs to which participant 
+condpp <- rep(0:5, Ipp, each = Kpp)  # to which condition row belongs  
+subpp <- rep(1:Kpp, Ipp * Jpp)  # to which observation per condition per parcticipant belongs row 
+
+# add parameters x, u, v, w, z 
+xjpp <- NA 
+ujpp <- NA 
+vjpp <- NA 
+wjpp <- NA 
+zjpp <- NA 
+# side effect, greater or smaller than 5  
+for (j in 1:length(condpp)){  # 3 = 6
+  if (condpp[j] < 3) {
+    xjpp[j] <- 1/2}
+  else xjpp[j] <- -1/2
+}
+
+### Add variable with information about difference between digits, for parameters delta's 
+#### Difference 8 and 7 
+for (j in 1:length(condpp)){ 
+  if (condpp[j] == 5) {  # 5 = 8 , 
+    ujpp[j] <- 0}
+  else if (condpp[j] == 4) {
+    ujpp[j] <- 1}
+  else ujpp[j] <- 0
+}
+
+# Difference 7 and 6 
+for (j in 1:length(condpp)){ 
+  if (condpp[j] == 4) {  # 4 = 7, 3 = 6  
+    vjpp[j] <- 0}
+  else if (condpp[j] == 3) {
+    vjpp[j] <- 1}
+  else vjpp[j] <- 0
+}
+
+# Difference 4 and 3 
+for (j in 1:length(condpp)){ 
+  if (condpp[j] == 1) {  # 1 = 3, 2 = 4 
+    wjpp[j] <- 0}
+  else if (condpp[j] == 2) {
+    wjpp[j] <- 1}
+  else wjpp[j] <- 0
+}
+
+# Difference 3 and 2 
+for (j in 1:length(condpp)){ 
+  if (condpp[j] == 0) {  # 0 = 2, 1 = 3
+    zjpp[j] <- 0}
+  else if (condpp[j] == 1) {
+    zjpp[j] <- 1}
+  else zjpp[j] <- 0
+}
+
+### Set the priors and add them to the list 
+a <- -0.5  # mean for mu, mu is the mean of theta  
+b <- 1  # variance for mu 
+c <- 3  # mean for sigma 
+d <- .3  # variance for sigma, sigma is the variance of observations  
+e <- 3  # mean for g, g is the variance of theta   
+f <- .3  # variance for g 
+
+#### Priors for beta 
+a2 <- 0  # mean for mean of beta
+b2 <- 0.005  # sd for mean of beta, used to be 1 
+e2 <- 3  # mean for sd of beta, used to be .7 
+f2 <- 0.01  # sd for sd of beta, used to be .2. 
+
+#### Prior for deltas, same for every delta 
+a3 <- 0  # mean for mean of delta 
+b3 <- 0.005  # sd for mean of delta, 0.005 pretty good, 0,01 worse 
+dd3 <- 3  # mean for sd of delta 
+f3 <- 0.01  # sd for sd of delta, 0.01 good, 0.05 worse  
+
+datalistpp3 <- list()
+delta1pp2 <- list()
+gammaipp2 <- list()
+betaipp2 <- list()
+sigmapp2 <- c()
+for (i in 1:1000){  # with 10000 my computer cannot handle it 
+  # Hyperpriors: These are not individual specific right? So only sample 1? 
+  mugammapp <- rnorm(1, -0.5, sqrt(1))
+  vargammapp <- rinvgamma(1, e, f)
+  mubetapp <- rnorm(1, a2, sqrt(b2))
+  varbetapp <- rinvgamma(1, e2, f2)
+  mudeltapp <- rnorm(1, a3, sqrt(b3))
+  vardeltapp <- rinvgamma(1, dd3, f3)
+  
+  # Priors: for each person sample prior 1 time 
+  gammaipp <- rnorm(Ipp, mugammapp, sqrt(vargammapp))
+  betaipp <-  rnorm(Ipp, mubetapp, sqrt(varbetapp))
+  delta1pp <- rnorm(Ipp, mudeltapp, sqrt(vardeltapp))
+  delta2pp <- rnorm(Ipp, mudeltapp, sqrt(vardeltapp))
+  delta3pp <- rnorm(Ipp, mudeltapp, sqrt(vardeltapp))
+  delta4pp <- rnorm(Ipp, mudeltapp, sqrt(vardeltapp))
+  
+  sigmapp <- rinvgamma(1, c, d)  # Only 1 because not individual specific? 
+  
+  # Or start for loop here? Or do we want to vary persons as well? 
+  # data
+  Ypp <- rlnorm(Ipp*Jpp*Kpp, gammaipp[exppp] + xjpp * betaipp[exppp] + 
+                  ujpp * delta1pp[exppp] + vjpp * delta2pp[exppp] +
+                  wjpp * delta3pp[exppp] + zjpp * delta4pp[exppp],
+                sqrt(sigmapp))
+  gammaipp2[[i]] <- gammaipp
+  betaipp2[[i]] <- betaipp
+  delta1pp2[[i]] <- delta1pp
+  sigmapp2[i] <- sigmapp
+  datartpp <- data.frame(exppp, condpp, subpp, repetition = rep(i, length(exppp)), gammaipp[exppp], betaipp[exppp], delta1pp[exppp], delta2pp[exppp], delta3pp[exppp], delta4pp[exppp], Ypp)
+  datalistpp3[[i]] <- datartpp
+} 
+
+# Add datasets under each other 
+bigdatapp3 <- do.call(rbind, datalistpp3)
+
+
+########### Create figure function 
+
+## Or plot mean rt per condition per trial 
+  priorpredfigurecreate <- function(bigdatapp3brms){
+    plotsimpp <- aggregate(bigdatapp3brms$Ypp, list(bigdatapp3brms$condpp, bigdatapp3brms$repetition), mean)
+    meanrtsimpp <- aggregate(bigdatapp3brms$Ypp, list(bigdatapp3brms$condpp), mean)  # mean RT per condition 
+    
+    # Mean difference per digits per trial and side effect (mean(2, 3, 4) - mean (6, 7, 8))
+    plotsimpp <- aggregate(bigdatapp3brms$Ypp, list(bigdatapp3brms$condpp, bigdatapp3brms$repetition), mean)
+    # meanrtsimpp <- aggregate(bigdatapp3$Ypp, list(bigdatapp3$condpp), mean)
+    
+    sideapp3 <- NA 
+    diff1app3 <- NA   # length 1000 
+    diff2app3 <- NA 
+    diff3app3 <- NA
+    diff4app3 <- NA 
+    repapp3 <- NA 
+    
+    # Group.2 is the trial number (1000 in total per condition)
+    for (i in 1:length(unique(plotsimpp$Group.2))){
+      repapp3[i] <- i 
+      sideapp3[i] <- ((plotsimpp$x[plotsimpp$Group.1==0 & plotsimpp$Group.2 == i] + plotsimpp$x[plotsimpp$Group.1==1 & plotsimpp$Group.2 == i] + plotsimpp$x[plotsimpp$Group.1==2 & plotsimpp$Group.2 == i]) - 
+                     (plotsimpp$x[plotsimpp$Group.1==3 & plotsimpp$Group.2 == i] + plotsimpp$x[plotsimpp$Group.1==4 & plotsimpp$Group.2 == i] + plotsimpp$x[plotsimpp$Group.1==5 & plotsimpp$Group.2 == i]))
+      diff1app3[i] <- (plotsimpp$x[plotsimpp$Group.1==4 & plotsimpp$Group.2 == i]- plotsimpp$x[plotsimpp$Group.1==5 & plotsimpp$Group.2 == i])  # 4 = 7 and 5 = 8 
+      diff2app3[i] <- (plotsimpp$x[plotsimpp$Group.1==3 & plotsimpp$Group.2 == i]- plotsimpp$x[plotsimpp$Group.1==5 & plotsimpp$Group.2 == i])  # 3 = 6, 4 = 7
+      
+      diff3app3[i] <- (plotsimpp$x[plotsimpp$Group.1==2 & plotsimpp$Group.2 == i]- plotsimpp$x[plotsimpp$Group.1==0 & plotsimpp$Group.2 == i])  # 2 = 4, 1 = 3 
+      
+      diff4app3[i] <- (plotsimpp$x[plotsimpp$Group.1==1 & plotsimpp$Group.2 == i]- plotsimpp$x[plotsimpp$Group.1==0 & plotsimpp$Group.2 == i])  # 1 = 3, 0 = 2 
+      
+    }
+    #diffdatapp3 <- data.frame(repapp3, diff1app3, diff2app3, diff3app3, diff4app3)  # length 1000 
+    diffdatapp33 <- data.frame(trial = rep(repapp3, 5), condition = rep(1:5, each = length(repapp3)), difference =  c(sideapp3, diff4app3, diff3app3, diff2app3, diff1app3))
+    
+    # difference aggregated 
+    diffmeandatapp33 <- data.frame(condition = 1:5, 
+                                   difference =  c(((meanrtsimpp$x[meanrtsimpp$Group.1==0] + meanrtsimpp$x[meanrtsimpp$Group.1==1] + meanrtsimpp$x[meanrtsimpp$Group.1==2])-(meanrtsimpp$x[meanrtsimpp$Group.1==3] + meanrtsimpp$x[meanrtsimpp$Group.1==4] + meanrtsimpp$x[meanrtsimpp$Group.1==5])), 
+                                                   (meanrtsimpp$x[meanrtsimpp$Group.1==1] - meanrtsimpp$x[meanrtsimpp$Group.1==0]), 
+                                                   (meanrtsimpp$x[meanrtsimpp$Group.1==2] - meanrtsimpp$x[meanrtsimpp$Group.1==1]), 
+                                                   (meanrtsimpp$x[meanrtsimpp$Group.1==3] - meanrtsimpp$x[meanrtsimpp$Group.1==4]), 
+                                                   (meanrtsimpp$x[meanrtsimpp$Group.1==4] - meanrtsimpp$x[meanrtsimpp$Group.1==5])))
+    
+    
+    # Old figure 
+    diffrtplotsimpp <- ggplot(diffdatapp33, aes(y = difference, x = as.factor(condition))) + 
+      geom_line(aes(group = trial), alpha = .014) + 
+      geom_point(data = diffdatapp33, aes(group = trial), alpha = 0.014) + 
+      geom_line(data = diffmeandatapp33, aes(group = 1), color='blue') + 
+      geom_point(data = diffmeandatapp33, aes(group = 1), color='blue') + 
+      labs(x = "Digits", y = "Response Time Difference (Seconds)") + 
+      theme_bw() + 
+      theme(axis.line = element_line(colour = "black"), panel.border = element_blank(), panel.background = element_blank()) + 
+      scale_x_discrete(breaks = 1:5, labels = c("side", "3-2", "4-3", "6-7", "7-8"))   # + ylim(-0.1,0.1) then you see the difference better but missing a lot of trials 
+      theme_set(theme_apa(base_size = 9))
+    
+    priorpredictionplot1 <- diffrtplotsimpp + ylim(-15,15)
+    
+    # Try new figure 
+    
+    # Create violin plot 
+    priorpredictionplotnew_1 <- ggplot(diffdatapp33, aes(y = difference, x = as.factor(condition))) + 
+      geom_violin(width = 1, alpha = 0.1) + 
+      geom_quasirandom(alpha = 0.014, width = 0.2, dodge.width=1) + 
+      geom_point(data = diffmeandatapp33, aes(group = 1), color='blue') + 
+      labs(x = "Effects", y = "Response Time Difference (Seconds)") + 
+      theme_bw() + 
+      theme(axis.line = element_line(colour = "black"), panel.border = element_blank(), panel.background = element_blank()) + 
+      scale_x_discrete(breaks = 1:5, labels = c("Side", "3-2", "4-2", "6-8", "7-8"))   # + ylim(-0.1,0.1) then you see the difference better but missing a lot of trials 
+  
+  return(priorpredictionplotnew_1)
+} 
+
+########### End figure function
+
+# Create figure 
+priorpredictionplotnew_2 <- priorpredfigurecreate(bigdatapp3)
+
+theme_set(theme_apa(base_size = 9))
+priorpredictionplotnew_2
+```
+
+## Fit the Model 
+
+|    Now we have the required input, we can fit the model. 
+&nbsp; 
+
+\scriptsize 
+``` {r modelfit, eval = FALSE}
+library(rstan) 
+model_fit <- stan(file = "myPath/myLogModel.stan", 
+                  data = myData_list, 
+                  iter = 4000, 
+                  chains = 4,
+                  warmup = 1000, 
+                  cores = 4)
+```
+\normalsize 
+
+We have already fitted the model and saved it in the R object `logmodel_fit`. In case you do not want to wait until the model has been fitted but continue immediately with the rest of this tutorial, you can load this R object that contains the model estimates.  
+&nbsp; 
+
+\scriptsize 
+```{r loadmodelfit, eval = FALSE}
+logmodel_fit <- readRDS(file = "myPath/rstan_logmodel_fit.rds")
+```
+\normalsize 
+```{r loadmodelfit2, echo = FALSE}
+setwd('..')
+logmodel_fit <- readRDS(file = "R objects/rstan/log-normal model/hier_logmodelc_adj13012022.rds")
+```
+
+## Output 
+
+|    `Brms` offers the `launch_shinystan` function which will load a shiny app with the results of the model fit. It is very extensive. It, for instance, includes model diagnostics as trace plots, posterior plots, prediction plots and way more. 
+&nbsp; 
+
+\scriptsize 
+```{r shinyrstan, eval = FALSE}
+launch_shinystan(logmodel_fit)
+```
+\normalsize 
+
+It also has the possibility to save plots so you do not have to code them yourself. However, if you want the full control over the layout, it might be better to code them yourself. Therefore, we will show you how the program the plots presented in the paper. 
+
+|    The `summary` function provides an overview of the model fit. From this function, we can get a lot of information. As the output is structured in a specific way, it sometimes is hard to figure out how to isolate specific outcomes. [This document](https://cran.r-project.org/web/packages/rstan/vignettes/stanfit-objects.html) nicely explains how to obtain specific output from the model fit. 
+
+### Trace plot 
+
+|    The trace plot shows whether the posterior distribution of the parameter has converged. With the package's `plot` function it is possible to obtain the trace plots per parameter by setting the option `plotfun` to `trace`. By default, it will show the trace plots of the first ten parameters. With the `pars` function you can specify for which parameters you want to inspect the trace plots. The trace plot will automatically remove the warm-up (burn-in) period from the chain (which is desirable), however, if you would like to see that as well you have to set the option `inc_warmup` to `TRUE`. As the `plot` option returns a `ggplot` object, it is possible to manually adjust the plot using `ggplot` functions. We created the function `traceplotfunc` to obtain the trace plot for the parameter you are interested in. In the figure below, we show the trace plots for all the general effects. 
+&nbsp; 
+
+\scriptsize 
+```{r traceplotB, fig.cap="Trace plots of the general effect parameters.", fig.align = "left", fig.height = 6, fig.width = 8}
+
+# Trace plot for parameter mu4
+trdif2rstan <- plot(logmodel_fit,     # Model fit 
+                    plotfun = "trace",   # Specify that you want trace plots 
+                    pars = c("mu4"))     # Select parameter, 
+#it is also possible to select more than one at the same time, such as c("mu2", "mu3","mu4")
+
+# In case you want to see the warmup period as well 
+trdif2rstanwarmup <- plot(logmodel_fit,    # Model fit 
+                          plotfun = "trace",  # Specify that you want trace plots 
+                          pars = c("mu4"),    # Select parameter
+                          inc_warmup = TRUE)  # Show warmup period as well 
+
+# We created a function, so you can easily check all our parameters 
+traceplotfunc <- function(parameter, title){
+  
+# Trace plot for parameter mu4
+trdif2rstan <- plot(logmodel_fit,     # Model fit 
+                    plotfun = "trace",   # Specify that you want trace plots 
+                    pars = c(parameter))     # Select parameter, 
+# it is also possible to select more than one at the same time, such as c("mu2", "mu3","mu4")
+
+# Adjust the plot (without warmup) with ggplot 
+trdif2rstan2 <- trdif2rstan +   # Object returned from plot function 
+                ylab(title) + 
+                theme(axis.title.y=element_text(angle = 0, 
+                                                vjust = 0.5, 
+                                                hjust = -0.5, 
+                                                margin = margin(0, 0.7, 0, 0, "cm"), size = 14), 
+                      #legend.position = "none",  
+                      axis.line.x  = element_line(size = 0.6), 
+                      axis.line.y  = element_line(size = 0.6), 
+                      plot.margin = unit(c(0.3,0.1,0.3,0.05),"cm"), 
+                      plot.subtitle = element_text(size = 10.5), 
+                      axis.ticks = element_line(size = 0.6), 
+                      axis.text=element_text(size=8.5), 
+                       axis.ticks.length=unit(.1, "cm")) + 
+                labs(subtitle = "") + 
+                #ylim(c(0.01, 0.07)) + 
+                xlab("Iteration")
+
+return(trdif2rstan2)
+}
+# Show trace plot for one digit parameter 
+tr2 <- traceplotfunc(parameter = "mu2", title = expression(~mu[~beta]))
+tr2 <- tr2 + theme(legend.position = "none")
+tr3 <- traceplotfunc(parameter = "mu3", title = expression(~mu[~delta[~7]]))
+tr3 <- tr3 + theme(legend.position = "none")
+tr4 <- traceplotfunc(parameter = "mu4", title = expression(~mu[~delta[~6]]))
+tr4 <- tr4 + theme(legend.position = "none")
+tr5 <- traceplotfunc(parameter = "mu5", title = expression(~mu[~delta[~4]]))
+tr5 <- tr5 + theme(legend.position = "none")
+tr6 <- traceplotfunc(parameter = "mu6", title = expression(~mu[~delta[~3]]))
+legendtr <- cowplot::get_legend(tr6)
+tr6 <- tr6 + theme(legend.position = "none")
+
+# Plot general effects together 
+grid.arrange(tr2, tr3, tr4, tr5, tr6, legendtr, nrow = 2, ncol = 3)
+```
+\normalsize 
+
+```{r traceplotsd, echo = FALSE}
+# Show trace plot for one digit parameter 
+tr2 <- traceplotfunc(parameter = "g2", title = expression(~sigma[~beta]^2))
+tr2 <- tr2 + theme(legend.position = "none")
+tr3 <- traceplotfunc(parameter = "g3", title = expression(~sigma[~delta[~7]]^2))
+tr3 <- tr3 + theme(legend.position = "none")
+tr4 <- traceplotfunc(parameter = "g4", title = expression(~sigma[~delta[~6]]^2))
+tr4 <- tr4 + theme(legend.position = "none")
+tr5 <- traceplotfunc(parameter = "g5", title = expression(~sigma[~delta[~4]]^2))
+tr5 <- tr5 + theme(legend.position = "none")
+tr6 <- traceplotfunc(parameter = "g6", title = expression(~sigma[~delta[~3]]^2))
+legendtr <- cowplot::get_legend(tr6)
+tr6 <- tr6 + theme(legend.position = "none")
+
+# Plot general effects together 
+grid.arrange(tr2, tr3, tr4, tr5, tr6, legendtr, nrow = 2, ncol = 3)
+```
+
+
+Because there are so many parameters (each for every individual), it is hard to inspect them all individually. A more efficient way to check if the parameters have converged is by checking the $\hat{R}$ and the number of effective samples. 
+
+### Rhat & Number of Effective Samples 
+
+|    As for the trace plots, the standard *plot* function offers the possibility to plot the $\hat{R}$ (Rhat) and the ratio of the effective sample size to the total posterior sample size (this is different from what is plotted in the paper). 
+&nbsp; 
+
+\scriptsize 
+```{r rhatneffstandard, eval = FALSE}
+# Plot frequency of rhat 
+plot(logmodel_fit, plotfun= "rhat")
+
+# Plot frequency of the ratio 
+plot(logmodel_fit, plotfun = "ess")
+```
+\normalsize 
+
+|    However, you can also manually do this. To obtain the plots from the paper, the following code can be run. Instead of the ratio of the effective sample size to the total posterior sample size, we obtain the frequency of the numbers of effective samples (as shown in the paper). 
+&nbsp; 
+
+\scriptsize 
+```{r rhatneff, fig.cap="The frequency of the $\\hat{R}$ statistic and the number of effective samples. A: The frequency of the $\\hat{R}$. B: The frequency of the number of effective samples where the dashed lines represent the total number of iterations.", fig.align = "left", fig.height = 4, fig.width = 8, eval = FALSE, echo = FALSE}
+# Obtain rhat for every parameter from model fit 
+rhatrstan <- summary(logmodel_fit)$summary[,"Rhat"]
+
+# Obtain number of effective samples for every paramter from model fit 
+neffrstan <- summary(logmodel_fit)$summary[,"n_eff"]
+
+# Save as dataframe so we can plot it with ggplot
+rstanrhatneff <- data.frame(rhat = rhatrstan, neff = neffrstan)
+
+# Figures 
+# Rhat histogram 
+rhatplotrstan <- ggplot(rstanrhatneff, aes(rhat)) + 
+  geom_histogram(binwidth = 0.0001, alpha = 0.5, position = "identity", fill = 
+                   "darkgreen") +   # Histogram, with binwidth the width of the frequency bars is set, 
+  #with alpha the color is made more transparant, 
+  #with position identity the bars are not set on top of each other in case of plotting multiple groups 
+  xlim(0.998, 1.025) +         # Works for this example but can be left out 
+  xlab(expression(hat(R))) +   # Set x axis title 
+  ylab("Frequency") +          # Set y axis title 
+  theme_classic() +            # Removes grid 
+  labs(subtitle = "A") +       # Adds subtitle 
+  theme(legend.position = "none")  # Removes legend 
+
+# Neff histogram 
+neffplotrstan <- ggplot(rstanrhatneff, aes(neff)) + 
+  geom_histogram(binwidth = 100, alpha = 0.5, position = "identity", fill = 
+                   "darkgreen") + 
+  xlab("Number of effective samples") + 
+  ylab("") + 
+  theme_classic() + 
+  guides(fill=guide_legend(title="Package")) + 
+  labs(subtitle = "B") + 
+  geom_vline(xintercept = 12000, linetype = "dashed", color = "darkgreen", size = .3)  # Line representing otal number of iterations 
+
+# Plot together 
+grid.arrange(rhatplotrstan, neffplotrstan, nrow = 1, ncol = 2)
+
+```
+\normalsize 
+
+\scriptsize 
+```{r rhatneff2, fig.cap="The frequency of the $\\hat{R}$ statistic and the number of effective samples. A: The frequency of the $\\hat{R}$. B: The frequency of the number of effective samples where the dashed lines represent the total number of iterations.", fig.align = "left", fig.height = 4, fig.width = 8}
+# Obtain rhat for every parameter from model fit 
+rhatrstan <- summary(logmodel_fit)$summary[,"Rhat"]
+fixedrhatrstan <- rhatrstan[1:13]  # for general effects 
+deltameanrrstan <- mean(fixedrhatrstan[3:6])  # calculate the mean for delta parameters 
+
+# Obtain number of effective samples for every parameter from model fit 
+neffrstan <- summary(logmodel_fit)$summary[,"n_eff"]
+fixedneffrstan <- neffrstan[1:13]  # for general effects 
+fixedneffrstanmean <- mean(fixedneffrstan[3:6])  # calculate the mean for delta parameters 
+
+# Save as dataframe so we can plot it with ggplot
+rstanrhatneff <- data.frame(rhat = rhatrstan, neff = neffrstan)
+
+# Combine rhat into one data.frame 
+rhatrstan_trans <- t(rhatrstan)
+rhatrstan_trans2 <- as.data.frame(rhatrstan_trans)
+  
+# remove lp and fixed effects 
+# rhat 
+rhatrstan2 <- rhatrstan[-c(1:13, 326)]
+
+rhatrstan4 <- t(rhatrstan2)
+rhatrstan5 <- as.data.frame(rhatrstan4)
+rhatrstan6 <- unlist(rhatrstan5)
+rstanrhatneff_v2 <- data.frame(package = rep("Rstan", 312), 
+                                 parameter = rep(c("Gamma", "Beta", "Delta", "Delta", 
+                                                   "Delta", "Delta", "Gamma", "Beta", 
+                                                   "Delta", "Delta", "Delta", "Delta"), 
+                                                 each = 52), 
+                                 rhat = rhatrstan6)
+
+# Create violin plot 
+  figrhatnew <- ggplot(rstanrhatneff_v2, aes(x = factor(parameter, level = c("Gamma", "Beta", "Delta")), y = rhat, colour = package)) + 
+    geom_violin(width = 1) + 
+    geom_quasirandom(alpha = 0.1, width = 0.2, dodge.width=1) + 
+    geom_point(aes(x=1, y= fixedrhatrstan[1]), shape = 8, colour="darkgreen", size = 2) + 
+    geom_point(aes(x=2, y= fixedrhatrstan[2]), shape = 8, colour="darkgreen", size = 2) + 
+    geom_point(aes(x=3, y= deltameanrrstan), shape = 8, colour="darkgreen", size = 2) + 
+    xlab("Parameter") + ylab(expression(hat(R))) +
+    scale_colour_manual(values = "darkgreen") + 
+    theme_classic() + 
+    theme(legend.position = "none") + 
+    scale_x_discrete(labels= c( 
+      expression(~gamma), 
+      expression(~beta), 
+      expression(~delta))) + 
+    labs(subtitle = "C") + 
+    theme(axis.title.y = element_text(angle = 0, 
+                                      vjust = 0.5, 
+                                      hjust = -0.5, 
+                                      margin = margin(0, 1.1, 0, 0, "cm")))
+  
+  
+  # neff
+  # Combine neff into one data.frame 
+  neffrstan2 <- data.frame(neff = neffrstan)
+  neffrstan3 <- neffrstan2$neff[-c(1:13, 326)]
+  
+  neffrstanbrms2 <- data.frame(package = rep("Rstan", 312), 
+                               parameter = rep(c("Gamma", "Beta", "Delta", "Delta", 
+                                                 "Delta", "Delta", "Gamma", "Beta", 
+                                                 "Delta", "Delta", "Delta", "Delta"), each = 52),
+                               neff = neffrstan3) 
+  
+  figneffnew <- ggplot(neffrstanbrms2, aes(x = factor(parameter, level = c("Gamma", "Beta", "Delta")), y = neff, colour = package)) + 
+    geom_violin(width = 1) + 
+    geom_quasirandom(alpha = 0.1, width = 0.2, dodge.width=1) + 
+    geom_point(aes(x = 1, y = fixedneffrstan[1]), shape = 8, colour="darkgreen", size = 2) + 
+    geom_point(aes(x = 2, y = fixedneffrstan[2]), shape = 8, colour="darkgreen", size = 2) + 
+    geom_point(aes(x = 3, y = fixedneffrstanmean), shape = 8, colour="darkgreen", size = 2) + 
+    xlab("Parameter") + ylab("Number of effective samples") +
+    scale_colour_manual(values = "darkgreen") + 
+    theme_classic() + 
+    theme(legend.position = "none") + 
+    scale_x_discrete(labels= c( 
+      expression(~gamma), 
+      expression(~beta), 
+      expression(~delta))) + 
+    labs(subtitle = "D") + 
+    geom_hline(yintercept = 12000, linetype = "dashed", color = "darkgreen", size = .3)  
+
+grid.arrange(figrhatnew, figneffnew, nrow = 1, ncol = 2)
+
+```
+\normalsize
+
+### General effects 
+
+|    The general effects are represented by $\mu_{\delta_{7}}$, $\mu_{\delta_{6}}$, $\mu_{\delta_{4}}$, $\mu_{\delta_{3}}$, and $\mu_{\beta}$. To investigate whether there is a digit and side effect, we will inspect the estimates for these parameters.  
+
+#### Posterior Distribution 
+
+|    With the `plot` function, the posterior distribution per parameter can be displayed. 
+&nbsp; 
+
+\scriptsize 
+```{r posteriorstandard, eval = FALSE}
+# Seperate plot per parameter of posterior density 
+plot(logmodel_fit, 
+     plotfun = "dens")  
+# without specifying pars, the posterior distributions of the first ten parameters are displayed 
+```
+\normalsize 
+
+|    Another possibility is to use the `bayesplot` package to plot all the posterior densities together in one plot. This makes it easier to compare the posterior distributions of each parameter. 
+&nbsp; 
+
+\scriptsize 
+```{r posteriormanual, fig.cap="The posterior distributions for the general effects. The middle line within the distributions represents the mean posterior. The shaded area within the distributions represents 95\\% of the probability mass.", fig.align = "left", fig.height = 4, fig.width = 5}
+postc <- as.array(logmodel_fit)  # change structure of model fit 
+
+# With dimnames(postc) we could check the names of parameters 
+# The ones useful for us are "mu2", "mu3", "mu4", "mu5", and "mu6" 
+
+color_scheme_set("green")  # plot the distributions in green 
+
+pairsc <- mcmc_areas(
+  postc,                                        # Structured model fit 
+  pars = c("mu2", "mu3", "mu4", "mu5", "mu6"),  # Select parameters 
+  prob = 0.95,                                   # Plot 80% credible intervals   
+  prob_outer = 0.99,                            # 99% outer interval            
+  point_est = "mean"                            # Plot line in middle    distribution representing the mean 
+)
+# Returns ggplot object 
+
+# Adjust ggplot object further 
+pairsc2 <- pairsc +                             # ggplot object 
+            ggtitle("Posterior Distribution") +                  # Add title 
+            scale_x_continuous(breaks = c(-0.025, 0, 0.025, 0.05, 0.075)) +   # specify the breaks and labels on x-axis, this is analysis dependent 
+            theme_apa() +                       # Select theme 
+            scale_y_discrete(labels= c(         # Customize labels to y axis 
+                                       expression(~mu[~beta]), 
+                                       expression(~mu[~delta[~7]]), 
+                                       expression(~mu[~delta[~6]]), 
+                                       expression(~mu[~delta[~4]]), 
+                                       expression(~mu[~delta[~3]])))
+
+pairsc2
+```
+\normalsize 
+
+|    We can present more information about the distribution by providing a table with the estimated mean of the posterior distribution, the standard error of this mean, the lower and upper bound of the 95% credible interval, the $\hat{R}$ and the number of effective samples. 
+&nbsp; 
+
+\scriptsize 
+```{r geneftable, results = "asis", cache = TRUE}
+# Obtain the mean, standard error, 95% credible interval, rhat and number of effective samples for the intercept, and the digit and side parameters 
+fitrstanhiertable <- summary(logmodel_fit,  # model fit 
+                             # Select parameters 
+                             pars = c("mu", "mu2", "mu3", "mu4", "mu5", 
+                                      "mu6"))$summary[,c("mean", "se_mean", 
+                                                         "2.5%", "97.5%", 
+                                                         "n_eff", "Rhat")]
+
+# The results are transformed to a dataframe that allows us to plot the results nicely in a table 
+fitrstanhiertable2 <- as.data.frame(fitrstanhiertable)
+
+# We manually set the row names of the table using latex for mathematical symbols 
+rownamesfitrstanhiertable <-  c("$\\mu_{\\gamma}$","$\\mu_{\\beta}$", "$\\mu_{\\delta_{7}}$", "$\\mu_{\\delta_{6}}$", "$\\mu_{\\delta_{4}}$", "$\\mu_{\\delta_{3}}$")
+
+# We manually set the column names of the table 
+colnames(fitrstanhiertable2) <- c("Mean", "SE", "Lower Bound", "Upper Bound", "$n_{eff}$","$\\hat{R}$")
+
+# The column with row names is added to the table 
+fitrstanhiertable3 <- add_column(fitrstanhiertable2, 
+                                 Parameters = rownamesfitrstanhiertable, 
+                                 .before = "Mean")
+
+# Using the apa_table function from the papaja package the results are presented in an apa table 
+apa_table(fitrstanhiertable3,   # Data frame with results 
+          row.names = FALSE,    # Default row names are deleted (we set them ourself)
+          caption = "Posterior Mean, Standard Error (SE) of the Mean, Lower and 
+          Upper Bound of the 95\\% Credible Interval, the Number of Effective 
+          Samples, and the $\\hat{R}$ of the General Effect Parameters as 
+          estimated by Rstan.", 
+          align = c("l", "c", "c", "c", "c", "c", "c"),   # How should results be presented, in the midle of the table or outlined left 
+          digits = 3,       # The number of digits behind the ".". 
+          placement = "h",  # Place after code 
+          escape = FALSE)   # This indicates that the results contain latex code that should be read as latex code. It is important to do this in combination with putting the results to "asis" in the {R} section above. 
+
+```
+\normalsize 
+
+### Individual Effects 
+
+|    Next, we look at the individual deviations from the general effects. Therefore, we inspect the variance and the individual estimates of the digit and side effects. 
+
+#### Variance Estimates 
+
+|    First, we can show a table with the posterior distribution estimates of the variance parameters. This indicates the variation of the general effect. We called our variances `g` (`g` until `g6`). 
+&nbsp; 
+
+\scriptsize 
+```{r inddevtable, results = "asis", cache = TRUE}
+fitrstanhiertable2 <- summary(logmodel_fit,   # model fit 
+                              # Select variance parameters (we called them g)
+                              pars = c("g", "g2", "g3", "g4", "g5", 
+                                       "g6"))$summary[,c("mean", "se_mean", 
+                                                         "2.5%", "97.5%", 
+                                                         "n_eff", "Rhat")]
+
+# The results are transformed to a dataframe that allows us to plot the results nicely in a table 
+fitrstanhiertable22 <- as.data.frame(fitrstanhiertable2)
+
+# We manually set the row names of the table using latex for mathematical symbols 
+rownamesfitrstanhiertable2 <-  c("$\\sigma_{\\gamma}^2$","$\\sigma_{\\beta}^2$", "$\\sigma_{\\delta_{7}}^2$", "$\\sigma_{\\delta_{6}}^2$", "$\\sigma_{\\delta_{4}}^2$", "$\\sigma_{\\delta_{3}}^2$")
+
+# The column with row names is added to the table 
+colnames(fitrstanhiertable22) <- c("Mean", "SE", "Lower Bound", "Upper Bound", "$n_{eff}$","$\\hat{R}$")
+
+# The column with row names is added to the table 
+fitrstanhiertable32 <- add_column(fitrstanhiertable22, 
+                                  Parameters = rownamesfitrstanhiertable2, 
+                                  .before = "Mean")
+
+# Using the apa_table function from the papaja package the results are presented in an apa table 
+apa_table(fitrstanhiertable32,  # Data frame with results
+          row.names = FALSE,    # Default row names are deleted (we set them ourself)
+          caption = "Posterior Variance, Standard Error (SE) of the Variance, 
+          Lower and Upper Bound of the 95\\% Credible Interval, the Number of 
+          Effective Samples, and the $\\hat{R}$ of the Variance Parameters           as estimated by Rstan.", 
+          align = c("l", "c", "c", "c", "c", "c", "c"),  # How should results be presented, in the midle of the table or outlined left 
+          digits = 3,        # The number of digits behind the ".". 
+          place = "h",       # Place after code 
+          escape = FALSE)    # This indicates that the results contain latex code that should be read as latex code. It is important to do this in combination with putting the results to "asis" in the {R} section above. 
+
+```
+\normalsize 
+
+#### Individual Estimates 
+
+|    Next, we can look at the individual estimates for the digit and side effect parameters in two different ways. First, we plot the individual estimates and display their 95% credible interval. The credible interval is displayed in pink when it contains zero, and displayed in blue when it does not contain zero. In addition, the dashed line represent the general effect estimate. 
+|    The code below shows you how to obtain this code for one parameter. The other parameters follow logically from this example and would result in the figure below. 
+&nbsp; 
+
+\scriptsize 
+```{r randefplotexample}
+# Gamma 
+## Create object with parameter names 
+gamnamesstan <- paste("gammai", "[",1:52,"]", sep="") 
+
+# Extract the parameter estimates using the names from before 
+gamstan <- as.data.frame(summary(logmodel_fit, 
+                                 pars = c( gamnamesstan))$summary)
+
+# Extract the general effect estimate of the parameter 
+gamstanmu <- as.data.frame(summary(logmodel_fit, 
+                                   pars = c("mu"))$summary)
+
+# Add the parameter names to the data.frame 
+gamstan$parameters <- c(gamnamesstan)
+
+# Add parameter to dataframe. When the credible interval contains zero, the parameter is set pink, otherwise to blue 
+for (i in 1:nrow(gamstan)){  # 1 if CI contains zero, 0 otherwise 
+  if (gamstan$`2.5%`[i]*gamstan$`97.5%`[i] < 0) {
+    gamstan$zero2[i] <- "pink"
+  } else (gamstan$zero2[i] <- "blue") 
+}
+
+# Order the estimates ascending 
+gamstan2 <- gamstan[order(gamstan$mean),]
+gamstan2$order <- c(1:52)  # Add parameter to data frame with the order 
+
+# Plot the individual estimates for gamma (intercept)
+gammarandomplot <- ggplot(gamstan2, aes(x = order, y = mean, ymin = `2.5%`, ymax = `97.5%`)) + 
+  geom_linerange(aes(color = "blue"), color = "#00BFC4") + 
+  geom_point() + 
+  geom_hline(yintercept = gamstanmu$mean, linetype = "dashed", alpha = .3) + 
+  labs(title = expression(~gamma[~i]), y = "Estimation") + 
+  theme(legend.position = "none", 
+        axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+```
+\normalsize 
+
+```{r indvestirstan, echo = FALSE, fig.cap="The posterior means with 95\\% credible interval in pink and red as estimated by \\textit{rstan} for every individual shown in increasing order. The dashed line represents the general posterior mean. A pink interval means that the interval contains zero, a blue interval represents an interval that does not contain zero.", fig.align = "left", fig.height = 6, fig.width = 8}
+# Documentation on how to retrieve objects from stan output: https://cran.r-project.org/web/packages/rstan/vignettes/stanfit-objects.html
+
+# Gamma 
+## Create object with parameter names 
+gamnamesstan <- paste("gammai", "[",1:52,"]", sep="") 
+
+# Extract the parameter estimates using the names from before 
+gamstan <- as.data.frame(summary(logmodel_fit, 
+                                 pars = c( gamnamesstan))$summary)
+
+# Extract the general effect estimate of the parameter 
+gamstanmu <- as.data.frame(summary(logmodel_fit, 
+                                   pars = c("mu"))$summary)
+
+# Add the parameter names to the data.frame 
+gamstan$parameters <- c(gamnamesstan)
+
+# Add parameter to dataframe. When the credible interval contains zero, the parameter is set pink, otherwise to blue 
+for (i in 1:nrow(gamstan)){  # 1 if CI contains zero, 0 otherwise 
+  if (gamstan$`2.5%`[i]*gamstan$`97.5%`[i] < 0) {
+    gamstan$zero2[i] <- "pink"
+  } else (gamstan$zero2[i] <- "blue") 
+}
+
+# Order the estimates ascending 
+gamstan2 <- gamstan[order(gamstan$mean),]
+gamstan2$order <- c(1:52)  # Add parameter to data frame with the order 
+
+# Plot the individual estimates for gamma (intercept)
+gammarandomplot <- ggplot(gamstan2, aes(x = order, y = mean, ymin = `2.5%`, ymax = `97.5%`)) + 
+  geom_linerange(aes(color = "blue"), color = "#00BFC4") + 
+  geom_point() + 
+  geom_hline(yintercept = gamstanmu$mean, linetype = "dashed", alpha = .3) + 
+  labs(title = expression(~gamma[~i]), y = "Estimation") + 
+  theme(legend.position = "none", 
+        axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+
+
+# Beta  
+betnamesstan <- paste("betai", "[",1:52,"]", sep="")
+betstan <- as.data.frame(summary(logmodel_fit, pars = c( betnamesstan))$summary)
+betstanmu <- as.data.frame(summary(logmodel_fit, pars = c("mu2"))$summary)
+betstan$parameters <- c(betnamesstan)
+
+for (i in 1:nrow(betstan)){  # 1 if CI contains zero, 0 otherwise 
+  if (betstan$`2.5%`[i]*betstan$`97.5%`[i] < 0) {
+    betstan$zero2[i] <- "blue"
+  } else (betstan$zero2[i] <- "pink") 
+}
+
+betstan2 <- betstan[order(betstan$mean),]
+betstan2$order <- c(1:52)
+
+betarandomplot <- ggplot(betstan2, aes(x = order, y = mean, ymin = `2.5%`, ymax = `97.5%`)) + 
+  geom_linerange(aes(color = zero2)) + 
+  geom_point() + 
+  geom_hline(yintercept = betstanmu$mean, linetype = "dashed", alpha = .3) + 
+  labs(title = expression(~beta[~"side,i"]), y = "") + 
+  geom_hline(yintercept = 0, color = "red", alpha = .3) +  
+  theme(legend.position = "none", 
+        axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank()) 
+
+# Delta1 
+del1namesstan <- paste("delta1", "[",1:52,"]", sep="")
+delt1stan <- as.data.frame(summary(logmodel_fit, pars = c( del1namesstan))$summary)
+del1stanmu <- as.data.frame(summary(logmodel_fit, pars = c("mu3"))$summary)
+delt1stan$parameters <- c(del1namesstan)
+
+for (i in 1:nrow(delt1stan)){  # 1 if CI contains zero, 0 otherwise 
+  if (delt1stan$`2.5%`[i]*delt1stan$`97.5%`[i] < 0) {
+    delt1stan$zero2[i] <- "blue"
+  } else (delt1stan$zero2[i] <- "pink") 
+}
+
+delt1stan2 <- delt1stan[order(delt1stan$mean),]
+delt1stan2$order <- c(1:52)
+
+delta1randomplot <- ggplot(delt1stan2, aes(x = order, y = mean, ymin = `2.5%`, ymax = `97.5%`)) + 
+  geom_linerange(aes(color = zero2)) + 
+  geom_point() + 
+  geom_hline(yintercept = del1stanmu$mean, linetype = "dashed", alpha = .3) + 
+  labs(title = expression(~delta[~"7-8,i"]), y = "") + 
+  geom_hline(yintercept = 0, color = "red", alpha = .3) +  
+  theme(legend.position = "none", 
+        axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank()) 
+
+# Delta 2 
+del2namesstan <- paste("delta2", "[",1:52,"]", sep="")
+delt2stan <- as.data.frame(summary(logmodel_fit, pars = c( del2namesstan))$summary)
+del2stanmu <- as.data.frame(summary(logmodel_fit, pars = c("mu4"))$summary)
+delt2stan$parameters <- c(del2namesstan)
+
+for (i in 1:nrow(delt2stan)){  # 1 if CI contains zero, 0 otherwise 
+  if (delt2stan$`2.5%`[i]*delt2stan$`97.5%`[i] < 0) {
+    delt2stan$zero2[i] <- "blue"
+  } else (delt2stan$zero2[i] <- "pink") 
+}
+
+delt2stan2 <- delt2stan[order(delt2stan$mean),]
+delt2stan2$order <- c(1:52)
+
+delta2randomplot <- ggplot(delt2stan2, aes(x = order, y = mean, ymin = `2.5%`, ymax = `97.5%`)) + 
+  geom_linerange(aes(color = zero2)) + 
+  geom_point() + 
+  geom_hline(yintercept = del2stanmu$mean, linetype = "dashed", alpha = .3) + 
+  labs(title = expression(~delta[~"6,i"]), y = "Estimation") + 
+  geom_hline(yintercept = 0, color = "red", alpha = .3) +  
+  theme(legend.position = "none", 
+        axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank()) 
+
+# Delta 3 
+del3namesstan <- paste("delta3", "[",1:52,"]", sep="")
+delt3stan <- as.data.frame(summary(logmodel_fit, pars = c( del3namesstan))$summary)
+del3stanmu <- as.data.frame(summary(logmodel_fit, pars = c("mu5"))$summary)
+delt3stan$parameters <- c(del3namesstan)
+
+for (i in 1:nrow(delt3stan)){  # 1 if CI contains zero, 0 otherwise 
+  if (delt3stan$`2.5%`[i]*delt3stan$`97.5%`[i] < 0) {
+    delt3stan$zero2[i] <- "blue"
+  } else (delt3stan$zero2[i] <- "pink") 
+}
+
+delt3stan2 <- delt3stan[order(delt3stan$mean),]
+delt3stan2$order <- c(1:52)
+
+delta3randomplot <- ggplot(delt3stan2, aes(x = order, y = mean, ymin = `2.5%`, ymax = `97.5%`)) + 
+  geom_linerange(aes(color = zero2)) + 
+  geom_point() + 
+  geom_hline(yintercept = del3stanmu$mean, linetype = "dashed", alpha = .3) + 
+  labs(title = expression(~delta[~"4-3,i"]), y = "") + 
+  geom_hline(yintercept = 0, color = "red", alpha = .3) +  
+  theme(legend.position = "none", 
+        axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank()) 
+
+# Delta 4 
+del4namesstan <- paste("delta4", "[",1:52,"]", sep="")
+delt4stan <- as.data.frame(summary(logmodel_fit, pars = c( del4namesstan))$summary)
+del4stanmu <- as.data.frame(summary(logmodel_fit, pars = c("mu6"))$summary)
+delt4stan$parameters <- c(del4namesstan)
+
+for (i in 1:nrow(delt4stan)){  # 1 if CI contains zero, 0 otherwise 
+  if (delt4stan$`2.5%`[i]*delt4stan$`97.5%`[i] < 0) {
+    delt4stan$zero2[i] <- "blue"
+  } else (delt4stan$zero2[i] <- "pink") 
+}
+
+delt4stan2 <- delt4stan[order(delt4stan$mean),]
+delt4stan2$order <- c(1:52)
+
+delta4randomplot <- ggplot(delt4stan2, aes(x = order, y = mean, ymin = `2.5%`, ymax = `97.5%`)) + 
+  geom_linerange(aes(color = zero2)) + 
+  geom_point() + 
+  geom_hline(yintercept = del4stanmu$mean, linetype = "dashed", alpha = .3) + 
+  labs(title = expression(~delta[~"3-2,i"]), y = "") + 
+  geom_hline(yintercept = 0, color = "red", alpha = .3) +  
+  theme(legend.position = "none", 
+        axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),) 
+
+# Plot together 
+grid.arrange(gammarandomplot, betarandomplot, delta1randomplot, delta2randomplot, delta3randomplot, delta4randomplot, nrow = 2, ncol = 3)
+```
+
+|    The second way is the plot the individual estimates and display the variation of these individual estimates. For this figure, we used the design and code from @j_van_langen_2020_3715576. 
+&nbsp; 
+
+\scriptsize 
+```{r modelestimatesrstanfigure3, fig.cap="Model estimates for digit effect parameters. The points represent the mean parameter estimate for each individual. The violin plot on each right side shows the variance of the individual parameter estimates.", fig.align = "left", fig.height = 4, fig.width = 5}
+## Delta's 
+## Create dataframe 
+parameter_m7 <- rep(c("Delta 1", "Delta 2", "Delta 3", "Delta 4"), each = 52 )
+
+### Obtain all individual estimates delta 
+hier_modeld <- logmodel_fit  # model fit 
+
+# Obtain individual estimates 
+delta1_summary <- summary(hier_modeld, pars = c("delta1"), probs = c(0.1, 0.9))$summary
+
+delta2_summary <- summary(hier_modeld, pars = c("delta2"), probs = c(0.1, 0.9))$summary
+
+delta3_summary <- summary(hier_modeld, pars = c("delta3"), probs = c(0.1, 0.9))$summary
+
+delta4_summary <- summary(hier_modeld, pars = c("delta4"), probs = c(0.1, 0.9))$summary
+
+parest_m7 <- rbind(delta1_summary, delta2_summary, delta3_summary, delta4_summary)
+datafr_m7 <- data.frame(parameter_m7, parest_m7)
+
+## Plot 
+set.seed(321)
+datafr_m7$x <- rep(c(1, 2, 3, 4), each = 52)
+datafr_m7$xj <- jitter(datafr_m7$x, amount = 0.09)
+datafr_m7$id <- rep(c(1:52), 4)
+
+plotmodelest_m7 <- ggplot(data=datafr_m7, aes(y=mean)) +
+  
+  #Add geom_() objects
+  geom_point(data = datafr_m7 %>% filter(x=="1"), aes(x=xj), color = 'dodgerblue', size = 1.5,
+             alpha = .6) +
+  geom_point(data = datafr_m7 %>% filter(x=="2"), aes(x=xj), color = 'darkgreen', size = 1.5,
+             alpha = .6) +
+  geom_point(data = datafr_m7 %>% filter(x=="3"), aes(x=xj), color = 'darkorange', size = 1.5, 
+             alpha = .6) +
+  geom_point(data = datafr_m7 %>% filter(x=="4"), aes(x=xj), color = 'gold2', size = 1.5, 
+             alpha = .6) +
+  
+  geom_line(aes(x=xj, group=id), color = 'lightgray', alpha = .3) +
+  
+  geom_line(data=data.frame(x=-1:4.5,y=0), aes(x = x, y = y), linetype = "dashed", size = .3) + 
+  
+  geom_half_violin(
+    data = datafr_m7 %>% filter(x=="1"),aes(x = x, y = mean), position = position_nudge(x = 3.2), 
+    side = "r", fill = 'dodgerblue', alpha = .5, color = "dodgerblue", trim = TRUE) +
+  
+  geom_half_violin(
+    data = datafr_m7 %>% filter(x=="2"),aes(x = x, y = mean), position = position_nudge(x = 2.2), 
+    side = "r", fill = "darkgreen", alpha = .5, color = "darkgreen", trim = TRUE) +
+  
+  geom_half_violin(
+    data = datafr_m7 %>% filter(x=="3"),aes(x = x, y = mean), position = position_nudge(x = 1.2), 
+    side = "r", fill = "darkorange", alpha = .5, color = "darkorange", trim = TRUE) +
+  
+  geom_half_violin(
+    data = datafr_m7 %>% filter(x=="4"),aes(x = x, y = mean), position = position_nudge(x = 0.2), 
+    side = "r", fill = "gold2", alpha = .5, color = "gold2", trim = TRUE) +
+  
+  #Define additional settings
+  scale_x_continuous(breaks=c(1,2,3,4), labels=c(expression(~delta[~7]), expression(~delta[~6]), expression(~delta[~4]), expression(~delta[~3]))) +
+  xlab("") + ylab("Value") +
+  ggtitle('') +
+  theme_classic() + 
+  coord_cartesian(xlim = c(0.75, 5), ylim = c(-0.05, 0.12))
+
+plotmodelest_m7
+```
+\normalsize 
+
+
+## Model comparison 
+
+|    In case we have different models, we can compare them to check under which model the data is most likely. This can be done with the Bayes factor. In `rstan` the Bayes factor can be obtained by using the `bridgesampling` package. To be able to use this package, it is important that the `.stan` file is written in a way that it saves the constants (i.e., `target += normal_lpdf(mu4 | a3, sqrt(b3));`).   
+|    First, we fit all the models (except for the full model that we already fitted. 
+&nbsp; 
+
+\scriptsize 
+```{r modelcomparison, eval = FALSE, echo = TRUE}
+# Fit the other models 
+## Null model 
+BFnulllogmodel <- stan(file = "myPath/logstanmodelh0.stan", 
+                    data = myData_list, 
+                    iter = 4000, 
+                    chains = 4,  
+                    warmup = 1000, 
+                    cores = 4)
+
+## Side model 
+BFsidelogmodel <- stan(file = "myPath/logstanmodelhside.stan", 
+                       data = myData_list, 
+                       iter = 4000, 
+                       chains = 4, 
+                       warmup = 1000, 
+                       cores = 4)
+
+## Digit model 
+BFdigitlogmodel <- stan(file = "myPath/logstanmodelhdigit.stan", 
+                         data = myData_list, 
+                         iter = 4000, 
+                         chains = 4, 
+                         warmup = 1000, 
+                         cores = 4)
+```
+\normalsize 
+
+|    Then, we use the `bridge_sampler` function to obtain the marginal likelihoods. In case you loaded the full model from the provided R object, you will need an extra step as described in [this issue](https://github.com/quentingronau/bridgesampling/issues/7). 
+&nbsp; 
+
+\scriptsize 
+```{r bfpart2, eval = FALSE, echo = TRUE}
+# Bridge sampling 
+# library(bridgesampling)
+bridge_Hnulllog <- bridge_sampler(BFnulllogmodel)
+bridge_Hsidelog <- bridge_sampler(BFsidelogmodel)
+bridge_Hdigitlog <- bridge_sampler(BFdigitlogmodel)
+bridge_Hfulllog <- bridge_sampler(logmodel_fit)  # in case you just fitted the model yourself 
+
+## In case you loaded the full model from the R object, you will need some preparation (https://github.com/quentingronau/bridgesampling/issues/7)
+
+### Fit model again but do not run any chains 
+new_logmod <- stan(file = "myPath/myLogModel.stan", 
+                data = myData_list, 
+                chains = 0)
+
+### Now do the bridgesampling 
+bridge_Hfulllog <- bridge_sampler(logmodel_fit, new_logmod)
+```
+\normalsize 
+
+|    Finally, we can obtain the Bayes factor. You obtain the evidence in favor of the first model that you specify in the `bf` function. 
+&nbsp; 
+
+\scriptsize 
+```{r bfpart3, eval = FALSE, echo = TRUE}
+
+# Obtain BF (in this way evidence in favor of the null hypothesis)
+bridgesampling::bf(bridge_Hnulllog, bridge_Hfulllog)   # Null against full 
+
+# Obtain BF (in this way evidence in favor of the full hypothesis)
+bridgesampling::bf(bridge_Hfulllog, bridge_Hnulllog)   # Full against null
+bridgesampling::bf(bridge_Hfulllog, bridge_Hsidelog)   # Full against side 
+bridgesampling::bf(bridge_Hfulllog, bridge_Hdigitlog)  # Full against digit 
+```
+\normalsize 
+
+## Additional Resources 
+
+|    To learn more about fitting a Bayesian Hierarchical Model, we recommend the following resources: 
+
+- [Stan forum](https://discourse.mc-stan.org/c/interfaces/rstan) 
+- [Accessing the contents of a stanfit object](https://cran.r-project.org/web/packages/rstan/vignettes/stanfit-objects.html)
+
+\newpage 
+
+# References 
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+&nbsp; 

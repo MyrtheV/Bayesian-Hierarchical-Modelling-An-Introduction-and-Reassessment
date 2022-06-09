@@ -1,0 +1,170 @@
+---
+title             : "Online Supplement A: Model Parameterization for Aggregated and Individual Models"
+author            : "" 
+bibliography      : ["r-references.bib"]
+header-includes   :
+   - \usepackage{bm}
+   - \usepackage{amsmath}
+   - \usepackage{setspace}
+   - \usepackage{xcolor}
+   - \definecolor{mypink}{RGB}{255, 230, 255}
+   - \usepackage{todonotes}
+   - \usepackage{graphicx}
+   - \usepackage{float}
+   - \renewcommand{\figurename}{Figure A}
+   - \makeatletter
+   - \def\fnum@figure{\figurename\thefigure}
+   - \makeatother
+
+csl               : apa6.csl
+output            : pdf_document
+---
+\spacing{1.5}
+\fontsize{12}{12}
+
+```{r setup, include=FALSE}
+def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(chunk = function(x, options) {
+  x <- def.chunk.hook(x, options)
+  ifelse(options$size != "normalsize", paste0("\n \\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
+})
+
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=40), tidy=TRUE, echo = TRUE, message = FALSE, warning = FALSE, fig.pos = "H")
+```
+
+\scriptsize 
+
+```{R loadpackages, message = FALSE, warning = FALSE, echo = FALSE}
+# Load the packages
+library("papaja")
+library("LaplacesDemon")
+library("rstan")
+library("brms")
+library("plyr")
+library("lattice")
+library("ggplot2")
+library("dplyr")
+library("readr")
+library("rmarkdown")
+library("Rmisc")
+library("devtools")
+library("gghalves") 
+library("bayesplot")
+library("bridgesampling") 
+library("gridExtra") 
+library("tibble") 
+library("kableExtra") 
+library("truncnorm")
+library("ggbeeswarm")
+```
+\normalsize 
+
+This appendix illustrates the difference between hierarchical models and analyses of individual and aggregated data by showing the parameterization for the latter two. In case of an analysis of aggregated data where the *k*th observation/trial for the *i*th participant in the *j*th condition comes from a normal distribution with the mean equal to the intercept $\gamma$, the effect of the side (i.e., smaller or greater than 5, $\beta$) and the effect of the distance from 5 (i.e., symbolic distance effect, $\delta$’s), and the variance $\sigma^2$, the equation is as follows: 
+
+\begin{equation}
+\tag{A1}
+Y_{ijk} \sim \text{Normal}(\gamma + x_j \beta_{side} + u_j \delta_{7} + v_j \delta_{6} + w_j \delta_{4} + z_j \delta_{3}, \sigma^2), 
+\end{equation}
+
+where 
+
+<!-- \[ -->
+<!-- x_j =  -->
+<!-- \begin{cases} -->
+<!-- \frac{1}{2} & j < 5\\ -->
+<!-- - \frac{1}{2} & j > 5, \\ -->
+<!-- \end{cases} -->
+
+<!-- \; \; \; -->
+
+<!-- \[ -->
+<!-- u_j =  -->
+<!-- \begin{cases} -->
+<!-- 1 & j = 7\\ -->
+<!-- 0 & \text{Otherwise}, -->
+<!-- \end{cases} -->
+
+<!-- \; \; \; -->
+
+<!-- v_j =  -->
+<!-- \begin{cases} -->
+<!-- 1 & j = 6\\ -->
+<!-- 0 & \text{Otherwise}, -->
+<!-- \end{cases} -->
+<!-- \] -->
+
+\begin{align*}
+&
+\begin{aligned}
+x_j = 
+\begin{cases}
+\frac{1}{2} & j < 5\\
+- \frac{1}{2} & j > 5, \\
+\end{cases}
+\end{aligned}
+&
+\begin{aligned}
+u_j = 
+\begin{cases}
+1 & j = 7\\
+0 & \text{Otherwise},
+\end{cases}
+\end{aligned}
+&
+\begin{aligned}
+v_j = 
+\begin{cases}
+1 & j = 6\\
+0 & \text{Otherwise}.
+\end{cases}
+\end{aligned}
+\end{align*}
+
+<!-- \[ -->
+<!-- w_j =  -->
+<!-- \begin{cases} -->
+<!-- 1 & j = 4\\ -->
+<!-- 0 & \text{Otherwise}, -->
+<!-- \end{cases} -->
+
+<!-- \; \; \; -->
+
+<!-- z_j =  -->
+<!-- \begin{cases} -->
+<!-- 1 & j = 3\\ -->
+<!-- 0 & \text{Otherwise}. -->
+<!-- \end{cases} -->
+<!-- \] -->
+
+\begin{align*}
+&
+\begin{aligned}
+w_j = 
+\begin{cases}
+1 & j = 4\\
+0 & \text{Otherwise},
+\end{cases}
+\end{aligned}
+&
+\begin{aligned}
+z_j = 
+\begin{cases}
+1 & j = 3\\
+0 & \text{Otherwise}.
+\end{cases}
+\end{aligned}
+\end{align*}
+
+The equation shows that, for instance, for participant *i*=1 and digit *j*=7, the mean RT is $\gamma - \frac{1}{2}\beta + \delta_{7}$. This equation shows that there is no individual effect of the condition. Some individual RTs could differ from the general pattern of mean RTs.  
+
+When it is decided to investigate individual RTs instead, the overall response time is ignored, resulting in the following equation (in case of the normal model) for *i*=1: 
+
+\begin{equation}
+\tag{A2}
+Y_{i=1, jk} \sim \text{Normal}(\gamma_{i = 1} + x_j \beta_{i = 1} + u_j \delta_{7, i = 1} + v_j \delta_{6, i = 1} + w_j \delta_{4, i = 1} + z_j \delta_{3, i = 1}, \sigma^2_{i = 1}), 
+\end{equation}
+
+The equation is very similar to the one shown before. However, notice that the intercept $\gamma_i$, the effects $\beta_{i}$ and $\delta$’s, and the variance $\sigma^2_{i}$ are now individual specific.  
+
+However, a hierarchical analysis matches the symbolic distance effect data the best. We have observations per person per condition. Therefore, we can investigate a general trend and individual deviations from this trend. 
+
