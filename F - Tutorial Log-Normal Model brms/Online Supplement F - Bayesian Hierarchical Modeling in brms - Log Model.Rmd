@@ -506,25 +506,26 @@ logmodel_fit <- brm(formula = logformula,                      # Model formula
 ```
 \normalsize 
 
-We have already estimated the model and saved it in the R object `brmslogmodelfit_final`. In case you do not want to wait until the model has been fitted but continue immediately with the rest of this tutorial, you can load this R object that contains the model estimations.  
+We have already estimated the model and saved it in the R object `brmmodel8log13012022.rds`. In case you do not want to wait until the model has been fitted but continue immediately with the rest of this tutorial, you can load this R object that contains the model estimations.  
 &nbsp; 
 
 \scriptsize 
 ```{r loadmodelfit, eval = FALSE}
-logmodel_fit <- readRDS(file = "myPath/brmslogmodelfit_final.rds")  
+logmodel_fit <- readRDS(file = "myPath/brmmodel8log13012022.rds")  
 
 # For model comparison - sample_prior was set to "yes" 
-logmodel_fit_bf <- readRDS("myPath/brmslogmodelfit_BF_final.rds")  
+logmodel_fit_bf <- readRDS("myPath/BRMSmodelfit18_26052022_bf.rds")  
 
 ```
 \normalsize 
 
 \scriptsize 
-```{r loadmodelfits, show = FALSE}
-logmodel_fit <- readRDS(file = "/Users/myrtheveenman/Documents/GitHub/multilevel-tutorial-paper/R objects/brms/non-linear/brmmodel8log13012022.rds")  
+```{r loadmodelfits, show = FALSE, echo = FALSE}
+setwd('..')
+logmodel_fit <- readRDS(file = "R objects/brms/log-normal/brmmodel8log13012022.rds")  
 
 # For model comparison - sample_prior was set to "yes" 
-logmodel_fit_bf <- readRDS("/Users/myrtheveenman/Documents/GitHub/multilevel-tutorial-paper/R objects/brms/BF/brmmodel8log26052022_bf.rds")  
+logmodel_fit_bf <- readRDS("R objects/brms/BF/brmmodel8log26052022_bf.rds")  
 
 ```
 \normalsize 

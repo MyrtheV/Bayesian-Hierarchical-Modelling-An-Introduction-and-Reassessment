@@ -88,15 +88,33 @@ As the name of this folder tells you, the folder contains the fit of a normal mo
 
 This folder consists of four folders: "BF", "log-normal", "Posterior", and "Truncated". In the BF folder, you can find the model fit that has been used to obtain the Bayes factor by the Savage-Dickey density ratio (`.rds` files): "brmmodel8_new_bf_03012022.rds" for the normal model and "brmmodel8log26052022_bf.rds" for the log-normal model. The "Posterior"" folder contains the normal model fit without obtaining the Bayes factor (`.rds` file). Therefore, the models in the two folders only differ in the specification of one option. For the "BF"", the option `sample_prior` in the fit function is set to `TRUE`, while this is set to `FALSE` in fit located in the "Posterior"" folder. The "log-normal" folder contains the log-normal model fit ("brmmodel8log13012022.rds") and the log-normal fit used to obtain the Bayes factor ("BRMSmodelfit18_26052022_bf.rds", this is a duplicate of the log-normal model fit in the "BF" folder). The "Truncated" folder mainly contains duplicates of previously discussed model fits, but it also contains the model fit of the side model ("side_model_fit.rds" and "side_model_fit_12042022.rds"). The fit of the models can be loaded as an object in R, instead of fitting the model yourself. Therefore, it contains the result we worked with in this study. 
 
+
 ## 5.3 Model Comparison 
 
 The Model Comparison folder contains two folders "Bayes Factors per package" and "Sensitivity analysis". The folder "Bayes Factors per package" contains the ten estimated Bayes factors estimated by bridge sampling per package ("bssresults_07012022.csv" for `rstan` and "bssresults_brms_15032022_10rep.csv" for `brms`). The folder "Sensitivity analysis" contains the Bayes factors per scenario used for the sensitivity analysis. If the folders contains one or multiple `.csv` files, there will be an explanatory file describing the data set. In case you want to use the data, please read this description carefully as well. 
 
 ## 5.4 rstan 
 
-In this folder, you can find again two other folders: "normal model"" and "log-normal model". As the name tells you, these folders contain the `rstan` materials for the normal model and the log-normal model. They contain the `.stan` files for all the models (null model, side model, digit model and full model) and the results of the full model fit that is saved in the `.RDS` file (this is an R object). The fit of the full model can be loaded as an object in R, instead of fitting the model yourself. Therefore, it also contains the result we worked with in this study. The "normal model" folder also contains the `.stan` files used for the sensitivity analysis. "myModel.stan" is a duplicate of the full normal model saved under "rewritestanmodel3_trunc.stan". "myLogModel.stan" is a duplicate of the full log-normal model saved under "logstanmodel3.stan". 
+In this folder, you can find again two other folders: "normal model"" and "log-normal model". As the name tells you, these folders contain the `rstan` materials for the normal model and the log-normal model. They contain the `.stan` files for all the models (null model, side model, digit model and full model) and the results of the full model fit that is saved in the `.RDS` file (this is an R object). The fit of the full model can be loaded as an object in R, instead of fitting the model yourself. Therefore, it also contains the result we worked with in this study. The "normal model" folder also contains the `.stan` files used for the sensitivity analysis. "myModel.stan" is a duplicate of the full normal model saved under "rewritestanmodel3_trunc.stan". "rstan_model_fit.rds" is a duplicate of "hier_modelc_adj_07012022.rds". "myLogModel.stan" is a duplicate of the full log-normal model saved under "logstanmodel3.stan". "rstan_logmodel_fit.rds" is a duplicate of "hier_logmodelc_adj13012022.rds". 
 
 Other documents in the repository that are not discussed here are not of much interest, but are necessary to run the `.Rmd` files. 
+
+# Data set 
+
+In this study, we use publicly available data by Rouder et al. (2005), retrieved from https://github.com/PerceptionCognitionLab/data0/blob/master/lexDec-dist5/ld5.txt. For more information about this data, we refer to them. Participants that participated in the digit classification task performed multiple trials in multiple blocks, resulting in observations per condition (digits) per person. 
+
+Roughly, the columns represent: 
+- sub: This column represents the participant number. It starts at 0. 
+- block: The block which the trials belong. 
+- trial: The number of the trial in the block. 
+- stim: The digit that was presented. 0 represent number 2, 1 number 3, 2 number 4, 3 number 6, 4 number 7, and finally 5 equals 8. 
+- resp: Participants had to indicate whether the digit was greater or smaller than five. 0 means that they indicated that the digit was smaller than 5, 1 that it was greater than 5. 
+- rt: The response time in milliseconds. 
+- error: If the response was correct or not. 0 means the response was correct, 1 incorrect. 
+- sub 2: This column also represents the participant number, however, this one starts at 1 and has chronical numbers (i.e., it does not skip numbers).   
+
+For more information: 
+Rouder, J. N., Lu, J., Speckman, P., Sun, D., & Jiang, Y. (2005). A hierarchical model for estimating response time distributions. Psychonomic Bulletin & Review, 12(2), 195-223.
 
 # Contact Information 
 In case you have questions about the repository or our study, you can contact: 
@@ -106,8 +124,15 @@ Leiden University
 myrthe.veenman@gmail.com 
 
 # Citation 
+Veenman, M., Stefan, A. M., Haaf, J. M. (2022; preprint). Bayesian Hierarchical Modelling: An Introduction and Reassessment. 
 
-
-
+@misc{Veenman_2022,
+ title={Bayesian Hierarchical Modelling: An Introduction and Reassessment},
+ url={},
+ DOI={},
+ publisher={},
+ author={Veenman, Myrthe and Stefan, Angelika M. and Haaf, Julia M },
+ year={2022},
+}
 
 

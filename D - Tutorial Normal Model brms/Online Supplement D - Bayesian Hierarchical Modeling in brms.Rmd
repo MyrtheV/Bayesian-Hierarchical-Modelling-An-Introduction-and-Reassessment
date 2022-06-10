@@ -514,25 +514,26 @@ model_fit <- brm(formula = formula,                      # Model formula
 ```
 \normalsize 
 
-We have already estimated the model and saved it in the R object `brmsmodelfit_final`. In case you do not want to wait until the model has been fitted but continue immediately with the rest of this tutorial, you can load this R object that contains the model estimations.  
+We have already estimated the model and saved it in the R object `brmmodel8_new03012022.rds`. In case you do not want to wait until the model has been fitted but continue immediately with the rest of this tutorial, you can load this R object that contains the model estimations.  
 &nbsp; 
 
 \scriptsize 
 ```{r loadmodelfit, eval = FALSE}
-model_fit <- readRDS(file = "myPath/brmsmodelfit_final.rds")  
+model_fit <- readRDS(file = "myPath/brmmodel8_new03012022.rds")  
 
 # For model comparison - sample_prior was set to "yes" 
-model_fit_bf <- readRDS("myPath/brmsmodelfit_BF_final.rds")  
+model_fit_bf <- readRDS("myPath/brmmodel8_new_bf_03012022l.rds")  
 
 ```
 \normalsize 
 
 \scriptsize 
-```{r loadmodelfits, show = FALSE}
-model_fit <- readRDS(file = "/Users/myrtheveenman/Documents/GitHub/multilevel-tutorial-paper/R objects/brms/Truncated/BRMSmodelfit18_03012022.rds")  
+```{r loadmodelfits, show = FALSE, echo = FALSE}
+setwd('..')
+model_fit <- readRDS(file = "R objects/brms/Truncated/BRMSmodelfit18_03012022.rds")  
 
 # For model comparison - sample_prior was set to "yes" 
-model_fit_bf <- readRDS("/Users/myrtheveenman/Documents/GitHub/multilevel-tutorial-paper/R objects/brms/Truncated/BRMSmodelfit18_BF_03012022.rds")  
+model_fit_bf <- readRDS("R objects/brms/Truncated/BRMSmodelfit18_BF_03012022.rds")  
 
 ```
 \normalsize 
