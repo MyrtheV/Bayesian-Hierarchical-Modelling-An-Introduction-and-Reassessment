@@ -770,7 +770,7 @@ $\sigma_{\delta_{3}}^2$ & 0.020 & 0.014 & 0.029 & 18,357.620 & 1.000\\
 
 \end{table}
 
-Thanks to the hierarchical structure of the model, we can investigate whether the general effects hold for all the individuals by inspecting the individual variation and the individual parameter estimates. The individual variation is represented by the variance or standard deviation parameters in the model. The summaries of the posterior distributions of the variance parameters as estimated by \texttt{rstan} are shown in Table \ref{tab:inddevtable}. The estimates for the standard deviations by \texttt{brms} are smaller compared to \texttt{rstan} and can be found in Online Supplement D.
+Thanks to the hierarchical structure of the model, we can investigate whether the general effects hold for all the individuals by inspecting the individual variation and the individual parameter estimates. The individual variation is represented by the variance or standard deviation parameters in the model. The summaries of the posterior distributions of the variance parameters as estimated by \texttt{rstan} are shown in Table \ref{tab:inddevtable}. The estimates for the standard deviations by \texttt{brms} are smaller compared to \texttt{rstan} and can be found in Online Supplement D and H.
 
 Posterior means of the variances for the digit and side effects are all very close to 0.020 which corresponds to a standard deviation of 0.141 seconds, that is, 141 milliseconds. Additionally, the 95\% credible intervals do not contain zero. If we consider the effect of digit 7 wit an 11 millisecond general effect this is a substantial amount of individual variation. Therefore, we conclude that there are individual differences in the symbolic distance effect.
 
@@ -805,7 +805,7 @@ The model is fitted using the packages \texttt{rstan} and \texttt{brms}. For \te
 \hypertarget{model-diagnostics-1}{%
 \subsubsection{Model Diagnostics}\label{model-diagnostics-1}}
 
-Before interpreting the results, we have to check if the posterior distributions of the parameters have converged. The trace plot of \(\mu_{\delta_{6}}\) is shown panel A for \texttt{rstan} and B for \texttt{brms} of Figure \ref{fig:traceplotlog}. Trace plots for all other parameters can be found in the Online Supplement. All plots look like a hairy caterpillar. Therefore, they indicate that the posterior distributions of the parameters have converged. \(\hat{R}\) values shown in Figure \ref{fig:traceplotlog}C for all parameters are all close to 1 and most of the number of effective samples shown in Figure \ref{fig:traceplotlog}D exceed the total number of iterations. The number of effective samples for the general effects are comparatively low but still sufficient. In combination with the other diagnostics, we conclude that the posterior distributions of the parameters have converged and we proceed with the interpretation of the results.
+Before interpreting the results, we have to check if the posterior distributions of the parameters have converged. The trace plot of \(\mu_{\delta_{6}}\) is shown panel A for \texttt{rstan} and B for \texttt{brms} of Figure \ref{fig:traceplotlog}. Trace plots for all other parameters can be found in Online Supplement G. All plots look like a hairy caterpillar. Therefore, they indicate that the posterior distributions of the parameters have converged. \(\hat{R}\) values shown in Figure \ref{fig:traceplotlog}C for all parameters are all close to 1 and most of the number of effective samples shown in Figure \ref{fig:traceplotlog}D exceed the total number of iterations. The number of effective samples for the general effects are comparatively low but still sufficient. In combination with the other diagnostics, we conclude that the posterior distributions of the parameters have converged and we proceed with the interpretation of the results.
 
 
 
@@ -847,7 +847,7 @@ One property of these parameter estimates we can immediately interpret is their 
 \hypertarget{individual-effects-1}{%
 \paragraph{Individual effects}\label{individual-effects-1}}
 
-Next, we inspect the individual deviations from the general effects. Table \ref{tab:inddevtablelog} presents the estimates of the variance parameters by \texttt{rstan}. Results for brms can be found in the Online Supplement.
+Next, we inspect the individual deviations from the general effects. Table \ref{tab:inddevtablelog} presents the estimates of the variance parameters by \texttt{rstan}. Results for brms can be found in Online Supplement H.
 
 \begin{table}[h]
 
@@ -874,7 +874,7 @@ $\sigma_{\delta_{3}}^2$ & 0.001 & 0.001 & 0.002 & 6,841.198 & 1.001\\
 
 \end{table}
 
-The estimated parameter values for the variance terms are very small, but different from zero. This indicates that individuals may vary slightly with respect to the general effect parameters. The estimates for the standard deviations by \texttt{brms} are similar compared to the estimates by \texttt{rstan}, but slightly smaller. The exact estimates by \texttt{brms} can be found in Online Supplement F.
+The estimated parameter values for the variance terms are very small, but different from zero. This indicates that individuals may vary slightly with respect to the general effect parameters. The estimates for the standard deviations by \texttt{brms} are similar compared to the estimates by \texttt{rstan}, but slightly smaller. The exact estimates by \texttt{brms} can be found in Online Supplement F and H.
 Figure \ref{fig:randomparplotlog} shows the individual estimates for the digit and side effects. The pink lines indicate that the 95\% credible interval of the individual effect contains zero. The estimated general effect is represented by the dashed line. For \(\beta\), \(\delta_{7}\), and \(\delta_{3}\), most 95\% credible intervals contain zero. For \(\delta_{6}\) and \(\delta_{4}\), most credible intervals are entirely larger than zero, indicating an increase in RT for most participants.
 
 \begin{figure}[H]

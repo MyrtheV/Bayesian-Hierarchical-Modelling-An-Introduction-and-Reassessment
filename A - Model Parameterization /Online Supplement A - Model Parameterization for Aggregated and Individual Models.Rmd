@@ -166,5 +166,5 @@ Y_{i=1, jk} \sim \text{Normal}(\gamma_{i = 1} + x_j \beta_{i = 1} + u_j \delta_{
 
 The equation is very similar to the one shown before. However, notice that the intercept $\gamma_i$, the effects $\beta_{i}$ and $\delta$’s, and the variance $\sigma^2_{i}$ are now individual specific.  
 
-However, a hierarchical analysis matches the symbolic distance effect data the best. We have observations per person per condition. Therefore, we can investigate a general trend and individual deviations from this trend. 
+However, a hierarchical analysis matches the digit classification task data the best. We have observations per person per condition. Therefore, we can investigate a general trend and individual deviations from this trend. 
 
