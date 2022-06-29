@@ -1,6 +1,6 @@
 ---
 title             : "Online Supplement D: Bayesian Hierarchical Modeling in brms"
-author            : "Myrthe Veenman"
+author            : " "
 bibliography      : ["r-references.bib"]
 
 header-includes   :
@@ -29,7 +29,7 @@ knitr::knit_hooks$set(chunk = function(x, options) {
 knitr::opts_chunk$set(tidy.opts=list(width.cutoff=40), tidy=TRUE, echo = TRUE, message = FALSE, warning = FALSE, fig.pos = "H")
 ```
 
-|    This online supplement provides a tutorial on Bayesian Hierarchical models (BHM) in `brms` [@R-brms_a; @R-brms_b]. In addition, it contains information about the Number Classification Task that could not be included in the paper. As `brms` runs on `Stan` [@carpenter2017stan], it is very similar to `rstan` [@R-rstan]. However, there are some differences that will be discussed in this tutorial. Only the fit of the full model will be shown as the fitting the others should follow logically from this tutorial. Technical details, such as explanations of statistical terms (e.g., $\hat{R}$), will not be discussed here but can be found in the paper. In concrete, the tutorial will cover the following:   
+|    This online supplement provides a tutorial on Bayesian Hierarchical models (BHM) in `brms` [@R-brms_a; @R-brms_b]. In addition, it contains information about the digit classification task that could not be included in the paper. As `brms` runs on `Stan` [@carpenter2017stan], it is very similar to `rstan` [@R-rstan]. However, there are some differences that will be discussed in this tutorial. Only the fit of the full model will be shown as the fitting the others should follow logically from this tutorial. Technical details, such as explanations of statistical terms (e.g., $\hat{R}$), will not be discussed here but can be found in the paper. In concrete, the tutorial will cover the following:   
 
 1. Required packages 
 2. Input  
@@ -49,9 +49,9 @@ knitr::opts_chunk$set(tidy.opts=list(width.cutoff=40), tidy=TRUE, echo = TRUE, m
 In this practical, the following packages will be used: 
 
 - For the document layout: *rmarkdown* [Version 1.16; @R-rmarkdown], *papaja* [Version 0.1.0.9842; @R-papaja], *knitr* [Version 1.25; @R-knitr], *kableExtra* [Version 1.1.0; @R-kableExtra]
-- For data structuring: *LaplacesDemon* [Version 16.1.4; @R-LaplacesDemon], *plyr* [Version 1.8.4; @R-plyr], *dplyr* [Version 0.8.3; @R-dplyr], *readr* [Version 1.3.1; @R-readr], *truncnorm* [Version 1.0.8; @truncnorm]
+- For data structuring: *LaplacesDemon* [Version 16.1.4; @R-LaplacesDemon], *plyr* [Version 1.8.4; @R-plyr], *dplyr* [Version 0.8.3; @R-dplyr], *readr* [Version 1.3.1; @R-readr], *truncnorm* [Version 1.0.8; @R-truncnorm]
 - To fit the model and for model comparison: *brms* [Version 2.13.0; @R-brms_a; @R-brms_b]
-- For the visualization of the results: *lattice* [Version 0.20.38; @R-lattice], *ggplot2* [Version 3.3.2; @R-ggplot2], *Rmisc* [Version 1.5; @R-Rmisc], *devtools* [Version 2.2.1; @R-devtools], *gghalves* [Version 0.1.0; @R-gghalves], *bayesplot* [Version 1.7.1; @R-bayesplot], *gridExtra* [Version 2.3; @R-gridExtra], *ggridges* [Version 0.5.3; @ggridges], *ggbeeswarm* [Version 0.6.0; @ggbeeswarm], *tibble* [Version 3.0.2; @R-tibble]
+- For the visualization of the results: *lattice* [Version 0.20.38; @R-lattice], *ggplot2* [Version 3.3.2; @R-ggplot2], *Rmisc* [Version 1.5; @R-Rmisc], *devtools* [Version 2.2.1; @R-devtools], *gghalves* [Version 0.1.0; @R-gghalves], *bayesplot* [Version 1.7.1; @R-bayesplot], *gridExtra* [Version 2.3; @R-gridExtra], *ggridges* [Version 0.5.3; @R-ggridges], *ggbeeswarm* [Version 0.6.0; @R-ggbeeswarm], *tibble* [Version 3.0.2; @R-tibble]
 
 &nbsp; 
 
