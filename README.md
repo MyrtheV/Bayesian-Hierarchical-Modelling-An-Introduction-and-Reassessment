@@ -1,5 +1,7 @@
 # Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment
 
+Note: This version of the abstract and repository are posted prior to formal peer review.
+
 # Abstract 
 
 With the recent development of easy-to-use tools for Bayesian analysis, psychologists have started to embrace Bayesian hierarchical modeling. Bayesian hierarchical models provide an intuitive account of inter- and intraindividual variability and are particularly suited for the evaluation of repeated-measures designs. Here, we provide guidance for model specificaton and interpretation in Bayesian hierarchical modeling and describe common pitfalls that can arise in the process of model fitting and evaluation. Our introduction gives particular emphasis to prior specification and prior sensitivity, as well as to the calculation of Bayes factors for model comparisons. We illustrate the use of state-of-the-art software programs Stan and brms. The result is an overview over best practices in Bayesian hierarchical modeling that, as we hope, will help psychologists in making the best use of Bayesian hierarchical modeling.
@@ -134,5 +136,18 @@ Veenman, M., Stefan, A. M., Haaf, J. M. (2022; preprint). Bayesian Hierarchical 
  author={Veenman, Myrthe and Stefan, Angelika M. and Haaf, Julia M },
  year={2022},
 }
+
+
+Shield: [![CC BY 4.0][cc-by-shield]][cc-by]
+
+This work is licensed under a
+[Creative Commons Attribution 4.0 International License][cc-by].
+
+[![CC BY 4.0][cc-by-image]][cc-by]
+
+[cc-by]: http://creativecommons.org/licenses/by/4.0/
+[cc-by-image]: https://i.creativecommons.org/l/by/4.0/88x31.png
+[cc-by-shield]: https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg 
+
 
 
