@@ -1248,7 +1248,30 @@ In summary, by offering a comparison of software packages, guidance on prior sel
 
 \newpage 
 
-# Acknowledgement 
+# Declarations 
+
+## Funding 
+
+A.S. is supported by the Research Talent Programme from the Dutch Research Council and the Dutch Ministry of Education, Culture and Science (NWO; grant number 406.18.556). 
+
+## Conflicts of interest 
+
+The authors have no conflicts of interest to declare.
+
+## Availability of data and materials
+
+We do not have ownership of the data used in this study, but the the data set is publicly available on [GitHub](https://github.com/PerceptionCognitionLab/data0/blob/master/lexDec-dist5/). The `.stan` models, results of the model fit, and model comparison are available on [our GitHub repository]().
+
+## Code availability 
+
+The R code used for the analyses and figures in this manuscript, and `R` tutorials on BHMs are available on [our GitHub repository]().
+
+## Authors’ contributions
+
+M.V. participated in the design and coordination of this study, performed statistical analyses, and drafted the paper; A.S. participated in the design and coordination of this study, helped with the statistical analyses, interpretation of the results and writing the paper; J.H. (principal investigator) conceived the study, participated in the design and coordination of the study, helped with the statistical analyses, interpretation of results and writing the paper. All authors read and approved the final paper.
+
+
+## Acknowledgements 
 
 We would like to express our gratitude to the R developers [Version 3.6.1; @R-base] and the following R package developers:  
 

@@ -103,7 +103,7 @@ Other documents in the repository that are not discussed here are not of much in
 
 # Data set 
 
-In this study, we use publicly available data by Rouder et al. (2005), retrieved from https://github.com/PerceptionCognitionLab/data0/blob/master/lexDec-dist5/ld5.txt. For more information about this data, we refer to them. Participants that participated in the digit classification task performed multiple trials in multiple blocks, resulting in observations per condition (digits) per person. 
+In this study, we use publicly available data by Rouder et al. (2005), retrieved from https://github.com/PerceptionCognitionLab/data0/blob/master/lexDec-dist5/. For more information about this data, we refer to them. Participants that participated in the digit classification task performed multiple trials in multiple blocks, resulting in observations per condition (digits) per person. 
 
 Roughly, the columns represent: 
 - sub: This column represents the participant number. It starts at 0. 
