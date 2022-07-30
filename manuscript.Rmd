@@ -1264,7 +1264,7 @@ We do not have ownership of the data used in this study, but the the data set is
 
 ## Code availability 
 
-The R code used for the analyses and figures in this manuscript, and `R` tutorials on BHMs are available on [our GitHub repository]().
+The R code used for the analyses and figures in this manuscript, and `R` tutorials on BHMs are available under an CC-BY-4.0 license on [our GitHub repository]().
 
 ## Authors’ contributions
 
