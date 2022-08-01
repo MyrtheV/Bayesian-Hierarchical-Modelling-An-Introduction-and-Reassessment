@@ -137,11 +137,18 @@ Veenman, M., Stefan, A. M., Haaf, J. M. (2022; preprint). Bayesian Hierarchical 
  year={2022},
 }
 
+# License 
 
-Shield: [![CC BY 4.0][cc-by-shield]][cc-by]
+## Code 
 
-This work is licensed under a
+The code in this repository, including the code samples in the manuscript and tutorials, is released under the MIT [MIT license](LICENSE-CODE). Read more at the [Open Source Initiative](https://opensource.org/licenses/MIT).
+
+## Text & Figures 
+
+The text content and figures in this repository are licensed under a
 [Creative Commons Attribution 4.0 International License][cc-by].
+
+[![CC BY 4.0][cc-by-shield]][cc-by]
 
 [![CC BY 4.0][cc-by-image]][cc-by]
 
