@@ -1252,7 +1252,7 @@ In summary, by offering a comparison of software packages, guidance on prior sel
 
 ## Funding 
 
-A.S. is supported by the Research Talent Programme from the Dutch Research Council and the Dutch Ministry of Education, Culture and Science (NWO; grant number 406.18.556). 
+This work was supported in part by an NWO Research Talent grant to A.M.S. (406.18.556) and a Veni grant from the NWO (VI.Veni.201G.019) to J.M.H. 
 
 ## Conflicts of interest 
 
@@ -1275,11 +1275,11 @@ M.V. participated in the design and coordination of this study, performed statis
 
 We would like to express our gratitude to the R developers [Version 3.6.1; @R-base] and the following R package developers:  
 
-- Document layout: *rmarkdown* [Version 1.16; @R-rmarkdown], *papaja* [Version 0.1.0.9842; @R-papaja], *knitr* [Version 1.25; @R-knitr], *kableExtra* [Version 1.1.0; @R-kableExtra]
-- Data analysis and cleaning: *LaplacesDemon* [Version 16.1.4; @R-LaplacesDemon], *plyr* [Version 1.8.4; @R-dplyr; @R-plyr], *dplyr* [Version 0.8.3; @R-dplyr], *readr* [Version 1.3.1; @R-readr], *crch* [Version 1.0.4; @R-crch_a; @R-crch_b; @R-crch_c; @R-crch_d], *foreign* [Version 0.8.71; @R-foreign], *Matrix* [Version 1.2.17; @R-Matrix], *tidyr* [Version 1.0.0; @R-tidyr], *truncnorm* [Version 1.0.8; @R-truncnorm] 
-- Model fit and comparison: *rstan* [Version 2.19.2; @R-rstan], *brms* [Version 2.13.0; @R-brms_a; @R-brms_b], *BayesFactor* [Version 0.9.12.4.2; @R-BayesFactor], *bridgesampling* [Version 1.0.0; @R-bridgesampling]
-- Visualization: *coda* [Version 0.19.3; @R-coda], *lattice* [Version 0.20.38; @R-lattice], *ggplot2* [Version 3.3.2; @R-ggplot2], *Rmisc* [Version 1.5; @R-Rmisc], *devtools* [Version 2.2.1; @R-devtools], *gghalves* [Version 0.1.0; @R-gghalves], *bayesplot* [Version 1.7.1; @R-bayesplot], *gridExtra* [Version 2.3; @R-gridExtra], *tibble* [Version 3.0.2; @R-tibble], *ggmcmc* [Version 1.4.1; @R-ggmcmc], *cowplot* [Version 1.0.0; @R-cowplot], *ggridges* [Version 0.5.1; @R-ggridges], *circlize* [Version 0.4.9; @R-circlize], *StanHeaders* [Version 2.19.0; @R-StanHeaders], *unikn* [Version 0.2.0; @R-unikn], *ggbeeswarm* [Version 0.6.0; @R-ggbeeswarm]
-- Other: *Rcpp* [Version 1.0.3; @R-Rcpp_a; @R-Rcpp_b], *usethis* [Version 1.5.1; @R-usethis]
+- Document layout: *rmarkdown* [Version 2.9; @R-rmarkdown], *papaja* [Version 0.1.0.9997; @R-papaja], *knitr* [Version 1.33; @R-knitr], *kableExtra* [Version 1.3.4; @R-kableExtra]
+- Data analysis and cleaning: *LaplacesDemon* [Version 16.1.6; @R-LaplacesDemon], *plyr* [Version 1.8.6; @R-dplyr; @R-plyr], *dplyr* [Version 1.0.7; @R-dplyr], *readr* [Version 2.0.0; @R-readr], *crch* [Version 1.0.4; @R-crch_a; @R-crch_b; @R-crch_c; @R-crch_d], *foreign* [Version 0.8.81; @R-foreign], *Matrix* [Version 1.3.3; @R-Matrix], *tidyr* [Version 1.1.3; @R-tidyr], *truncnorm* [Version 1.0.8; @R-truncnorm] 
+- Model fit and comparison: *rstan* [Version 2.21.3; @R-rstan], *brms* [Version 2.16.3; @R-brms_a; @R-brms_b], *BayesFactor* [Version 0.9.12.4.2; @R-BayesFactor], *bridgesampling* [Version 1.1.2; @R-bridgesampling]
+- Visualization: *coda* [Version 0.19.4; @R-coda], *lattice* [Version 0.20.44; @R-lattice], *ggplot2* [Version 3.3.5; @R-ggplot2], *Rmisc* [Version 1.5; @R-Rmisc], *devtools* [Version 2.4.2; @R-devtools], *gghalves* [Version 0.1.1.9000; @R-gghalves], *bayesplot* [Version 1.8.1; @R-bayesplot], *gridExtra* [Version 2.3; @R-gridExtra], *tibble* [Version 3.1.6; @R-tibble], *ggmcmc* [Version 1.5.1.1; @R-ggmcmc], *cowplot* [Version 1.1.1; @R-cowplot], *ggridges* [Version 0.5.3; @R-ggridges], *circlize* [Version 0.4.13; @R-circlize], *StanHeaders* [Version 2.21.0.7; @R-StanHeaders], *unikn* [Version 0.4.0; @R-unikn], *ggbeeswarm* [Version 0.6.0; @R-ggbeeswarm]
+- Other: *Rcpp* [Version 1.0.7; @R-Rcpp_a; @R-Rcpp_b], *usethis* [Version 2.0.1; @R-usethis]
 
 \newpage
 
