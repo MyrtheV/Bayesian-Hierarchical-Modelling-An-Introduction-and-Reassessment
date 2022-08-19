@@ -4,22 +4,22 @@ shorttitle        : "Bayesian Hierarchical Modeling"
 
 author: 
   - name          : "Myrthe Veenman"
-    affiliation   : "2"
+    affiliation   : "1"
     corresponding : yes    # Define only one corresponding author
     address       : "Wassenaarseweg 52, Leiden"
     email         : "myrthe.veenman@gmail.com"
   - name          : "Angelika Stefan"
-    affiliation   : "1"
+    affiliation   : "2"
     corresponding : no    # Define only one corresponding author
   - name          : "Julia Haaf"
-    affiliation   : "1"
+    affiliation   : "2"
     corresponding : no    # Define only one corresponding author
 
 affiliation:
   - id            : "1"
-    institution   : "University of Amsterdam"
-  - id            : "2"
     institution   : "Leiden University"
+  - id            : "2"
+    institution   : "University of Amsterdam"
 
 authornote: |
 
