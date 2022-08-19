@@ -23,7 +23,7 @@ affiliation:
 
 authornote: |
 
-  This paper is written in R Markdown. The R Markdown file, other R code, and additional information on this study can be found in the [Online Supplement](https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment).  
+  This paper is written in R Markdown. The R Markdown file, other R code, and additional information on this study can be found in the [Online Supplement: https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment](https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment).  
 
 abstract: |
   With the recent development of easy-to-use tools for Bayesian analysis, psychologists have started to embrace Bayesian hierarchical modeling. Bayesian hierarchical models provide an intuitive account of inter- and intraindividual variability and are particularly suited for the evaluation of repeated-measures designs. Here, we provide guidance for model specificaton and interpretation in Bayesian hierarchical modeling and describe common pitfalls that can arise in the process of model fitting and evaluation. Our introduction gives particular emphasis to prior specification and prior sensitivity, as well as to the calculation of Bayes factors for model comparisons. We illustrate the use of state-of-the-art software programs `Stan` and `brms`. The result is an overview over best practices in Bayesian hierarchical modeling that, as we hope, will help psychologists in making the best use of Bayesian hierarchical modeling.  
@@ -240,7 +240,7 @@ A second alternative analysis method is to conduct an analysis on each participa
 
 In hierarchical analyses, the general or overall effect is called fixed effect, and the individual-specific deviations from this effect are called random effects (Rouder & Lu, 2005). We can also estimate individual effects, not as deviations from an overarching effect, but as effects for each individual, as obtained from a per-participant analysis. In this tutorial, we will use the terms general effect, individual deviation, and individual effects instead of fixed and random effects, because we believe these terms are better suited for the interpretation of our analyses. 
 
-If estimated for each participant independently, observed individual effects are quite variable because they are perturbed by sample noise. In hierarchical modeling, these individual effects are optimally and automatically corrected towards the general trend [@efron1977stein]. This phenomenon, also called "shrinkage", is illustrated in Panel B of Figure \@ref(fig:figure1). The rightmost observation in the figure is in sample quite large compared to the other observed effects. The estimated effect (green point) is drastically corrected towards the mean. Conversely, the general trend is only influenced slightly by individuals showing a highly divergent trend. By adding the individual variability to the model, we no longer assume independence between observations, but the overall effect in the model leaves the possibility to generalize the effect. Therefore, hierarchical analysis can be considered a middle ground between an independent analysis and an analysis of aggregated data. 
+If estimated for each participant independently, observed individual effects are quite variable because they are perturbed by sample noise. In hierarchical modeling, these individual effects are optimally and automatically corrected towards the general trend [@efron1977stein]. This phenomenon, also called `shrinkage', is illustrated in Panel B of Figure \@ref(fig:figure1). The rightmost observation in the figure is in sample quite large compared to the other observed effects. The estimated effect (green point) is drastically corrected towards the mean. Conversely, the general trend is only influenced slightly by individuals showing a highly divergent trend. By adding the individual variability to the model, we no longer assume independence between observations, but the overall effect in the model leaves the possibility to generalize the effect. Therefore, hierarchical analysis can be considered a middle ground between an independent analysis and an analysis of aggregated data. 
 ```{r figure2, echo=FALSE, eval = FALSE, fig.cap="Sample represents the observed response time in milliseconds per individual, while model represents the individual response time estimates. Individual estimates are shrunken towards the general trend. ", fig.align = "left", fig.height = 2, fig.width = 3, out.width="70%"}
 knitr::include_graphics("Images/hierplotefmor.png")
 ```
@@ -380,7 +380,7 @@ Both the normal and the log-normal models contain the following parameters: $\ga
 
 In Bayesian modeling, prior distributions are needed to complete model specification. In the next section, we will take you through the process of setting these priors, followed by sections on Bayesian estimation and hypothesis testing for both the normal and log-normal model. In every section, we will first explain the normal model, followed by an illustration of the log-normal model. 
 
-```{r hierarchyplot, echo=FALSE, fig.cap="Hierarchical structure of the normal and lognormal models for the digit classification task.", fig.align = "left", fig.height = 3, fig.width = 4, out.width="70%"}
+```{r hierarchyplot, echo=FALSE, fig.cap="Hierarchical structure of the normal and log-normal models for the digit classification task.", fig.align = "left", fig.height = 3, fig.width = 4, out.width="70%"}
 knitr::include_graphics("Images/Fig2_Hierarchical structure.png")
 ```
 
@@ -446,7 +446,7 @@ For this step, it is important to consider the scale on which variables are meas
 ## Step 3: Prior Predictions 
 A key advantage of model specification with priors is that we can obtain preditions on what the data would look like that are generated from the model. These prior predictions allow us to make the implications of our specified priors more concrete. Researchers can look at relevant statistic that summarize the simulated data and decide if they correspond to reasonable observations for their specific research context. If the simulated data are in line with the researchers' expectations, the priors can be used for the analysis. If the simulated data do not match the expectations, the priors have to be adjusted (Step 4).  
 
-```{r priorpredfigurepanel, echo=FALSE, fig.cap="Side and digit effects from predicted data. Violins represent the distribution of predicted effects across 1000 simulation runs. The blue points are the average effects across simultions. Panel A shows the prior predictions for the normal model based on the default priors of \\textit{brms}. Panel B shows the prior predictions for the normal model based on the selected priors. Panel C shows the prior predictions for the lognormal model based on the priors chosen for the normal model. Panel D shows the prior predictions for the lognormal model based on the selected priors.", fig.align = "left", fig.height = 3, fig.width = 4, out.width="100%"}
+```{r priorpredfigurepanel, echo=FALSE, fig.cap="Side and digit effects from predicted data. Violins represent the distribution of predicted effects across 1000 simulation runs. The blue points are the average effects across simultions. Panel A shows the prior predictions for the normal model based on the default priors of \\textit{brms}. Panel B shows the prior predictions for the normal model based on the selected priors. Panel C shows the prior predictions for the log-normal model based on the priors chosen for the normal model. Panel D shows the prior predictions for the log-normal model based on the selected priors.", fig.align = "left", fig.height = 3, fig.width = 4, out.width="100%"}
 knitr::include_graphics("Images/Fig5_priorpredfigure_v2.png")
 ```
 
@@ -732,7 +732,7 @@ Every sampling algorithm requires the specification of the number of samples (al
 Before interpreting the estimation results, it has to be checked whether the posterior distribution of the parameters has converged, meaning that a stationary posterior distribution has been reached [@Vehtari_2021]. We will explain these convergence checks in more detail in the section Model Diagnostics. 
 
 ## Software 
-There are many different programs available to fit Bayesian hierarchical models, that is, to obtain samples from the joint posterior distribution of parameters. In this tutorial, we focus on two of the most commonly used `R` packages, `rstan` [@R-rstan] and `brms` [@R-brms_a; @R-brms_b]. We assume that readers are somewhat familiar with `R`. The package `rstan` provides the most modern algorithms and flexibility in model set-up. The package `brms` was created as an overlay to `rstan` and is based on the well-known `lme4` syntax [@R-lme4]. The goal of `brms` is to ease the transition to Bayesian hierarchical modeling for novice users of Bayesian statistics. The packages work similarly for the normal and log-normal model. In this section, we explain how a model can be fitted in each package using code snippets. In addition, we offer a separate Rmarkdown file for each package in our [Online Supplement](https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment) that explains in more depth how to analyze the full symbolic distance effect model with the specific package. 
+There are many different programs available to fit Bayesian hierarchical models, that is, to obtain samples from the joint posterior distribution of parameters. In this tutorial, we focus on two of the most commonly used `R` packages, `rstan` [@R-rstan] and `brms` [@R-brms_a; @R-brms_b]. We assume that readers are somewhat familiar with `R`. The package `rstan` provides the most modern algorithms and flexibility in model set-up. The package `brms` was created as an overlay to `rstan` and is based on the well-known `lme4` syntax [@R-lme4]. The goal of `brms` is to ease the transition to Bayesian hierarchical modeling for novice users of Bayesian statistics. The packages work similarly for the normal and log-normal model. In this section, we explain how a model can be fitted in each package using code snippets. In addition, we offer a separate R Markdown file for each package in our [Online Supplement](https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment) that explains in more depth how to analyze the full symbolic distance effect model with the specific package. 
 
 ### Rstan 
 
@@ -838,7 +838,9 @@ priorsmodel <- c(set_prior("normal(0,1)", class = "Intercept"),
 
 # Estimation of the Digit Classification Task
 ## Data 
-For our example, we will use the data set by Rouder et al. (2005). The data are available under a free license on GitHub [https://github.com/PerceptionCognitionLab/data0/tree/master/lexDec-dist5](https://github.com/PerceptionCognitionLab/data0/tree/master/lexDec-dist5). The data set contains observations from 54 participants who took part in a digit classification task. Each participant performed 360 trials in six blocks. For the analysis, only the correct responses are included. To account for practice effects, the first 25 trials of the first block are removed from the analysis. The trials after the breaks between the blocks are also removed from the analysis to correct for lack of concentration. In addition, trials with very fast RTs (< 250 MS) and very slow RTs (> 2000 MS) are excluded. Two participants were excluded because they did not respond properly to the task. Similar criteria were applied by @haaf2019capturing. This results in 52 participants and a total of 17031 observations. In the following two sections we will describe the model fitting and parameter estimation procedure for the normal and log-normal model, respectively. 
+For our example, we will use the data set by Rouder et al. (2005). The data are available under a free license on GitHub [https://github.com/PerceptionCognitionLab/data0/tree/master/lexDec-dist5]((https://github.com/PerceptionCognitionLab/data0/tree/master/lexDec-dist5)). The data set contains observations from 54 participants who took part in a digit classification task. Each participant performed 360 trials in six blocks. For the analysis, only the correct responses are included. To account for practice effects, the first 25 trials of the first block are removed from the analysis. The trials after the breaks between the blocks are also removed from the analysis to correct for lack of concentration. In addition, trials with very fast RTs (< 250 MS) and very slow RTs (> 2000 MS) are excluded. Two participants were excluded because they did not respond properly to the task. Similar criteria were applied by @haaf2019capturing. This results in 52 participants and a total of 17031 observations. In the following two sections we will describe the model fitting and parameter estimation procedure for the normal and log-normal model, respectively. 
+
+\newpage
 
 ## Normal Model 
 
@@ -870,7 +872,7 @@ Another popular convergence statistic is the number of effective samples. This s
 For the symbolic distance effect, the estimated number of effective samples is provided in panel D of Figure \@ref(fig:traceplots3p). For the package `rstan` the number is generally high, much higher than the actual number of samples depicted by the green dashed line. The `brms` package shows much more variation. The lowest effective sample sizes can be found for the intercept parameters. Table 1 also displays the number of effective samples for the general effects parameters in the `rstan` model. If the number of effective samples is too low, `brms` and `rstan` will return a warning. Here, this was not case, and all other diagnostics were good, so we continue with the interpretation of the estimates. 
 
 ### Estimation Results
-Considering good/acceptable convergence diagnostics, we can now interpret the estimation results. First, we present the general effects, then we visualize the individual variability of these effects.
+Considering acceptable to good convergence diagnostics, we can now interpret the estimation results. First, we present the general effects, then we visualize the individual variability of these effects.
 
 ```{r modelposteriorsmufigure3, echo=FALSE, fig.cap="The posterior distributions for the general effects estimated by the two packages. The middle line within the distributions represents the posterior mean. The shaded area within the distributions represent 95\\% credible intervals.", fig.align = "left", fig.height = 11, fig.width = 1, out.width="100%"}
 knitr::include_graphics("Images/Fig9_posteriormu_v2.png")
@@ -1263,11 +1265,11 @@ The authors have no conflicts of interest to declare.
 
 ## Availability of data and materials
 
-We do not have ownership of the data used in this study, but the the data set is publicly available on [GitHub](https://github.com/PerceptionCognitionLab/data0/blob/master/lexDec-dist5/). The `.stan` models, results of the model fit, and model comparison are available on [our GitHub repository](https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment).
+We do not have ownership of the data used in this study, but the the data set is publicly available on [GitHub (https://github.com/PerceptionCognitionLab/data0/blob/master/lexDec-dist5/)](https://github.com/PerceptionCognitionLab/data0/blob/master/lexDec-dist5/). The `.stan` models, results of the model fit, and model comparison are available on [our GitHub repository: https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment](https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment).
 
 ## Code availability 
 
-The R code used for the analyses and figures in this manuscript, and `R` tutorials on BHMs are available on [our GitHub repository](https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment).
+The R code used for the analyses and figures in this manuscript, and `R` tutorials on BHMs are available on [our GitHub repository: https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment](https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment).
 
 ## Authors’ contributions
 
@@ -1294,7 +1296,7 @@ r_refs(file = "r-references.bib")
 
 \begingroup
 \setlength{\parindent}{-0.5in}
-\setlength{\leftskip}{0.5in}
+\setlength{\leftskip}{0.2in}
 
 <div id = "refs">
 
