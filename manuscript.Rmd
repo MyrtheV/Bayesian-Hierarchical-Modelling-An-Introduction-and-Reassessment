@@ -8,10 +8,10 @@ author:
     corresponding : yes    # Define only one corresponding author
     address       : "Wassenaarseweg 52, Leiden"
     email         : "myrthe.veenman@gmail.com"
-  - name          : "Angelika Stefan"
+  - name          : "Angelika M. Stefan"
     affiliation   : "2"
     corresponding : no    # Define only one corresponding author
-  - name          : "Julia Haaf"
+  - name          : "Julia M. Haaf"
     affiliation   : "2"
     corresponding : no    # Define only one corresponding author
 
