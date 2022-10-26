@@ -127,7 +127,8 @@ priorsmodel9_cor <- c(set_prior("normal(0.5,1)", class = "b", lb = 0, nlpar = "b
                   set_prior("inv_gamma(13.8,5.3)", class = "sd", coef="dif3", group = "sub1",  nlpar = "a"),
                   set_prior("normal(0,0.3)", class = "b", coef="dif4",  nlpar = "a"),  
                   set_prior("inv_gamma(13.8,5.3)", class = "sd", coef="dif4", group = "sub1",  nlpar = "a"),
-                  set_prior("inv_gamma(13.8, 6.3)", class = "sigma"))
+                  set_prior("inv_gamma(13.8, 6.3)", class = "sigma"), 
+                  set_prior("lkj_corr_cholesky(1)", class = "L"))
 
 # Fit Model 
 bform_cor <- brms::bf(rt2 ~ a + b, nl = TRUE, 
