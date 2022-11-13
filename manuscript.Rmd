@@ -12,13 +12,15 @@ author:
     affiliation   : "2"
     corresponding : no    # Define only one corresponding author
   - name          : "Julia M. Haaf"
-    affiliation   : "2"
+    affiliation   : "3"
     corresponding : no    # Define only one corresponding author
 
 affiliation:
   - id            : "1"
     institution   : "Leiden University"
-  - id            : "2"
+  - id            : "2" 
+    institution   : "Universität der Bundeswehr München"
+  - id            : "3"
     institution   : "University of Amsterdam"
 
 authornote: |
@@ -238,7 +240,7 @@ Before diving into hierarchical modeling, let us consider two alternative approa
 
 A second alternative analysis method is to conduct an analysis on each participant's data independently. For example, in the digit classification task, we would estimate one digit effect per person (cf. the grey lines in Figure 1A), but no overall effect (cf. the blue line in Figure 1A). Therefore, when analyzing participant data independently, it is hard to draw any general conclusions.   
 
-In hierarchical analyses, the general or overall effect is called fixed effect, and the individual-specific deviations from this effect are called random effects (Rouder & Lu, 2005). We can also estimate individual effects, not as deviations from an overarching effect, but as effects for each individual, as obtained from a per-participant analysis. In this tutorial, we will use the terms general effect, individual deviation, and individual effects instead of fixed and random effects, because we believe these terms are better suited for the interpretation of our analyses. 
+\textcolor{blue}{In hierarchical analyses, the general or overall effect is sometimes called fixed effect, and the individual-specific deviations from this effect are in that case referred to as random effects (Rouder \& Lu, 2005). We can also estimate individual effects, not as deviations from an overarching effect, but as effects for each individual, as obtained from a per-participant analysis. Therefore, more common terms that suit the interpretation of the analyses better are general effect, individual deviation, and individual effects instead of fixed and random effects. We will use the terms general effect, individual deviation, and individual effect throughout this tutorial.} 
 
 If estimated for each participant independently, observed individual effects are quite variable because they are perturbed by sample noise. In hierarchical modeling, these individual effects are optimally and automatically corrected towards the general trend [@efron1977stein]. This phenomenon, also called `shrinkage', is illustrated in Panel B of Figure \@ref(fig:figure1). The rightmost observation in the figure is in sample quite large compared to the other observed effects. The estimated effect (green point) is drastically corrected towards the mean. Conversely, the general trend is only influenced slightly by individuals showing a highly divergent trend. By adding the individual variability to the model, we no longer assume independence between observations, but the overall effect in the model leaves the possibility to generalize the effect. Therefore, hierarchical analysis can be considered a middle ground between an independent analysis and an analysis of aggregated data. 
 ```{r figure2, echo=FALSE, eval = FALSE, fig.cap="Sample represents the observed response time in milliseconds per individual, while model represents the individual response time estimates. Individual estimates are shrunken towards the general trend. ", fig.align = "left", fig.height = 2, fig.width = 3, out.width="70%"}
@@ -948,7 +950,7 @@ Figure \@ref(fig:randomparfigure) shows the posterior means and 95% credible int
 
 The largest variation across participants can be seen for the intercept parameter. This means that participants vary considerably in their baseline response times. There is also considerable individual variation in the digit effects ($\delta$'s). However, most of the intervals contain zero which implies that the effects might be small or non-existent. The variability is most pronounced for the effect parameters of the digits close to 5. For these digits, there are also more intervals that do not contain zero, indicating that an effect might be present on the subject level. The posterior mean of the individual side effect ($\beta_{i}$) varies between -0.05 and 0.05. Again, all but four 95% credible intervals include zero indicating uncertainty about the existence of an effect for anyone. The credible intervals of the side effect and digit effects $\delta_{7}$ and $\delta_{3}$ indicate that different subjects may show opposite effects [@haaf2019some]. 
 
-Finally, Figure \@ref(fig:modelestimatesfigure3) shows how the relationship between individuals' digit effects.^[The design and code for this figure are by @j_van_langen_2020_3715576.] The posterior means of individual effects are represented by the dots. The right side of each plot represents the distribution of the individual estimates. Note that this distribution is not the posterior distribution of the general effect. It rather corresponds to the left side of Figure 6. The two panels of Figure \@ref(fig:modelestimatesfigure3) show that the estimates are almost identical between `Stan` and `brms`. This means that differences in the parametrization between the packages did not influence the results of the parameter estimation.
+Finally, Figure \@ref(fig:modelestimatesfigure3) shows how the relationship between individuals' digit effects.^[The design and code for this figure are by @j_van_langen_2020_3715576.] The posterior means of individual effects are represented by the dots. The right side of each plot represents the distribution of the individual estimates. Note that this distribution is not the posterior distribution of the general effect. It rather corresponds to the left side of Figure 6.
 
 ```{r modelestimatesfigure3, echo=FALSE, fig.cap="Model estimates for digit effect parameters in \\textit{rstan}. The points represent the mean parameter estimates for each individual. The violin plots on the right side show the variance of the individual parameter estimates. The size of effects is not very constistent within a person.", fig.align = "left", fig.height = 11, fig.width = 1, out.width="75%"}
 knitr::include_graphics("Images/Fig11_modelestimatefigure2_onlyrstan_v2.png")
@@ -1080,7 +1082,7 @@ The Bayes factor can also be interpreted as the relative evidence of two competi
 Our models consist of several parameters. Therefore, computing the Bayes factor of, for example, the normal model versus the log-normal model becomes somewhat difficult. Let the vector of all parameters of the normal model be $\bm{\theta_\text{n}}$ and the vector of all parameters for the log-normal model be $\bm{\theta_{\text{l}}}$. With the prior distributions for the two models, $f(\bm{\theta_\text{n}})$ and $f(\bm{\theta_\text{l}})$, the Bayes factor can be calculated by the following ratio of marginal likelihoods:  
 
 \begin{equation}
-\text{BF}_{\text{nl}} = \frac{\int_{-\infty}^{\infty}P(\bm{Y} | \mathcal{M}_\text{n}, \bm{\theta_{\text{n}}})f(\bm{\theta_{\text{n}}})d\bm{\theta_{\text{n}}}}{\int_{-\infty}^{\infty}P(\bm{Y} | \mathcal{M}_\text{l}, \bm{\theta_{\text{l}}})f(\bm{\theta_{\text{l}}})d\bm{\theta_{\text{l}}}}. 
+\text{BF}_{\text{nl}} = \frac{P(\bm{Y} | \mathcal{M}_n)}{P(\bm{Y} | \mathcal{M}_{\text{l}}) = \frac{\int_{-\infty}^{\infty}P(\bm{Y} | \mathcal{M}_\text{n}, \bm{\theta_{\text{n}}})f(\bm{\theta_{\text{n}}})d\bm{\theta_{\text{n}}}}{\int_{-\infty}^{\infty}P(\bm{Y} | \mathcal{M}_\text{l}, \bm{\theta_{\text{l}}})f(\bm{\theta_{\text{l}}})d\bm{\theta_{\text{l}}}}. 
 \end{equation}
 
 Imagine this results in $\text{BF}_{\text{nl}} = 100$. This means that the data are 100 times more likely under the normal model than under the log-normal model, clear evidence in favor of the normal model. \textcolor{blue}{But how do we know whether a Bayes factor of 100-to-1, or 10-to-1 or 3-to-1 fulfills?}. As a reminder, Bayes factors are the relative predictive accuracy of two models for the observed data. Therefore, Bayes factors are odds or ratios. Odds themselves are directly interpretable without the need for decisions or cutoffs. For example, if a presidential candidate is favored 10-to-1 over another one, then these are just the odds, and it is beside the point whether these are large or not. According to this line of thought, Rouder et al. [-@rouder2018theories] argue that researchers should take a similar approach when interpreting and reporting Bayes factors. While there exist rules of thumb to categorize Bayes factors verbally, we suggest researchers use their research context to form substantive conclusions based on Bayes factors, not arbitrary rules of thumb.
@@ -1227,7 +1229,7 @@ As prior distributions influence model estimation and model comparison, it is im
 
 We illustrated different methods to obtain Bayes factors. We want to emphasize the importance of checking the variability of the Bayes factor estimate, the Bayes factor sensitivity to prior distributions, and to ensure that the Bayes factor estimate is based on a sufficient number of posterior samples. 
 
-This tutorial showed the application of two R packages: `rstan` and `brms`. Which package to use depends mostly on the complexity of the model and your technical background. For the non-technical user, we recommend using `brms` because of its intuitive model specification. However, the default prior setup can be unsuitable for a specific research context and might need to be adapted. Additionally, users are limited to predefined parametrizations. `rstan` offers the most flexibility in model and prior specification. This flexibility comes with a cost: if the prior or the model is not well defined, results can be misleading. 
+This tutorial showed the application of two R packages: `rstan` and `brms`. Which package to use depends mostly on the complexity of the model and your technical background. For the non-technical user, we recommend using `brms` because of its intuitive model specification. However, the default prior setup can be unsuitable for a specific research context and (virtually) always needs to be adapted. Additionally, users are limited to predefined parametrizations. `rstan` offers the most flexibility in model and prior specification. This flexibility comes with a cost: if the prior or the model is not well defined, results can be misleading. 
 
 ## Further Recommendations
 

@@ -11,13 +11,13 @@ data {
   // vector[All] dif2;                // Delta digit 7 and 6, either 1/2, -1/2 or 0 
   // vector[All] dif3;                // Delta digit 4 and 3, either 1/2, -1/2 or 0 
   // vector[All] dif4;                // Delta digit 3 and 2, either 1/2, -1/2 or 0 
-  int a;                           // Prior: mean for mu, mu is the mean of gamma 
-  int b;                           // Prior: variance for mu, mu is the mean of gamma  
+  real a;                           // Prior: mean for mu, mu is the mean of gamma 
+  real b;                           // Prior: variance for mu, mu is the mean of gamma  
   // int a2;                         // Prior: mean for mean side            
   // real b2;                         // Prior variance for mean side 
-  int c;                          // Prior: mean for sigma, sigma is the variance of observations  
+  real c;                          // Prior: mean for sigma, sigma is the variance of observations  
   real d;                          // Prior: variance for sigma, sigma is the variance of observations  
-  int dd;                         // Prior: mean for g, g is the variance of theta 
+  real dd;                         // Prior: mean for g, g is the variance of theta 
   real f;                          // Prior: variance for g, g is the variance of theta 
   // real dd2;                       // Prior: mean for prior variance side, real if continuous variable 
   // real f2;                        // Prior: variance for prior variance side 

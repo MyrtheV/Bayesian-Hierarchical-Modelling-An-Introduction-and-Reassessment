@@ -137,7 +137,7 @@ bform_cor <- brms::bf(rt2 ~ a + b, nl = TRUE,
 )
 
 # Adjust 'myPath' to your directory 
-brmmodel9_new21102022 <- brm(formula = bform_cor,         # Model formula 
+brmmodel9_new26102022 <- brm(formula = bform_cor,         # Model formula 
                              data = indat1,              # Data frame with variables + dependent variable 
                              family = gaussian(),        # Response distribution 
                              prior = priorsmodel9_cor,       # Priors 
@@ -149,6 +149,10 @@ brmmodel9_new21102022 <- brm(formula = bform_cor,         # Model formula
                              #control = list(adapt_delta = 0.95),  # Control sampler's behavior, this avoided the problem of convergement 
                              # Finally we can save the model fit to a file 
                              file = "/myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/R code/BRMSmodelfit19_21102022")
+
+# !!! Check this prior: # student_t(3, 0, 2.5)    sd                           a                default
+# student_t(3, 0, 2.5)    sd                           b                default
+
 
 # Warning messages brmmodel9_new21102022:
 #   1: The largest R-hat is 1.74, indicating chains have not mixed.

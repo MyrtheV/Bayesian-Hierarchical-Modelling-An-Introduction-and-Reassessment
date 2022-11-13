@@ -37,9 +37,9 @@ parameters {
   vector[K] beta_p[N];              // ind participant intercept and slope coefficients by group
   vector<lower=0>[K] sigma_p;       // sd for intercept and slope
   vector[K] beta;                   // intercept and slope hyper-priors
-  corr_matrix[K] Omega;             // correlation matrix
+  //corr_matrix[K] Omega;             // correlation matrix
   real<lower=0> sigma;              // population sigma
-  
+  cholesky_factor_corr[K] L;
   }
 
 // Hierarchical regression.
@@ -65,13 +65,14 @@ model {
   target += normal_lpdf(beta[6] | a3, sqrt(b3));            // mean for digit (delta's) 
   target += inv_gamma_lpdf(sigma_p[6]| dd3, f3);         // variance for digit (delta's)  
   
-  target += lkj_corr_lpdf(Omega | 1);          // stan suggest to use lkj_cor_cholesky_lpdf, I don't know what the difference is exactly 
+  target += lkj_corr_cholesky_lpdf(L | 1);
+  //target += lkj_corr_lpdf(Omega | 1);          // stan suggest to use lkj_cor_cholesky_lpdf, I don't know what the difference is exactly 
   
   // Prior.
   target += inv_gamma_lpdf(sigma | c, d);         // variance of observations (y)  
 
   // Population model and likelihood.
-  target += multi_normal_lpdf(beta_p | beta, quad_form_diag(Omega, sqrt(sigma_p)));
+  target += multi_normal_cholesky_lpdf(beta_p | beta, quad_form_diag(L, sqrt(sigma_p)));
   
   
   
