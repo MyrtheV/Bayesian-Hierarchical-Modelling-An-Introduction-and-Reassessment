@@ -151,13 +151,13 @@ datareal$K <- 6  # intercept + side effect + digit effects (4)
 ################################################################################
 library(rstan) 
 # Adjust "myPath" below to your directory  
-hier_modelc_cor_25102022 <- stan(file = "/Users/myrtheveenman/myModel_cor.stan", 
-                                 data = datareal, 
-                                 iter = 4000, chains = 4,
-                                 # , control = list(max_treedepth = 15, adapt_delta = 0.95)
-                                 warmup = 1000, cores = 4)
-
-saveRDS(hier_modelc_cor_25102022, "hier_modelc_cor_25102022.rds")
+# hier_modelc_cor_25102022 <- stan(file = "/Users/myrtheveenman/myModel_cor.stan", 
+#                                  data = datareal, 
+#                                  iter = 4000, chains = 4,
+#                                  # , control = list(max_treedepth = 15, adapt_delta = 0.95)
+#                                  warmup = 1000, cores = 4)
+# 
+# saveRDS(hier_modelc_cor_25102022, "hier_modelc_cor_25102022.rds")
 
 # Warning messages:
 #   1: There were 3157 divergent transitions after warmup. See
@@ -178,7 +178,7 @@ saveRDS(hier_modelc_cor_25102022, "hier_modelc_cor_25102022.rds")
 # https://mc-stan.org/misc/warnings.html#tail-ess 
 
 
-# With the different code 
+# With the different code - this is the one to work on 
 hier_modelc_cor2_12112022 <- stan(file = "/Users/myrtheveenman/Documents/GitHub/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/BHM_correlation/Rstan/myModel_cor2.stan", 
                                  data = datareal, 
                                  iter = 10000, chains = 4,
