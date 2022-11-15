@@ -1199,7 +1199,7 @@ Note that the null model is the same in all three scenarios.
 To obtain the posterior model probability for each model in every scenario, we first compute the Bayes factor of every model against the null model. This includes the trivial Bayes factor of the null model against the null model, resulting in ten Bayes factors in total. Next, we calculate the sum of all these Bayes factors and divide each Bayes factor by this sum. This results in the posterior model probabilities shown in Table \@ref(tab:postmodprob).^[Note that it would be possible to calculate the posterior model probabilities directly from the marginal likelihoods. However, marginal likelihoods are often not computed explicitly in the model fitting process (e.g., when using the bayes_factor function in the `brms` package), so we believe that readers might find it easier to compute posterior model probabilities from Bayes factors.] All posterior model probabilities from the table and the posterior probability of the null model (see table note) sum to one.
 
 \begin{table}[H]
-\caption{Posterior Model Probabilities}
+\caption{Posterior Model Probabilities Normal Models}
 \label{tab:postmodprob}
 \begin{tabularx}{\textwidth}{XXXX}
 \toprule
@@ -1211,13 +1211,35 @@ Full model & $0.43*10^{-158}$ & $0.47*10^{-61}$ & $0.05$\\
 \bottomrule
 \end{tabularx}
 \begin{tablenotes}[para]
-\textit{Note.} Scenario 1: large individual differences. Scenario 2: small individual differences. Scenario 3: no individual differences. The posterior model probability of the null model is the same in every scenario and equals $0.50*10^{107}$. 
+\textit{Note.} Scenario 1: large individual differences. Scenario 2: small individual differences. Scenario 3: no individual differences. The posterior model probability of the null model is the same in every scenario and equals $0.50*10^{-107}$. 
 \end{tablenotes}
 \end{table}
 
 The table shows that the digit model without individual digit effects from scenario 3 has the highest posterior model probability, followed by the full model without individual digit and side effects (scenario 3). This means that the data are most likely under these models than the other eight models included in the comparison. In addition, the models with smaller prior expectations for individual differences (scenario 2), have higher posterior model probabilities than the models in scenario 1. Thus, decreasing our expectations of the size of the individual digit and side effects, or completely removing them, results in higher posterior model probabilities. Together with Figure \@ref(fig:randomparfigure), showing the small differences in individual effects (also illustrated by Haaf et al., 2019), this result supports the notion that side and digit effects are small and there is a lack in individual variability. 
 
-This example illustrates the benefits of comparing hierarchical models of varying complexity. While individual differences are a common phenomenon in psychology, there are instances where general effects are sufficient to describe the data adequately, or where only a random intercept, but no random slopes are necessary. As shown in Table \@ref(tab:postmodprob), Bayesian model comparisons can help researchers to identify the model that best describes the data. 
+### Log-normal Model
+We can take a similar approach for the log-normal model to compare the hierarchical models on varying complexity. We evaluate their performance in two scenarios that correspond to scenario 1 and 3 for the normal model. This means that in scenario 1 for the log-normal model, we estimated a null, digit, side and full model based on the prior specified in Equation, specifying large individual differences. For scenario 2, we remove individual variability from the side, digit, and full model. This resulted in the following posterior model probabilities shown in Table \@ref(tab:postmodproblog).
+
+\begin{table}[H]
+\caption{Posterior Model Probabilities Log-normal Models}
+\label{tab:postmodproblog}
+\begin{tabularx}{\textwidth}{XXXX}
+\toprule
+ & \multicolumn{1}{l}{Scenario 1} & \multicolumn{1}{l}{Scenario 3}\\
+\midrule
+Digit model & $26.61 * 10^9$ & $48.55 * 10^{15}$\\
+Side model & $0.25 * 10^{-49}$  & $0.50 * 10^{-52}$ \\
+Full model & $11.02 * 10^7$ &  $96.84 * 10^{14}$\\
+\bottomrule
+\end{tabularx}
+\begin{tablenotes}[para]
+\textit{Note.} Scenario 1: large individual differences. Scenario 2: no individual differences. The posterior model probability of the null model is the same in every scenario and equals $0.86*10^{-51}$. 
+\end{tablenotes}
+\end{table}
+
+The table shows that the digit model without individual digit effects from scenario 2 has the highest posterior model probability. This is in line with our findings for the normal model. Finally, we can compare the normal model with the highest marginal likelihood to the log-normal with the highest marginal likelihood. The normal digit model from scenario 3 to the log-normal model from scenario 2. The log marginal likelihood for the normal digit model without individual differences was $6441.04$ while the log marginal likelihood for the log-normal digit model without individual differences was $10637.45$. This indicates that the Bayes factor is in favor of the log-normal digit model over the normal digit model.  
+
+This example illustrates the benefits of comparing hierarchical models of varying complexity. While individual differences are a common phenomenon in psychology, there are instances where general effects are sufficient to describe the data adequately, or where only a random intercept, but no random slopes are necessary. As shown in Tables \@ref(tab:postmodprob) and \@ref(tab:postmodproblog), Bayesian model comparisons can help researchers to identify the model that best describes the data. 
 
 # Discussion 
 
