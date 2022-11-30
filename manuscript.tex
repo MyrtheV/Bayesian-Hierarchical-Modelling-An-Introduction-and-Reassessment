@@ -151,6 +151,7 @@
 \definecolor{mypink}{RGB}{255, 230, 255}
 \usepackage{todonotes}
 \newcommand{\Julia}[1]{\todo[inline, color=mypink]{#1}}
+\newcommand{\Revision}[1]{\textcolor{blue}{#1}}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{tabularx}
@@ -341,17 +342,17 @@ The means (\(\mu_{\gamma}\), \(\mu_{\beta}\), \(\mu_{\delta}\)) of these normal 
 \hypertarget{log-normal-model}{%
 \subsection{Log-normal Model}\label{log-normal-model}}
 
-A normal model may not be appropriate in case of more complex theories, hypotheses, or data structures. For example, the data in the example are response times. The normal model, however, can yield negative values, which seems very problematic. In addition, RT distributions are right-skewed. A better representation of the data at hand is therefore given by a log-normal model (Schramm \& Rouder, 2019). This means that Equation \eqref{eq:datalevel} has to be adjusted:
+A normal model may not be appropriate in case of more complex theories, hypotheses, or data structures. For example, the data in the example are response times. \textcolor{blue}{Response times cannot be negative. The normal model, however, can yield negative values. When using the normal model for response times, we are assigning probability to negative values that are not possible. This seems very problematic.} In addition, RT distributions are right-skewed. A better representation of the data at hand is therefore given by a log-normal model (Schramm \& Rouder, 2019). This means that Equation \eqref{eq:datalevel} has to be adjusted:
 
 \begin{equation}
 Y_{ijk} \sim \text{LogNormal}(\gamma_{i} + x_j \beta_{i} + u_j \delta_{7i} + v_j \delta_{6i} + w_j \delta_{4i} + z_j \delta_{3i}, \sigma^2).  
 \end{equation}
-Note that the only change in the model formulation is the change of the likelihood function from a normal distribution to a log-normal distribution. The location parameter of the log-normal distribution is described through the same combination of parameters as the mean of the normal model. However, it has a different interpretation. For example, for a location parameter of \(\mu = 0\) and a scale parameter of \(\sigma^2 = 1\), the mode of the log-normal distribution is \(0.368\), and the mean is \(1.65\).
+Note that the only change in the model formulation is the change of the likelihood function from a normal distribution to a log-normal distribution. \textcolor{blue}{The log-normal distribution only assigns probability to positive values, and is, just as the RT distributions, right-skewed. Therefore, the log-normal distribution is a better match for the RT data.} The location parameter of the log-normal distribution is described through the same combination of parameters as the mean of the normal model. However, it has a different interpretation. For example, for a location parameter of \(\mu = 0\) and a scale parameter of \(\sigma^2 = 1\), the mode of the log-normal distribution is \(0.368\), and the mean is \(1.65\).
 
 \hypertarget{summary}{%
 \subsection{Summary}\label{summary}}
 
-In summary, the models are placed directly on the raw RT data. The only difference between the normal and the log-normal models is the likelihood distribution. The normal model just assumes a symmetric normal distibution that can take on any value. The log-normal model assumes a log-normal distribution, which is restricted to positive values and has a right skew.
+In summary, the models are placed directly on the raw RT data. The only difference between the normal and the log-normal models is the likelihood distribution. The normal model just assumes a symmetric normal distribution that can take on any value. The log-normal model assumes a log-normal distribution, which is restricted to positive values and has a right skew.
 
 Both the normal and the log-normal models contain the following parameters: \(\gamma_i\) corresponds to the participant's overall response time, \(\beta_i\) corresponds to the participant's side effect, and the four \(\delta_{\cdot i}\) correspond to the effects between the digits furthest away from 5 (2 or 8) and the other digits. These person-specific effects all come from parent distributions. This results in the hierarchical structure shown in Figure \ref{fig:hierarchyplot}. The figure highlights the relationship between the parameters and the data.
 
@@ -511,7 +512,8 @@ The adjusted priors are visualized in Figure \ref{fig:priorvisualization2}. The 
 \hypertarget{log-normal-model-1}{%
 \subsection{Log-normal model}\label{log-normal-model-1}}
 
-We follow the same procedure for prior specification in the log-normal model. As before, we prefer to apply conjugate priors. The conjugate priors that we applied to the normal model are also conjugate priors for the log-normal model. As a starting point, we can therefore use the adjusted priors of the normal model and perform a prior prediction, shown in panel C of Figure \ref{fig:priorpredfigurepanel}. These priors result in a slightly higher variance in RTs than we would expect, and, importantly, the mean response time differences are not centered around zero in all conditions. This pattern is inconsistent with our expectations, which means that prior distributions for the log-normal model need to be adjusted.
+We follow the same procedure for prior specification in the log-normal model. As before, we prefer to apply conjugate priors. \textcolor{blue}{The conjugate priors that we applied to the normal model are also conjugate priors for the log-normal model [@fink1997compendium]. For instance, with a normal distribution as prior for the mean of the log-normal model, we assume that the mean of the parameter can be either negative, zero, or positive, and assign a higher probability to values closer to zero. Applying this conjugate prior, the posterior of the mean in the log-normal model will result in a normal distribution as well.}
+As a starting point, we can use the adjusted priors of the normal model and perform a prior prediction, shown in panel C of Figure \ref{fig:priorpredfigurepanel}. These priors result in a slightly higher variance in RTs than we would expect, and, importantly, the mean response time differences are not centered around zero in all conditions. This pattern is inconsistent with our expectations, which means that prior distributions for the log-normal model need to be adjusted.
 
 The transformation of the prior distributions is not as simple as the transformation of the parameter itself. Panel C shows that with the same priors as for the normal model, we obtain different data for the log-normal model compared to the normal model (panel B). Therefore, we adjusted the priors until the simulated data matched our expectations and looked like panel B. This yields the following priors that result in the prior prediction shown in panel D of Figure \ref{fig:priorpredfigurepanel}:\footnote{For the overall baseline \(\mu_\gamma\) we adjusted the prior based on our expectation of the expected overall response times. A mean parameter of -0.5 for the log-normal likelihood corresponds to a mean response time of 1.}
 
@@ -887,7 +889,7 @@ Figure \ref{fig:randomparplotlog} shows the individual estimates for the digit a
 \caption{The posterior means for individual effect parameters in the log-normal model with 95\% credible intervals as estimated by \textit{rstan}, shown in increasing order. The dashed line represents the general posterior mean. Pink intervals contain zero, blue interval do not contain zero.}\label{fig:randomparplotlog}
 \end{figure}
 
-We can further inspect the individual estimates for the digit effects in Figure \ref{fig:modeldigitestplotlog}. The figure shows the individual estimates for the digit effects with the distribution of the variability of the individual estimates (not the posterior distribution of the general effect). The figure illustrates that there is considerable variance in the point estimates of the individual digit effects. However, compared to the normal model there is considerably more hierarchical shrinkage.
+We can further inspect the individual estimates for the digit effects in Figure \ref{fig:modeldigitestplotlog}. The figure shows the individual estimates for the digit effects with the distribution of the variability of the individual estimates (not the posterior distribution of the general effect). The figure illustrates that there is considerable variance in the point estimates of the individual digit effects. However, compared to the normal model there is considerably more hierarchical shrinkage. \textcolor{blue}{This means that in the log-normal model, the individual effects are corrected more towards the group mean, compared to the normal model. Or, the group mean in the log-normal model is not affected as much by individuals showing a divergent trend compared to the normal model. Whether we should prefer a model with more shrinkage depends on the theoretical considerations. If more individual variation is expected, less shrinkage would be preferred. However, the advantage of more shrinkage is that outliers do not influence the estimation of the effect as much. }
 
 \hypertarget{model-comparison}{%
 \section{Model Comparison}\label{model-comparison}}
@@ -1097,7 +1099,7 @@ We can take a similar approach for the log-normal model to compare the hierarchi
 \label{tab:postmodproblog}
 \begin{tabularx}{\textwidth}{XXXX}
 \toprule
- & \multicolumn{1}{l}{Scenario 1} & \multicolumn{1}{c}{Scenario 3}\\
+ & \multicolumn{1}{l}{Scenario 1} & \multicolumn{1}{l}{Scenario 3}\\
 \midrule
 Digit model & $26.61 * 10^9$ & $48.55 * 10^{15}$\\
 Side model & $0.25 * 10^{-49}$  & $0.50 * 10^{-52}$ \\
@@ -1130,7 +1132,7 @@ This tutorial showed the application of two R packages: \texttt{rstan} and \text
 With this tutorial, we attempted to cover the most relevant topics that researchers encounter when starting with Bayesian hierarchical modeling. However, there are still many remaining issues and recommendations that we could not discuss. Here, we would like to point to further references in the literature if researchers want to continue mastering Bayesian hierarchical modeling.
 
 First, we kept the discussion of the software packages and code fairly brief. We provide further code examples for the digit classification task in the \href{https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment}{Online Supplement}. For different models, it may be useful to study additional tutorials and books. For \texttt{rstan}, we recommend the \texttt{Stan} manual (Stan Development Team, 2018b, 2018a). For \texttt{brms} there are several useful tutorials (Bürkner, 2017, 2018; Bürkner \& Vuorre, 2019). There are also several resources for Bayesian estimation with other samplers (Lee \& Wagenmakers, 2013; Rouder, Morey, \& Pratte, 2013). Two other useful tutorials for Bayesian modeling are Schad, Betancourt, and
-Vasishth (2019) and Schad, Nicenboim, Bürkner, Betancourt, and Vasishth (2021).
+Vasishth (2019) and Schad, Nicenboim, Bürkner, Betancourt, and Vasishth (2021). \textcolor{blue}{There are also other R software packages for Bayesian multilevel modeling besides `brms` and `rstan`, such as `BayesFactor`[@R-BayesFactor] and `rstanarm`[@rstanarm2020], that we did not illustrate in this tutorial. However, most of these other R software packages are a bit more limited, for instance, in model specification and prior settings.}
 
 Second, we did not discuss study planning. When planning an experiment, researchers may want to determine the number of participants required to gain conclusive results. Bayesian analysis has the advantage that an optional stopping paradigm may be employed (Rouder, 2014; Schönbrodt, Wagenmakers, Zehetleitner, \& Perugini, 2017). Schönbrodt and Wagenmakers (2018) and Stefan and colleagues (2019) introduced Bayes factor design analysis for fixed and sequential designs. However, these approaches to study planning have not yet been fully extended to a hierarchical setup (but see recent efforts by Vasishth et al., 2021). The extension to nested designs is not entirely trivial because, in addition to planning the number of participants, we also need to consider the number of trials (Rouder \& Haaf, 2018). While we think there remains some open questions on the topic, the tutorial by Stefan and colleagues (2019) is a good place to start for applied researchers.
 
