@@ -29,12 +29,12 @@ model {
   beta[6] ~ normal(0, 0.3);          // mean delta 
   Omega ~ lkj_corr(1);               // correlation 
   //sigma_p ~ exponential(1);  // This is just from an example 
-  sigma_p[1] ~ inv_gamma(3, 0.7);    // variance beta 
-  sigma_p[2] ~ inv_gamma(3, 0.5);    // variance delta 
-  sigma_p[3] ~ inv_gamma(3, 0.5);    // variance delta 
-  sigma_p[4] ~ inv_gamma(3, 0.5);    // variance delta 
-  sigma_p[5] ~ inv_gamma(3, 0.5);    // variance delta 
-  sigma_p[6] ~ inv_gamma(3, 0.5);    // variance delta 
+  target += normal_lpdf(sigma_p[1] | 0, 1) - normal_lcdf(0 | 0, 1);    // variance beta 
+  target += normal_lpdf(sigma_p[2] | 0, 1) - normal_lcdf(0 | 0, 1);    // variance delta 
+  target += normal_lpdf(sigma_p[3] | 0, 1) - normal_lcdf(0 | 0, 1);    // variance delta 
+  target += normal_lpdf(sigma_p[4] | 0, 1) - normal_lcdf(0 | 0, 1);    // variance delta 
+  target += normal_lpdf(sigma_p[5] | 0, 1) - normal_lcdf(0 | 0, 1);    // variance delta 
+  target += normal_lpdf(sigma_p[6] | 0, 1) - normal_lcdf(0 | 0, 1);    // variance delta 
   sigma ~ inv_gamma(3, 0.7);         // variance 
   beta_p ~ multi_normal(beta, quad_form_diag(Omega, sqrt(sigma_p)));
   

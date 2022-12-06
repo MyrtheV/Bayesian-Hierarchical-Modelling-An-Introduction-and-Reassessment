@@ -44,9 +44,7 @@ parameters {
 
 // Hierarchical regression.
 model {
- 
   
-  // Hyperpriors.
   target += normal_lpdf(beta[1]| a, sqrt(b))-normal_lccdf(0.0 | a, sqrt(b));             // mean of intercept (gamma), b = standard deviation , sqrt(b) is sd but since 1 not necessary to sqrt()
   target += inv_gamma_lpdf(sigma_p[1] | dd, f);            // tau is g, g is the variance of intercept (gamma)   
   
@@ -74,9 +72,17 @@ model {
   // Population model and likelihood.
   target += multi_normal_cholesky_lpdf(beta_p | beta, quad_form_diag(L, sqrt(sigma_p)));
   
-  
+  {
+    vector[All] x_beta_All;
+    for (n in 1:All)
+      x_beta_All[n] = x[n, ] * beta_p[group_inds[n]];
+    target += normal_lpdf(y | x_beta_All, sqrt(sigma));
+  }
   
   //betaii 
-  target += normal_lpdf(y | x[All] * beta_p[group_inds[All]], sqrt(sigma)); // does not work
+  //target += normal_lpdf(y | x[All] * beta_p[group_inds[All]], sqrt(sigma)); // does not work
+  
+  //for (n in 1:All)
+    //y[n] ~ normal(x[n] * beta_p[group_inds[n]], sqrt(sigma));
 
 }

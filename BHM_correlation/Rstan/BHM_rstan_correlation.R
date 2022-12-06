@@ -32,7 +32,7 @@ datareal <- list(N = length(unique(indat1$sub)))
 datareal$All <- nrow(indat1)  # number of total observations, adding to the list for the analysis  
 
 ### Indicating which observation belongs to which person 
-sub <- rep(1:N, each = J)
+sub <- as.numeric(factor(indat1$sub))
 
 # Need a variable with group number that are crhonical (that doesn't skip numbers)
 for (j in 1:nrow(indat1)){
@@ -53,8 +53,8 @@ datareal$y <- indat1$rt/1000  # rt in seconds instead of miliseconds, added to t
 # so if bigger than 2 than 1/2, else than -1/2 
 for (j in 1:nrow(indat1)){
   if (indat1$stim[j] < 3) {
-    datareal$side[j] <- 1/2}
-  else datareal$side[j] <- -1/2
+    indat1$side[j] <- 1/2}
+  else indat1$side[j] <- -1/2
 }
 
 ### Add variable with information about difference between digits to the list, for parameters delta's 
@@ -98,6 +98,7 @@ datareal$dif1 <- indat1$dif1
 datareal$dif2 <- indat1$dif2
 datareal$dif3 <- indat1$dif3 
 datareal$dif4 <- indat1$dif4 
+datareal$side <- indat1$side 
 
 # Create a variable indicator for intercept 
 indat1$inter <- rep(1, nrow(indat1))
@@ -145,6 +146,7 @@ datareal$f3 <- f3
 
 # Add number of predictors 
 datareal$K <- 6  # intercept + side effect + digit effects (4)
+# datareal$K <- 2  # intercept + side effect 
 
 ################################################################################
 ## 2. Fit Model 
@@ -179,13 +181,19 @@ library(rstan)
 
 
 # With the different code - this is the one to work on 
-hier_modelc_cor2_12112022 <- stan(file = "/Users/myrtheveenman/Documents/GitHub/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/BHM_correlation/Rstan/myModel_cor2.stan", 
+hier_modelc_cor2_12112022 <- stan(file = "myModel_cor2.stan", 
                                  data = datareal, 
-                                 iter = 10000, chains = 4,
-                                 control = list(max_treedepth = 18, adapt_delta = 0.97),
-                                 warmup = 3000, cores = 4)
+                                 iter = 2000, chains = 4,
+                              #  control = list(max_treedepth = 15, adapt_delta = 0.97),
+                                 warmup = 1000, cores = 4)
 
 saveRDS(hier_modelc_cor2_12112022, "hier_modelc_cor2_12112022.rds")
+
+summary(hier_modelc_cor2_12112022, pars = c("beta", "sigma_p", "sigma", "L"))$summary
+traceplot(hier_modelc_cor2_12112022, pars = "beta")
+traceplot(hier_modelc_cor2_12112022, pars = "sigma_p")
+traceplot(hier_modelc_cor2_12112022, pars = "L")
+traceplot(hier_modelc_cor2_12112022, pars = "sigma")
 
 # Warning messages with 10000 iterations, 3000 warmup, control = list(max_treedepth = 18, adapt_delta = 0.97):
 #   1: There were 1023 divergent transitions after warmup. See
