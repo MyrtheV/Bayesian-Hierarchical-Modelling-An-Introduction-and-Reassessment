@@ -181,19 +181,39 @@ library(rstan)
 
 
 # With the different code - this is the one to work on 
-hier_modelc_cor2_12112022 <- stan(file = "myModel_cor2.stan", 
+hier_modelc_cor2_06122022 <- stan(file = "/Users/myrtheveenman/Documents/GitHub/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/BHM_correlation/Rstan/myModel_cor2.stan", 
                                  data = datareal, 
-                                 iter = 2000, chains = 4,
+                                 iter = 5000, chains = 4,
                               #  control = list(max_treedepth = 15, adapt_delta = 0.97),
-                                 warmup = 1000, cores = 4)
+                                 warmup = 2500, cores = 4)
 
 saveRDS(hier_modelc_cor2_12112022, "hier_modelc_cor2_12112022.rds")
 
-summary(hier_modelc_cor2_12112022, pars = c("beta", "sigma_p", "sigma", "L"))$summary
-traceplot(hier_modelc_cor2_12112022, pars = "beta")
-traceplot(hier_modelc_cor2_12112022, pars = "sigma_p")
-traceplot(hier_modelc_cor2_12112022, pars = "L")
-traceplot(hier_modelc_cor2_12112022, pars = "sigma")
+summary(hier_modelc_cor2_06122022, pars = c("beta", "sigma_p", "sigma", "L"))$summary
+rstan::traceplot(hier_modelc_cor2_06122022, pars = "beta")
+rstan::traceplot(hier_modelc_cor2_06122022, pars = "sigma_p")
+rstan::traceplot(hier_modelc_cor2_06122022, pars = "L")
+rstan::traceplot(hier_modelc_cor2_06122022, pars = "sigma")
+
+# Warning messages 5000 iterations 2500 warmup:
+#   1: There were 358 divergent transitions after warmup. See
+# https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
+# to find out why this is a problem and how to eliminate them.
+# 2: There were 2506 transitions after warmup that exceeded the maximum treedepth. Increase max_treedepth above 10. See
+# https://mc-stan.org/misc/warnings.html#maximum-treedepth-exceeded
+# 3: There were 4 chains where the estimated Bayesian Fraction of Missing Information was low. See
+# https://mc-stan.org/misc/warnings.html#bfmi-low
+# 4: Examine the pairs() plot to diagnose sampling problems
+# 
+# 5: The largest R-hat is NA, indicating chains have not mixed.
+# Running the chains for more iterations may help. See
+# https://mc-stan.org/misc/warnings.html#r-hat
+# 6: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
+# Running the chains for more iterations may help. See
+# https://mc-stan.org/misc/warnings.html#bulk-ess
+# 7: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
+# Running the chains for more iterations may help. See
+# https://mc-stan.org/misc/warnings.html#tail-ess
 
 # Warning messages with 10000 iterations, 3000 warmup, control = list(max_treedepth = 18, adapt_delta = 0.97):
 #   1: There were 1023 divergent transitions after warmup. See
