@@ -1,0 +1,116 @@
+---
+title             : "Bayesian Hierarchical Modeling: An Introduction and Reassessment"
+shorttitle        : "Bayesian Hierarchical Modeling"
+
+author: 
+  - name          : "Myrthe Veenman"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Wassenaarseweg 52, Leiden"
+    email         : "myrthe.veenman@gmail.com"
+  - name          : "Angelika M. Stefan"
+    affiliation   : "2"
+    corresponding : no    # Define only one corresponding author
+  - name          : "Julia M. Haaf"
+    affiliation   : "3"
+    corresponding : no    # Define only one corresponding author
+
+affiliation:
+  - id            : "1"
+    institution   : "Leiden University"
+  - id            : "2" 
+    institution   : "Universität der Bundeswehr München"
+  - id            : "3"
+    institution   : "University of Amsterdam"
+
+authornote: |
+
+  This paper is written in R Markdown. The R Markdown file, other R code, and additional information on this study can be found in the [Online Supplement: https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment](https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment).  
+
+abstract: |
+  With the recent development of easy-to-use tools for Bayesian analysis, psychologists have started to embrace Bayesian hierarchical modeling. Bayesian hierarchical models provide an intuitive account of inter- and intraindividual variability and are particularly suited for the evaluation of repeated-measures designs. Here, we provide guidance for model specificaton and interpretation in Bayesian hierarchical modeling and describe common pitfalls that can arise in the process of model fitting and evaluation. Our introduction gives particular emphasis to prior specification and prior sensitivity, as well as to the calculation of Bayes factors for model comparisons. We illustrate the use of state-of-the-art software programs `Stan` and `brms`. The result is an overview over best practices in Bayesian hierarchical modeling that, as we hope, will help psychologists in making the best use of Bayesian hierarchical modeling.  
+  
+keywords          : "Multilevel, Tutorial, rstan, brms, Bayes factor"
+
+bibliography      : ["r-references.bib"]
+
+header-includes   :
+   - \usepackage{bm}
+   - \usepackage{amsmath}
+   - \usepackage{setspace}
+   - \usepackage{xcolor}
+   - \definecolor{mypink}{RGB}{255, 230, 255}
+   - \usepackage{todonotes}
+   - \newcommand{\Julia}[1]{\todo[inline, color=mypink]{#1}}
+   - \newcommand{\Revision}[1]{\textcolor{blue}{#1}}
+   - \usepackage{graphicx}
+   - \usepackage{float}
+   - \usepackage{tabularx}
+   - \usepackage{hyperref}
+   - \newenvironment{CSLReferences}{}{\par}
+
+floatsintext      : yes
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : no
+mask              : no
+draft             : no
+figcaption        : yes 
+indent            : true 
+
+documentclass     : "apa6"
+classoption       : "doc"
+output            : papaja::apa6_pdf
+csl               : apa6.csl
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Section in the Intro about out tutorial:
+
+Our tutorial is directed at researchers who have a basic \Revision{conceptual} understanding of Bayesian inference and parameter estimation and are planning to perform more complex Bayesian analyses \Revision{of psychological phenomena. We hope to achieve a balance of detail and overview---while we want to provide guidance for a full Bayesian workflow (similar to Gelman et al. and Schad et al.) we don't shy away from in-depth explanations for the most curious scientists. To ensure that a broad audience is able to follow the tutorial, we limit and carefully explain equations. However, rudimentary knowledge of calculus is advantageous to fully understand Bayesian analysis.}
+
+### Section about prior propriety
+
+Another important issue is that wide priors are often improper probability distributions [@hobert1996effect]. \Revision{A prior is proper if two conditions hold: 1. All values of the probability distribution are positive definite, and 2. the probability distribution sums to one for discrete data or integrates to one for continuous data. An example of a proper and improper probability distribution are provided in Figure XXX. The figure shows two hypothetical priors for parameter $\theta$. The first condition can be assessed by checking the y-values---both priors have only positive definite values as function output (0.1, 0.2, and 0.4). To assess the second condition, we need to sum up the function values. Panel A shows a proper distribution where the values sum to 1; panel B shows an improper distribution where the values sum to 1.2.}
+
+```{r, echo = F, fig.width=7, fig.height=3.5, fig.align='center', fig.cap="Two hypothetical priors for a discrete parameter $\\theta$. A. A proper probability distribution that sums to one. B. An improper probability distribution that sums to 1.2."}
+layout(matrix(1:2, nrow = 1))
+par(mgp = c(2, .7, 0))
+x <- 1:5
+y <- c(12, 6, 6, 3, 3)
+y <- y / sum(y)
+
+plot(x, y, pch = 19, col = "gray40", axes = F, ylim = c(0, 1), ylab = "Probability", xlab = expression(theta), main = "A. Proper", xlim = c(.5, 5.5))
+axis(1, x)
+axis(2, c(0, unique(y), 1), las = 2)
+for(i in x) lines(rep(x[i], 2), c(0, y[i]), col = "gray40", lwd = 2)
+
+par(mgp = c(2, .7, 0))
+y[3] <- .4
+
+plot(x, y, pch = 19, col = "gray40", axes = F, ylim = c(0, 1), xlim = c(.5, 5.5), ylab = "Probability", xlab = expression(theta), main = "B. Improper")
+axis(1, x)
+axis(2, c(0, unique(y), 1), las = 2)
+for(i in x) lines(rep(x[i], 2), c(0, y[i]), col = "gray40", lwd = 2)
+```
+
+A \Revision{more common} example of an improper prior is a uniform prior distribution ranging from minus infinity to infinity. In case of improper priors, \Revision{it is often impossible to obtain correct estimation of general and individual effects in hierarchical models because the resulting posteriors will again be improper probability distributions.} However, even proper priors can result in improper posteriors [@hobert1996effect]. Although estimation should not be possible in this situation, statistical software might still provide results without notifying the user that the posterior distribution does not exist. If users are not aware of the impropriety problem, this can result in misleading conclusions. Therefore, it is important to check if *(a)* the priors are proper and *(b)* the priors result in proper posteriors. \Revision{Unfortunately,} there is no fail-safe method that guarantees proper posteriors for hierarchical models. The best approach is to choose well-reasoned informative priors for the model, for instance, by using the proposed four-step procedure below. \Revision{Priors that are proper and not too diffuse will in most cases lead to proper posteriors.}
+
+### Section on marginal likelihood STILL WORK IN PROGRESS
+
+Our models consist of several parameters. Therefore, computing the Bayes factor of, for example, the normal model versus the log-normal model becomes somewhat difficult. Let the vector of all parameters of the normal model be $\bm{\theta_\text{n}}$ and the vector of all parameters for the log-normal model be $\bm{\theta_{\text{l}}}$. With the prior distributions for the two models, $f(\bm{\theta_\text{n}})$ and $f(\bm{\theta_\text{l}})$, the Bayes factor can be calculated by the following ratio of marginal likelihoods:  
+
+\begin{equation}
+\text{BF}_{\text{nl}} = \frac{P(\bm{Y} | \mathcal{M}_n)}{P(\bm{Y} | \mathcal{M}_{\text{l}})} = \frac{\int_{-\infty}^{\infty}P(\bm{Y} | \mathcal{M}_\text{n}, \bm{\theta_{\text{n}}})f(\bm{\theta_{\text{n}}})d\bm{\theta_{\text{n}}}}{\int_{-\infty}^{\infty}P(\bm{Y} | \mathcal{M}_\text{l}, \bm{\theta_{\text{l}}})f(\bm{\theta_{\text{l}}})d\bm{\theta_{\text{l}}}}. 
+\end{equation}
+
+
+References to include:
+
+Gelman, A., Vehtari, A., Simpson, D., Margossian, C. C., Carpenter, B., Yao, Y., ... & Modrák, M. (2020). Bayesian workflow. arXiv preprint arXiv:2011.01808.
+
+Schad, D. J., Betancourt, M., & Vasishth, S. (2021). Toward a principled Bayesian workflow in cognitive science. Psychological methods, 26(1), 103.
