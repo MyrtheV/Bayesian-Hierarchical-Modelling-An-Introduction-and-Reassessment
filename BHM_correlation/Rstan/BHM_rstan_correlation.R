@@ -153,40 +153,13 @@ datareal$K <- 6  # intercept + side effect + digit effects (4)
 ## 2. Fit Model 
 ################################################################################
 library(rstan) 
-# Adjust "myPath" below to your directory  
-# hier_modelc_cor_25102022 <- stan(file = "/Users/myrtheveenman/myModel_cor.stan", 
-#                                  data = datareal, 
-#                                  iter = 4000, chains = 4,
-#                                  # , control = list(max_treedepth = 15, adapt_delta = 0.95)
-#                                  warmup = 1000, cores = 4)
-# 
-# saveRDS(hier_modelc_cor_25102022, "hier_modelc_cor_25102022.rds")
+# Don't forget to set the correct directory for the file path
 
-# Warning messages:
-#   1: There were 3157 divergent transitions after warmup. See
-# https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
-# to find out why this is a problem and how to eliminate them. 
-# 2: There were 2 transitions after warmup that exceeded the maximum treedepth. Increase max_treedepth above 10. See
-# https://mc-stan.org/misc/warnings.html#maximum-treedepth-exceeded 
-# 3: Examine the pairs() plot to diagnose sampling problems
-# 
-# 4: The largest R-hat is NA, indicating chains have not mixed.
-# Running the chains for more iterations may help. See
-# https://mc-stan.org/misc/warnings.html#r-hat 
-# 5: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
-# Running the chains for more iterations may help. See
-# https://mc-stan.org/misc/warnings.html#bulk-ess 
-# 6: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
-# Running the chains for more iterations may help. See
-# https://mc-stan.org/misc/warnings.html#tail-ess 
-
-
-# With the different code - this is the one to work on 
 hier_modelc_cor_06042023 <- stan(file = "myModel_cor_julia.stan", 
                                  data = datareal, 
                                  iter = 2500, chains = 4,
                               #  control = list(max_treedepth = 15, adapt_delta = 0.97),
-                                 warmup = 1000, cores = 4)
+                                 warmup = 2500, cores = 4)
 
 saveRDS(hier_modelc_cor_06042023, "hier_modelc_cor_06042023.rds")
 
@@ -195,97 +168,5 @@ traceplot(hier_modelc_cor_06042023, pars = "beta")
 traceplot(hier_modelc_cor_06042023, pars = "s2_p")
 traceplot(hier_modelc_cor_06042023, pars = "L")
 traceplot(hier_modelc_cor_06042023, pars = "sigma")
-
-# Warning messages with 10000 iterations, 3000 warmup, control = list(max_treedepth = 18, adapt_delta = 0.97):
-#   1: There were 1023 divergent transitions after warmup. See
-# https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
-# to find out why this is a problem and how to eliminate them. 
-# 2: There were 4 chains where the estimated Bayesian Fraction of Missing Information was low. See
-# https://mc-stan.org/misc/warnings.html#bfmi-low 
-# 3: Examine the pairs() plot to diagnose sampling problems
-# 
-# 4: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
-# Running the chains for more iterations may help. See
-# https://mc-stan.org/misc/warnings.html#bulk-ess 
-# 5: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
-# Running the chains for more iterations may help. See
-# https://mc-stan.org/misc/warnings.html#tail-ess 
-
-# When running pairs()
-# the following parameters were dropped because they are constant
-# L[1,1] L[1,2] L[1,3] L[2,3] L[1,4] L[2,4] L[3,4] L[1,5] L[2,5] L[3,5] L[4,5] L[1,6] L[2,6] L[3,6] L[4,6] L[5,6]
-
-
-# Warning messages with 7000 iterations, 2000 warm-up, control = list(max_treedepth = 17, adapt_delta = 0.95):
-#   1: There were 950 divergent transitions after warmup. See
-# https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
-# to find out why this is a problem and how to eliminate them. 
-# 2: There were 2 transitions after warmup that exceeded the maximum treedepth. Increase max_treedepth above 17. See
-# https://mc-stan.org/misc/warnings.html#maximum-treedepth-exceeded 
-# 3: There were 4 chains where the estimated Bayesian Fraction of Missing Information was low. See
-# https://mc-stan.org/misc/warnings.html#bfmi-low 
-# 4: Examine the pairs() plot to diagnose sampling problems
-# 
-# 5: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
-# Running the chains for more iterations may help. See
-# https://mc-stan.org/misc/warnings.html#bulk-ess 
-# 6: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
-# Running the chains for more iterations may help. See
-# https://mc-stan.org/misc/warnings.html#tail-ess
-
-# Warning messages for above code (6000 iterations,  control = list(max_treedepth = 20, adapt_delta = 0.95)):
-#   1: There were 5447 divergent transitions after warmup. See
-# https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
-# to find out why this is a problem and how to eliminate them. 
-# 2: There were 2991 transitions after warmup that exceeded the maximum treedepth. Increase max_treedepth above 15. See
-# https://mc-stan.org/misc/warnings.html#maximum-treedepth-exceeded 
-# 3: There were 3 chains where the estimated Bayesian Fraction of Missing Information was low. See
-# https://mc-stan.org/misc/warnings.html#bfmi-low 
-# 4: Examine the pairs() plot to diagnose sampling problems
-# 
-# 5: The largest R-hat is NA, indicating chains have not mixed.
-# Running the chains for more iterations may help. See
-# https://mc-stan.org/misc/warnings.html#r-hat 
-# 6: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
-# Running the chains for more iterations may help. See
-# https://mc-stan.org/misc/warnings.html#bulk-ess 
-# 7: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
-# Running the chains for more iterations may help. See
-# https://mc-stan.org/misc/warnings.html#tail-ess 
-
-
-# Warning messages with 4000 iteration and without the control settings:
-#   1: There were 40 divergent transitions after warmup. See
-# https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
-# to find out why this is a problem and how to eliminate them. 
-# 2: There were 1200 transitions after warmup that exceeded the maximum treedepth. Increase max_treedepth above 10. See
-# https://mc-stan.org/misc/warnings.html#maximum-treedepth-exceeded 
-# 3: There were 4 chains where the estimated Bayesian Fraction of Missing Information was low. See
-# https://mc-stan.org/misc/warnings.html#bfmi-low 
-# 4: Examine the pairs() plot to diagnose sampling problems
-# 
-# 5: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
-# Running the chains for more iterations may help. See
-# https://mc-stan.org/misc/warnings.html#bulk-ess 
-
-# Warning messages with 6000 iterations and control = list(max_treedepth = 15, adapt_delta = 0.95):
-#   1: There were 1051 divergent transitions after warmup. See
-# https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
-# to find out why this is a problem and how to eliminate them. 
-# 2: There were 394 transitions after warmup that exceeded the maximum treedepth. Increase max_treedepth above 15. See
-# https://mc-stan.org/misc/warnings.html#maximum-treedepth-exceeded 
-# 3: There were 4 chains where the estimated Bayesian Fraction of Missing Information was low. See
-# https://mc-stan.org/misc/warnings.html#bfmi-low 
-# 4: Examine the pairs() plot to diagnose sampling problems
-# 
-# 5: The largest R-hat is NA, indicating chains have not mixed.
-# Running the chains for more iterations may help. See
-# https://mc-stan.org/misc/warnings.html#r-hat 
-# 6: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
-# Running the chains for more iterations may help. See
-# https://mc-stan.org/misc/warnings.html#bulk-ess 
-# 7: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
-# Running the chains for more iterations may help. See
-# https://mc-stan.org/misc/warnings.html#tail-ess 
 
 
