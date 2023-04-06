@@ -128,6 +128,7 @@ dd3 <- 3  # mean for variance of delta, adjusted
 f3 <- 0.5   # variance for variance of delta, adjusted 
 
 
+
 datareal$a <- a 
 datareal$b <- b 
 datareal$c <- c 
@@ -181,19 +182,19 @@ library(rstan)
 
 
 # With the different code - this is the one to work on 
-hier_modelc_cor2_12112022 <- stan(file = "myModel_cor2.stan", 
+hier_modelc_cor_06042023 <- stan(file = "myModel_cor_julia.stan", 
                                  data = datareal, 
-                                 iter = 2000, chains = 4,
+                                 iter = 2500, chains = 4,
                               #  control = list(max_treedepth = 15, adapt_delta = 0.97),
                                  warmup = 1000, cores = 4)
 
-saveRDS(hier_modelc_cor2_12112022, "hier_modelc_cor2_12112022.rds")
+saveRDS(hier_modelc_cor_06042023, "hier_modelc_cor_06042023.rds")
 
-summary(hier_modelc_cor2_12112022, pars = c("beta", "sigma_p", "sigma", "L"))$summary
-traceplot(hier_modelc_cor2_12112022, pars = "beta")
-traceplot(hier_modelc_cor2_12112022, pars = "sigma_p")
-traceplot(hier_modelc_cor2_12112022, pars = "L")
-traceplot(hier_modelc_cor2_12112022, pars = "sigma")
+summary(hier_modelc_cor_06042023, pars = c("beta", "s2_p", "sigma", "Omega"))$summary
+traceplot(hier_modelc_cor_06042023, pars = "beta")
+traceplot(hier_modelc_cor_06042023, pars = "s2_p")
+traceplot(hier_modelc_cor_06042023, pars = "L")
+traceplot(hier_modelc_cor_06042023, pars = "sigma")
 
 # Warning messages with 10000 iterations, 3000 warmup, control = list(max_treedepth = 18, adapt_delta = 0.97):
 #   1: There were 1023 divergent transitions after warmup. See
