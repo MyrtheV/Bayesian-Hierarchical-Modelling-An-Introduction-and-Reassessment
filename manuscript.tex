@@ -236,7 +236,7 @@ However, there are challenges to the Bayesian way of hierarchical modeling (Roud
   Practical instructions for Bayes factor model comparison.
 \end{itemize}
 
-Our tutorial is directed at researchers who have a basic \textcolor{blue}{conceptual} understanding of Bayesian inference and parameter estimation and are planning to perform more complex Bayesian analyses \textcolor{blue}{of psychological phenomena. We hope to achieve a balance of detail and overview---while we want to provide guidance for a full Bayesian workflow, similar to Gelman et al.} (\textbf{gelman2020?}) \textcolor{blue}{and Schad et al.}(2021; 2021)\textcolor{blue}{, we don't shy away from in-depth explanations for the most curious scientists. To ensure that a broad audience is able to follow the tutorial, we limit and carefully explain equations. However, rudimentary knowledge of calculus is advantageous to fully understand Bayesian analysis. }
+Our tutorial is directed at researchers who have a basic \textcolor{blue}{conceptual} understanding of Bayesian inference and parameter estimation and are planning to perform more complex Bayesian analyses \textcolor{blue}{of psychological phenomena. We hope to achieve a balance of detail and overview---while we want to provide guidance for a full Bayesian workflow, similar to Gelman et al.} (2020) \textcolor{blue}{and Schad et al.}(2021; 2022)\textcolor{blue}{, we don't shy away from in-depth explanations for the most curious scientists. To ensure that a broad audience is able to follow the tutorial, we limit and carefully explain equations. However, rudimentary knowledge of calculus is advantageous to fully understand Bayesian analysis. }
 
 The application of Bayesian hierarchical analysis will be illustrated using a digit classification task collected by Rouder, Lu, Speckman, Sun, and Jiang (2005). In an experimental task participants repeatedly indicated whether a target digit (i.e., 2, 3, 4, 6, 7, or 8) was greater or smaller than 5. The participants in the task performed multiple trials per condition (i.e., digit). Therefore, observations are nested in participants. Our analyses focus on two effects that can potentially occur in this digit classification task: The digit effect and the side effect. According to the symbolic distance hypothesis (Moyer \& Landauer, 1967) processing of numbers is analogue. If numbers are closer on the number line, we may confuse them more, and comparing them is more difficult. In line with this hypothesis, the digit effect postulates that response times (RTs) are slower when digits are closer to 5. Additionally, we may hypothesize that RTs are affected by whether the target digit was smaller or greater than 5, yet it is unclear which side of 5 would lead to faster or slower RTs. \textcolor{blue}{The digit classification task is a standard task that usually would be analyzed in a 3 (digit, closest to 5, further away from 5, furthest away from 5) by 2 (side, greater or smaller than 5) within-subjects ANOVA.} In this tutorial, we show how inferences can be improved using a hierarchical Bayesian model instead.
 
@@ -556,7 +556,7 @@ Setting the same prior distribution on the standard deviations instead of on the
 \hypertarget{prior-sensitivity}{%
 \subsection{Prior sensitivity}\label{prior-sensitivity}}
 
-In the previous sections, we decided on one set of prior distributions for each of the proposed models. However, researchers may find it difficult to settle on a single set of prior distributions in practice. This raises the question: What happens if you cannot decide on one prior? If several possibilities seem plausible, it is possible to use them all separately for the analysis and investigate their influence on the analysis results. This is called a prior sensitivity analysis (Roos, Martins, Held, \& Rue, 2015). Generally, when it comes to prior specification, it is important to be \emph{transparent} and to provide a justification for the selected prior distributions (Stefan, Katsimpokis, Gronau, \& Wagenmakers, 2021). Prior distributions are rarely inadmissible. However, as we demonstrated earlier, their usefulness in constraining model predictions can vary. Therefore, providing a justification of prior distributions in a paper can help readers gauge the generative quality of a presented model. When multiple justifiable prior distributions are applied to the same analysis, it is important to be transparent about this to avoid the impression of cherry-picking priors. If priors are chosen for their best fit to the data, this can lead to overfitting and spurious results. Prior sensitivity analyses and transparency about the prior specification process more generally, can therefore help to increase trust in the research results.
+In the previous sections, we decided on one set of prior distributions for each of the proposed models. However, researchers may find it difficult to settle on a single set of prior distributions in practice. This raises the question: What happens if you cannot decide on one prior? If several possibilities seem plausible, it is possible to use them all separately for the analysis and investigate their influence on the analysis results. This is called a prior sensitivity analysis (Roos, Martins, Held, \& Rue, 2015). Generally, when it comes to prior specification, it is important to be \emph{transparent} and to provide a justification for the selected prior distributions (Stefan, Katsimpokis, Gronau, \& Wagenmakers, 2022). Prior distributions are rarely inadmissible. However, as we demonstrated earlier, their usefulness in constraining model predictions can vary. Therefore, providing a justification of prior distributions in a paper can help readers gauge the generative quality of a presented model. When multiple justifiable prior distributions are applied to the same analysis, it is important to be transparent about this to avoid the impression of cherry-picking priors. If priors are chosen for their best fit to the data, this can lead to overfitting and spurious results. Prior sensitivity analyses and transparency about the prior specification process more generally, can therefore help to increase trust in the research results.
 
 \hypertarget{bayesian-parameter-estimation}{%
 \section{Bayesian Parameter Estimation}\label{bayesian-parameter-estimation}}
@@ -752,7 +752,7 @@ Considering acceptable to good convergence diagnostics, we can now interpret the
 
 For the symbolic distance effect, there are two main questions we want to answer. First, we want to know whether there is a digit effect and, second, we want to know whether there is a side effect. Therefore, the key model parameters for general effects are \(\mu_{\beta}\), \(\mu_{\delta_{3}}\), \(\mu_{\delta_4}\), \(\mu_{\delta_6}\), and \(\mu_{\delta_{7}}\). In the following section, we will focus our reporting on these parameters.
 
-The posterior distributions for the focal parameters in the normal model are presented in Figure \ref{fig:modelposteriorsmufigure3}. The posterior means estimated by \texttt{rstan} and \texttt{brms} can be found in \href{https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/tree/main/H\%20-\%20Posterior\%20Distributions\%20Tables}{Online Supplement H}. The credible interval displayed in the figure is the Bayesian version of a confidence interval and provides a measure of uncertainty about the parameter value (Wagenmakers et al., 2018). \textcolor{blue}{In contrast to the confidence interval, the credible interval provides the probability of a range of values for an effect. However, considering the prior and under the assumption that there is an effect, the credible interval does not provide evidence to conclude whether there is an effect} (\textbf{wagenmakers2020?}).
+The posterior distributions for the focal parameters in the normal model are presented in Figure \ref{fig:modelposteriorsmufigure3}. The posterior means estimated by \texttt{rstan} and \texttt{brms} can be found in \href{https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/tree/main/H\%20-\%20Posterior\%20Distributions\%20Tables}{Online Supplement H}. The credible interval displayed in the figure is the Bayesian version of a confidence interval and provides a measure of uncertainty about the parameter value (Wagenmakers et al., 2018). \textcolor{blue}{In contrast to the confidence interval, the credible interval provides the probability of a range of values for an effect. However, considering the prior and under the assumption that there is an effect, the credible interval does not provide evidence to conclude whether there is an effect} (Wagenmakers, Lee, Rouder, \& Morey, 2020).
 
 The parameter estimates produced by the two packages look very similar. The \texttt{brms} estimates seem to be slightly higher with slightly more narrow posterior distributions compared to \texttt{rstan}. All parameters are presented on a scale of seconds. As expected, the effects are small. For instance, \(\mu_{\delta_{7}}\) has a posterior mean of 0.012, corresponding to a 11 millisecond effect.
 
@@ -1143,9 +1143,9 @@ This tutorial showed the application of two R packages: \texttt{rstan} and \text
 With this tutorial, we attempted to cover the most relevant topics that researchers encounter when starting with Bayesian hierarchical modeling. However, there are still many remaining issues and recommendations that we could not discuss. Here, we would like to point to further references in the literature if researchers want to continue mastering Bayesian hierarchical modeling.
 
 First, we kept the discussion of the software packages and code fairly brief. We provide further code examples for the digit classification task in the \href{https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment}{Online Supplement}. For different models, it may be useful to study additional tutorials and books. For \texttt{rstan}, we recommend the \texttt{Stan} manual (Stan Development Team, 2018b, 2018a). For \texttt{brms} there are several useful tutorials (Bürkner, 2017, 2018; Bürkner \& Vuorre, 2019). There are also several resources for Bayesian estimation with other samplers (Lee \& Wagenmakers, 2013; Rouder, Morey, \& Pratte, 2013). Two other useful tutorials for Bayesian modeling are Schad, Betancourt, and
-Vasishth (2021) and Schad, Nicenboim, Bürkner, Betancourt, and Vasishth (2021). \textcolor{blue}{There are also other R software packages for Bayesian multilevel modeling besides `brms` and `rstan`, such as `BayesFactor`[@R-BayesFactor] and `rstanarm`[@rstanarm2020], that we did not illustrate in this tutorial. However, most of these other R software packages are a bit more limited, for instance, in model specification and prior settings.}
+Vasishth (2021) and Schad, Nicenboim, Bürkner, Betancourt, and Vasishth (2022). \textcolor{blue}{There are also other R software packages for Bayesian multilevel modeling besides `brms` and `rstan`, such as `BayesFactor`[@R-BayesFactor] and `rstanarm`[@rstanarm2020], that we did not illustrate in this tutorial. However, most of these other R software packages are a bit more limited, for instance, in model specification and prior settings.}
 
-Second, we did not discuss study planning. When planning an experiment, researchers may want to determine the number of participants required to gain conclusive results. Bayesian analysis has the advantage that an optional stopping paradigm may be employed (Rouder, 2014; Schönbrodt, Wagenmakers, Zehetleitner, \& Perugini, 2017). Schönbrodt and Wagenmakers (2018) and Stefan and colleagues (2019) introduced Bayes factor design analysis for fixed and sequential designs. However, these approaches to study planning have not yet been fully extended to a hierarchical setup (but see recent efforts by Vasishth et al., 2021). The extension to nested designs is not entirely trivial because, in addition to planning the number of participants, we also need to consider the number of trials (Rouder \& Haaf, 2018). While we think there remains some open questions on the topic, the tutorial by Stefan and colleagues (2019) is a good place to start for applied researchers.
+Second, we did not discuss study planning. When planning an experiment, researchers may want to determine the number of participants required to gain conclusive results. Bayesian analysis has the advantage that an optional stopping paradigm may be employed (Rouder, 2014; Schönbrodt, Wagenmakers, Zehetleitner, \& Perugini, 2017). Schönbrodt and Wagenmakers (2018) and Stefan and colleagues (2019) introduced Bayes factor design analysis for fixed and sequential designs. However, these approaches to study planning have not yet been fully extended to a hierarchical setup (but see recent efforts by Vasishth et al., 2023). The extension to nested designs is not entirely trivial because, in addition to planning the number of participants, we also need to consider the number of trials (Rouder \& Haaf, 2018). While we think there remains some open questions on the topic, the tutorial by Stefan and colleagues (2019) is a good place to start for applied researchers.
 
 \hypertarget{section}{%
 \subsection{\texorpdfstring{\textcolor{blue}{Technical Possibilities are Endless}}{}}\label{section}}
@@ -1251,7 +1251,7 @@ Bürkner, P.-C. (2017). {brms}: An {R} package for {Bayesian} multilevel models 
 Bürkner, P.-C. (2018). Advanced {Bayesian} multilevel modeling with the {R} package {brms}. \emph{The R Journal}, \emph{10}(1), 395--411. doi:\href{https://doi.org/10.32614/RJ-2018-017}{10.32614/RJ-2018-017}
 
 \leavevmode\hypertarget{ref-burkner2019ordinal}{}%
-Bürkner, P.-C., \& Vuorre, M. (2019). Ordinal regression models in psychology: A tutorial. \emph{Advances in Methods and Practices in Psychological Science}, \emph{2}(1), 77--101.
+Bürkner, P.-C., \& Vuorre, M. (2019). Ordinal regression models in psychology: A tutorial. \emph{Advances in Methods and Practices in Psychological Science}, \emph{2}(1), 77--101. doi:\href{https://doi.org/10.1177/251524591882319}{10.1177/251524591882319}
 
 \leavevmode\hypertarget{ref-carpenter2017stan}{}%
 Carpenter, B., Gelman, A., Hoffman, M. D., Lee, D., Goodrich, B., Betancourt, M., \ldots{} Riddell, A. (2017). Stan: A probabilistic programming language. \emph{Journal of Statistical Software}, \emph{76}(1).
@@ -1266,7 +1266,7 @@ Clarke, E., \& Sherrill-Mix, S. (2017). \emph{Ggbeeswarm: Categorical scatter (v
 Dickey, J. M., \& Lientz, B. P. (1970). The weighted likelihood ratio, sharp hypotheses about chances, the order of a {Markov} chain. \emph{The Annals of Mathematical Statistics}, \emph{41}, 214--226.
 
 \leavevmode\hypertarget{ref-van2021bayes}{}%
-Doorn, J. van, Aust, F., Haaf, J. M., Stefan, A. M., \& Wagenmakers, E.-J. (2021). Bayes factors for mixed models. \emph{Computational Brain \& Behavior}, 1--13.
+Doorn, J. van, Aust, F., Haaf, J. M., Stefan, A. M., \& Wagenmakers, E.-J. (2021). Bayes factors for mixed models. \emph{Computational Brain \& Behavior}, 1--13. doi:\href{https://doi.org/10.1007/s42113-021-00113-2}{10.1007/s42113-021-00113-2}
 
 \leavevmode\hypertarget{ref-R-Rcpp_b}{}%
 Eddelbuettel, D., \& Balamuta, J. J. (2017). {Extending extit{R} with extit{C++}: A Brief Introduction to extit{Rcpp}}. \emph{PeerJ Preprints}, \emph{5}, e3188v1. doi:\href{https://doi.org/10.7287/peerj.preprints.3188v1}{10.7287/peerj.preprints.3188v1}
@@ -1290,7 +1290,7 @@ Fink, D. (1997). A compendium of conjugate priors. https://www.johndcook.com/Com
 Gabry, J., Simpson, D., Vehtari, A., Betancourt, M., \& Gelman, A. (2019). Visualization in {Bayesian} workflow. \emph{Journal of the Royal Statistical Society}, \emph{182}, 389--402. doi:\href{https://doi.org/10.1111/rssa.12378}{10.1111/rssa.12378}
 
 \leavevmode\hypertarget{ref-gelman2006prior}{}%
-Gelman, A. (2006). Prior distributions for variance parameters in hierarchical models (comment on article by {Browne} and {Draper}). \emph{Bayesian Analysis}, \emph{1}(3), 515--534.
+Gelman, A. (2006). Prior distributions for variance parameters in hierarchical models (comment on article by {Browne} and {Draper}). \emph{Bayesian Analysis}, \emph{1}(3), 515--534. doi:\href{https://doi.org/10.1214/06-BA117A}{10.1214/06-BA117A}
 
 \leavevmode\hypertarget{ref-gelman2013bayesian}{}%
 Gelman, A., Carlin, J. B., Stern, H. S., Dunson, D. B., Vehtari, A., \& Rubin, D. B. (2013). \emph{Bayesian data analysis}. CRC press.
@@ -1298,38 +1298,41 @@ Gelman, A., Carlin, J. B., Stern, H. S., Dunson, D. B., Vehtari, A., \& Rubin, D
 \leavevmode\hypertarget{ref-gelman1992inference}{}%
 Gelman, A., \& Rubin, D. B. (1992). Inference from iterative simulation using multiple sequences. \emph{Statistical Science}, \emph{7}(4), 457--472.
 
+\leavevmode\hypertarget{ref-gelman2020bayesian}{}%
+Gelman, A., Vehtari, A., Simpson, D., Margossian, C. C., Carpenter, B., Yao, Y., \ldots{} Modrák, M. (2020). Bayesian workflow. \emph{arXiv Preprint arXiv:2011.01808}.
+
 \leavevmode\hypertarget{ref-green2015bayesian}{}%
-Green, P. J., Łatuszyński, K., Pereyra, M., \& Robert, C. P. (2015). Bayesian computation: A summary of the current state, and samples backwards and forwards. \emph{Statistics and Computing}, \emph{25}(4), 835--862.
+Green, P. J., Łatuszyński, K., Pereyra, M., \& Robert, C. P. (2015). Bayesian computation: A summary of the current state, and samples backwards and forwards. \emph{Statistics and Computing}, \emph{25}(4), 835--862. doi:\href{https://doi.org/10.1007/s11222-015-9574-5}{10.1007/s11222-015-9574-5}
 
 \leavevmode\hypertarget{ref-gronau2017tutorial}{}%
-Gronau, Q. F., Sarafoglou, A., Matzke, D., Ly, A., Boehm, U., Marsman, M., \ldots{} Steingroever, H. (2017). A tutorial on bridge sampling. \emph{Journal of Mathematical Psychology}, \emph{81}, 80--97.
+Gronau, Q. F., Sarafoglou, A., Matzke, D., Ly, A., Boehm, U., Marsman, M., \ldots{} Steingroever, H. (2017). A tutorial on bridge sampling. \emph{Journal of Mathematical Psychology}, \emph{81}, 80--97. doi:\href{https://doi.org/10.1016/j.jmp.2017.09.005}{10.1016/j.jmp.2017.09.005}
 
 \leavevmode\hypertarget{ref-R-bridgesampling}{}%
 Gronau, Q. F., Singmann, H., \& Wagenmakers, E.-J. (2020). {bridgesampling}: An {R} package for estimating normalizing constants. \emph{Journal of Statistical Software}, \emph{92}(10), 1--29. doi:\href{https://doi.org/10.18637/jss.v092.i10}{10.18637/jss.v092.i10}
 
 \leavevmode\hypertarget{ref-gronau2019simple}{}%
-Gronau, Q. F., Wagenmakers, E.-J., Heck, D. W., \& Matzke, D. (2019). A simple method for comparing complex models: {Bayesian} model comparison for hierarchical multinomial processing tree models using {Warp}-III bridge sampling. \emph{Psychometrika}, \emph{84}(1), 261--284.
+Gronau, Q. F., Wagenmakers, E.-J., Heck, D. W., \& Matzke, D. (2019). A simple method for comparing complex models: {Bayesian} model comparison for hierarchical multinomial processing tree models using {Warp}-III bridge sampling. \emph{Psychometrika}, \emph{84}(1), 261--284. doi:\href{https://doi.org/10.1007/s11336-018-9648-3}{10.1007/s11336-018-9648-3}
 
 \leavevmode\hypertarget{ref-R-circlize}{}%
 Gu, Z., Gu, L., Eils, R., Schlesner, M., \& Brors, B. (2014). Circlize implements and enhances circular visualization in {R}. \emph{Bioinformatics}, \emph{30}, 2811--2812.
 
 \leavevmode\hypertarget{ref-haaf2019capturing}{}%
-Haaf, J. M., Klaassen, F., \& Rouder, J. (2019). Capturing ordinal theoretical constraint in psychological science.
+Haaf, J. M., Klaassen, F., \& Rouder, J. (2019). Capturing ordinal theoretical constraint in psychological science. doi:\href{https://doi.org/10.31234/osf.io/a4xu9}{10.31234/osf.io/a4xu9}
 
 \leavevmode\hypertarget{ref-haaf2017developing}{}%
-Haaf, J. M., \& Rouder, J. N. (2017). Developing constraint in {Bayesian} mixed models. \emph{Psychological Methods}, \emph{22}(4), 779.
+Haaf, J. M., \& Rouder, J. N. (2017). Developing constraint in {Bayesian} mixed models. \emph{Psychological Methods}, \emph{22}(4), 779. doi:\href{https://doi.org/10.1037/met0000156}{10.1037/met0000156}
 
 \leavevmode\hypertarget{ref-haaf2019some}{}%
-Haaf, J. M., \& Rouder, J. N. (2019). Some do and some don't? Accounting for variability of individual difference structures. \emph{Psychonomic Bulletin \& Review}, \emph{26}(3), 772--789.
+Haaf, J. M., \& Rouder, J. N. (2019). Some do and some don't? Accounting for variability of individual difference structures. \emph{Psychonomic Bulletin \& Review}, \emph{26}(3), 772--789. doi:\href{https://doi.org/10.3758/s13423-018-1522-x}{10.3758/s13423-018-1522-x}
 
 \leavevmode\hypertarget{ref-hecht2021comparing}{}%
-Hecht, M., Weirich, S., \& Zitzmann, S. (2021). Comparing the MCMC efficiency of JAGS and stan for the multi-level intercept-only model in the covariance-and mean-based and classic parametrization. \emph{Psych}, \emph{3}(4), 751--779.
+Hecht, M., Weirich, S., \& Zitzmann, S. (2021). Comparing the MCMC efficiency of JAGS and stan for the multi-level intercept-only model in the covariance-and mean-based and classic parametrization. \emph{Psych}, \emph{3}(4), 751--779. doi:\href{https://doi.org/10.3390/psych3040048}{10.3390/psych3040048}
 
 \leavevmode\hypertarget{ref-heck2019caveat}{}%
-Heck, D. W. (2019). A caveat on the {Savage--Dickey} density ratio: The case of computing {Bayes} factors for regression parameters. \emph{British Journal of Mathematical and Statistical Psychology}, \emph{72}(2), 316--333.
+Heck, D. W. (2019). A caveat on the {Savage--Dickey} density ratio: The case of computing {Bayes} factors for regression parameters. \emph{British Journal of Mathematical and Statistical Psychology}, \emph{72}(2), 316--333. doi:\href{https://doi.org/10.1111/bmsp.12150}{10.1111/bmsp.12150}
 
 \leavevmode\hypertarget{ref-hobert1996effect}{}%
-Hobert, J. P., \& Casella, G. (1996). The effect of improper priors on {Gibbs} sampling in hierarchical linear mixed models. \emph{Journal of the American Statistical Association}, \emph{91}(436), 1461--1473.
+Hobert, J. P., \& Casella, G. (1996). The effect of improper priors on {Gibbs} sampling in hierarchical linear mixed models. \emph{Journal of the American Statistical Association}, \emph{91}(436), 1461--1473. doi:\href{https://doi.org/10.2307/2291572}{10.2307/2291572}
 
 \leavevmode\hypertarget{ref-hoffman2014no}{}%
 Hoffman, M. D., \& Gelman, A. (2014). The no-u-turn sampler: Adaptively setting path lengths in {Hamiltonian Monte Carlo}. \emph{J. Mach. Learn. Res.}, \emph{15}(1), 1593--1623.
@@ -1350,7 +1353,7 @@ Kooperberg, C. (2019). \emph{Logspline: Routines for logspline density estimatio
 Langen, J. van. (2020). Open-visualizations in r and python (Version v.1.0.4). Zenodo. doi:\href{https://doi.org/10.5281/zenodo.3715576}{10.5281/zenodo.3715576}
 
 \leavevmode\hypertarget{ref-lee2011cognitive}{}%
-Lee, M. D. (2011). How cognitive modeling can benefit from hierarchical {Bayesian} models. \emph{Journal of Mathematical Psychology}, \emph{55}(1), 1--7.
+Lee, M. D. (2011). How cognitive modeling can benefit from hierarchical {Bayesian} models. \emph{Journal of Mathematical Psychology}, \emph{55}(1), 1--7. doi:\href{https://doi.org/10.1016/j.jmp.2010.08.013}{10.1016/j.jmp.2010.08.013}
 
 \leavevmode\hypertarget{ref-lee2013bayesian}{}%
 Lee, M., \& Wagenmakers, E.-J. (2013). Bayesian data analysis for cognitive science: A practical course. New York, NY: Cambridge University Press.
@@ -1383,10 +1386,10 @@ Messner, J. W., Zeileis, A., Broecker, J., \& Mayr, G. J. (2014). Probabilistic 
 Morey, R. D., \& Rouder, J. N. (2018). \emph{BayesFactor: Computation of bayes factors for common designs}. Retrieved from \url{https://CRAN.R-project.org/package=BayesFactor}
 
 \leavevmode\hypertarget{ref-morey2011using}{}%
-Morey, R. D., Rouder, J. N., Pratte, M. S., \& Speckman, P. L. (2011). Using MCMC chain outputs to efficiently estimate bayes factors. \emph{Journal of Mathematical Psychology}, \emph{55}(5), 368--378.
+Morey, R. D., Rouder, J. N., Pratte, M. S., \& Speckman, P. L. (2011). Using MCMC chain outputs to efficiently estimate bayes factors. \emph{Journal of Mathematical Psychology}, \emph{55}(5), 368--378. doi:\href{https://doi.org/10.1016/j.jmp.2011.06.004}{10.1016/j.jmp.2011.06.004}
 
 \leavevmode\hypertarget{ref-moyer1967time}{}%
-Moyer, R. S., \& Landauer, T. K. (1967). Time required for judgements of numerical inequality. \emph{Nature}, \emph{215}(5109), 1519--1520.
+Moyer, R. S., \& Landauer, T. K. (1967). Time required for judgements of numerical inequality. \emph{Nature}, \emph{215}(5109), 1519--1520. doi:\href{https://doi.org/10.1038/2151519a0}{10.1038/2151519a0}
 
 \leavevmode\hypertarget{ref-R-tibble}{}%
 Müller, K., \& Wickham, H. (2019). \emph{Tibble: Simple data frames}. Retrieved from \url{https://CRAN.R-project.org/package=tibble}
@@ -1413,25 +1416,25 @@ R Core Team. (2019). \emph{R: A language and environment for statistical computi
 Ravenzwaaij, D. van, \& Etz, A. (2021). Simulation studies as a tool to understand bayes factors. \emph{Advances in Methods and Practices in Psychological Science}, \emph{4}(1), 2515245920972624. doi:\href{https://doi.org/10.1177/2515245920972624}{10.1177/2515245920972624}
 
 \leavevmode\hypertarget{ref-roos2015sensitivity}{}%
-Roos, M., Martins, T. G., Held, L., \& Rue, H. (2015). Sensitivity analysis for {Bayesian} hierarchical models. \emph{Bayesian Analysis}, \emph{10}(2), 321--349.
+Roos, M., Martins, T. G., Held, L., \& Rue, H. (2015). Sensitivity analysis for {Bayesian} hierarchical models. \emph{Bayesian Analysis}, \emph{10}(2), 321--349. doi:\href{https://doi.org/10.1214/14-BA909}{10.1214/14-BA909}
 
 \leavevmode\hypertarget{ref-rouder2014optional}{}%
-Rouder, J. N. (2014). Optional stopping: No problem for {Bayesians}. \emph{Psychonomic Bulletin \& Review}, \emph{21}(2), 301--308.
+Rouder, J. N. (2014). Optional stopping: No problem for {Bayesians}. \emph{Psychonomic Bulletin \& Review}, \emph{21}(2), 301--308. doi:\href{https://doi.org/10.3758/s13423-014-0595-4}{10.3758/s13423-014-0595-4}
 
 \leavevmode\hypertarget{ref-rouder2018power}{}%
-Rouder, J. N., \& Haaf, J. M. (2018). Power, dominance, and constraint: A note on the appeal of different design traditions. \emph{Advances in Methods and Practices in Psychological Science}, \emph{1}(1), 19--26.
+Rouder, J. N., \& Haaf, J. M. (2018). Power, dominance, and constraint: A note on the appeal of different design traditions. \emph{Advances in Methods and Practices in Psychological Science}, \emph{1}(1), 19--26. doi:\href{https://doi.org/10.1177/2515245917745058}{10.1177/2515245917745058}
 
 \leavevmode\hypertarget{ref-rouder2018theories}{}%
-Rouder, J. N., Haaf, J. M., \& Aust, F. (2018). From theories to models to predictions: A {Bayesian} model comparison approach. \emph{Communication Monographs}, \emph{85}(1), 41--56.
+Rouder, J. N., Haaf, J. M., \& Aust, F. (2018). From theories to models to predictions: A {Bayesian} model comparison approach. \emph{Communication Monographs}, \emph{85}(1), 41--56. doi:\href{https://doi.org/10.1080/03637751.2017.1394581}{10.1080/03637751.2017.1394581}
 
 \leavevmode\hypertarget{ref-rouder2005introduction}{}%
-Rouder, J. N., \& Lu, J. (2005). An introduction to {Bayesian} hierarchical models with an application in the theory of signal detection. \emph{Psychonomic Bulletin \& Review}, \emph{12}(4), 573--604.
+Rouder, J. N., \& Lu, J. (2005). An introduction to {Bayesian} hierarchical models with an application in the theory of signal detection. \emph{Psychonomic Bulletin \& Review}, \emph{12}(4), 573--604. doi:\href{https://doi.org/10.3758/BF03196750}{10.3758/BF03196750}
 
 \leavevmode\hypertarget{ref-rouder2005hierarchical}{}%
-Rouder, J. N., Lu, J., Speckman, P., Sun, D., \& Jiang, Y. (2005). A hierarchical model for estimating response time distributions. \emph{Psychonomic Bulletin \& Review}, \emph{12}(2), 195--223.
+Rouder, J. N., Lu, J., Speckman, P., Sun, D., \& Jiang, Y. (2005). A hierarchical model for estimating response time distributions. \emph{Psychonomic Bulletin \& Review}, \emph{12}(2), 195--223. doi:\href{https://doi.org/10.3758/BF03257252}{10.3758/BF03257252}
 
 \leavevmode\hypertarget{ref-rouder2018teaching}{}%
-Rouder, J. N., \& Morey, R. D. (2018). Teaching {Bayes}' theorem: Strength of evidence as predictive accuracy. \emph{The American Statistician}.
+Rouder, J. N., \& Morey, R. D. (2018). Teaching {Bayes}' theorem: Strength of evidence as predictive accuracy. \emph{The American Statistician}, \emph{73}(2), 186--190. doi:\url{https://doi.org/10.1080/00031305.2017.1341334}
 
 \leavevmode\hypertarget{ref-rouder2013hierarchical}{}%
 Rouder, J. N., Morey, R. D., \& Pratte, M. S. (2013). Hierarchical {Bayesian} models. \emph{Practice}, \emph{1}(5), 10.
@@ -1443,22 +1446,22 @@ Sarkar, D. (2008). \emph{Lattice: Multivariate data visualization with r}. New Y
 Schad, D. J., Betancourt, M., \& Vasishth, S. (2021). Toward a principled bayesian workflow in cognitive science. \emph{Psychological Methods}, \emph{26}(1), 103. doi:\href{https://doi.org/10.1037/met0000275}{10.1037/met0000275}
 
 \leavevmode\hypertarget{ref-schad2021workflow}{}%
-Schad, D. J., Nicenboim, B., Bürkner, P.-C., Betancourt, M., \& Vasishth, S. (2021). Workflow techniques for the robust use of bayes factors. Retrieved from \url{http://arxiv.org/abs/2103.08744}
+Schad, D. J., Nicenboim, B., Bürkner, P.-C., Betancourt, M., \& Vasishth, S. (2022). Workflow techniques for the robust use of bayes factors. \emph{Psychological Methods}. American Psychological Association. doi:\href{https://doi.org/10.1037/met0000472}{10.1037/met0000472}
 
 \leavevmode\hypertarget{ref-schonbrodt2018bayes}{}%
-Schönbrodt, F. D., \& Wagenmakers, E.-J. (2018). Bayes factor design analysis: Planning for compelling evidence. \emph{Psychonomic Bulletin \& Review}, \emph{25}(1), 128--142.
+Schönbrodt, F. D., \& Wagenmakers, E.-J. (2018). Bayes factor design analysis: Planning for compelling evidence. \emph{Psychonomic Bulletin \& Review}, \emph{25}(1), 128--142. doi:\href{https://doi.org/10.3758/s13423-017-1230-y}{10.3758/s13423-017-1230-y}
 
 \leavevmode\hypertarget{ref-schonbrodt2017sequential}{}%
-Schönbrodt, F. D., Wagenmakers, E.-J., Zehetleitner, M., \& Perugini, M. (2017). Sequential hypothesis testing with {Bayes} factors: Efficiently testing mean differences. \emph{Psychological Methods}, \emph{22}(2), 322.
+Schönbrodt, F. D., Wagenmakers, E.-J., Zehetleitner, M., \& Perugini, M. (2017). Sequential hypothesis testing with {Bayes} factors: Efficiently testing mean differences. \emph{Psychological Methods}, \emph{22}(2), 322. doi:\href{https://doi.org/10.1037/met0000061}{10.1037/met0000061}
 
 \leavevmode\hypertarget{ref-schramm2019reaction}{}%
-Schramm, P., \& Rouder, J. (2019). Are reaction time transformations really beneficial?
+Schramm, P., \& Rouder, J. (2019). Are reaction time transformations really beneficial? doi:\href{https://doi.org/10.31234/osf.io/9ksa6}{10.31234/osf.io/9ksa6}
 
 \leavevmode\hypertarget{ref-shiffrin2008survey}{}%
-Shiffrin, R. M., Lee, M. D., Kim, W., \& Wagenmakers, E.-J. (2008). A survey of model evaluation approaches with a tutorial on hierarchical {Bayesian} methods. \emph{Cognitive Science}, \emph{32}(8), 1248--1284.
+Shiffrin, R. M., Lee, M. D., Kim, W., \& Wagenmakers, E.-J. (2008). A survey of model evaluation approaches with a tutorial on hierarchical {Bayesian} methods. \emph{Cognitive Science}, \emph{32}(8), 1248--1284. doi:\href{https://doi.org/10.1080/03640210802414826}{10.1080/03640210802414826}
 
 \leavevmode\hypertarget{ref-singmann2019introduction}{}%
-Singmann, H., \& Kellen, D. (2019). An introduction to mixed models for experimental psychology. In \emph{New methods in cognitive psychology} (pp. 4--31). Routledge.
+Singmann, H., \& Kellen, D. (2019). An introduction to mixed models for experimental psychology. In \emph{New methods in cognitive psychology} (pp. 4--31). Routledge. doi:\href{https://doi.org/10.4324/9780429318405-2}{10.4324/9780429318405-2}
 
 \leavevmode\hypertarget{ref-sorensen2015bayesian}{}%
 Sorensen, T., \& Vasishth, S. (2015). Bayesian linear mixed models using stan: A tutorial for psychologists, linguists, and cognitive scientists. \emph{arXiv Preprint arXiv:1506.06201}.
@@ -1478,29 +1481,32 @@ Stan Development Team. (2019b). {StanHeaders}: Headers for the {R} interface to 
 \leavevmode\hypertarget{ref-R-LaplacesDemon}{}%
 Statisticat, \& LLC. (2020). \emph{LaplacesDemon: Complete environment for {Bayesian} inference}. Bayesian-Inference.com. Retrieved from \url{https://web.archive.org/web/20150206004624/http://www.bayesian-inference.com/software}
 
-\leavevmode\hypertarget{ref-Stefan_etal2021}{}%
-Stefan, A., Katsimpokis, D., Gronau, Q. F., \& Wagenmakers, E.-J. (2021). Expert agreement in prior elicitation and its effects on {Bayesian} inference. \emph{PsyArXiv Preprint}. doi:\href{https://doi.org/10.31234/osf.io/8xkqd}{10.31234/osf.io/8xkqd}
-
 \leavevmode\hypertarget{ref-stefan2019tutorial}{}%
-Stefan, A. M., Gronau, Q. F., Schönbrodt, F. D., \& Wagenmakers, E.-J. (2019). A tutorial on {Bayes} factor design analysis using an informed prior. \emph{Behavior Research Methods}, \emph{51}(3), 1042--1058.
+Stefan, A. M., Gronau, Q. F., Schönbrodt, F. D., \& Wagenmakers, E.-J. (2019). A tutorial on {Bayes} factor design analysis using an informed prior. \emph{Behavior Research Methods}, \emph{51}(3), 1042--1058. doi:\href{https://doi.org/10.3758/s13428-018-01189-8}{10.3758/s13428-018-01189-8}
+
+\leavevmode\hypertarget{ref-Stefan_etal2021}{}%
+Stefan, A. M., Katsimpokis, D., Gronau, Q. F., \& Wagenmakers, E.-J. (2022). Expert agreement in prior elicitation and its effects on bayesian inference. \emph{Psychonomic Bulletin \& Review}, \emph{29}(5), 1776--1794. doi:\href{https://doi.org/10.3758/s13423-022-02074-4}{10.3758/s13423-022-02074-4}
 
 \leavevmode\hypertarget{ref-R-gghalves}{}%
 Tiedemann, F. (2020). \emph{Gghalves: Compose half-half plots using your favourite geoms}. Retrieved from \url{https://github.com/erocoar/gghalves}
 
 \leavevmode\hypertarget{ref-van2018simple}{}%
-Van Ravenzwaaij, D., Cassey, P., \& Brown, S. D. (2018). A simple introduction to {Markov Chain Monte--Carlo} sampling. \emph{Psychonomic Bulletin \& Review}, \emph{25}(1), 143--154.
+Van Ravenzwaaij, D., Cassey, P., \& Brown, S. D. (2018). A simple introduction to {Markov Chain Monte--Carlo} sampling. \emph{Psychonomic Bulletin \& Review}, \emph{25}(1), 143--154. doi:\href{https://doi.org/10.3758/s13423-016-1015-8}{10.3758/s13423-016-1015-8}
 
 \leavevmode\hypertarget{ref-vasishth2021sample}{}%
-Vasishth, S., Yadav, H., Schad, D., \& Nicenboim, B. (2021). Sample size determination for bayesian hierarchical models commonly used in psycholinguistics.
+Vasishth, S., Yadav, H., Schad, D. J., \& Nicenboim, B. (2023). Sample size determination for bayesian hierarchical models commonly used in psycholinguistics. \emph{Computational Brain \& Behavior}, \emph{6}(1), 102--126. doi:\href{https://doi.org/10.1007/s42113-021-00125-y}{10.1007/s42113-021-00125-y}
 
 \leavevmode\hypertarget{ref-Vehtari_2021}{}%
 Vehtari, A., Gelman, A., Simpson, D., Carpenter, B., \& Bürkner, P.-C. (2021a). Rank-normalization, folding, and localization: An improved r{}for assessing convergence of MCMC (with discussion). \emph{Bayesian Analysis}, \emph{16}(2). doi:\href{https://doi.org/10.1214/20-ba1221}{10.1214/20-ba1221}
 
 \leavevmode\hypertarget{ref-vehtari2019rank}{}%
-Vehtari, A., Gelman, A., Simpson, D., Carpenter, B., \& Bürkner, P.-C. (2021b). Rank-normalization, folding, and localization: An improved rhat for assessing convergence of MCMC (with discussion). \emph{Bayesian Analysis}, \emph{16}(2), 667--718.
+Vehtari, A., Gelman, A., Simpson, D., Carpenter, B., \& Bürkner, P.-C. (2021b). Rank-normalization, folding, and localization: An improved rhat for assessing convergence of MCMC (with discussion). \emph{Bayesian Analysis}, \emph{16}(2), 667--718. doi:\href{https://doi.org/10.1214/20-BA1221}{10.1214/20-BA1221}
+
+\leavevmode\hypertarget{ref-wagenmakers2020principle}{}%
+Wagenmakers, E.-J., Lee, M. D., Rouder, J. N., \& Morey, R. D. (2020). The principle of predictive irrelevance or why intervals should not be used for model comparison featuring a point null hypothesis. \emph{The Theory of Statistics in Psychology: Applications, Use, and Misunderstandings}, 111--129. doi:\href{https://doi.org/10.1007/978-3-030-48043-1_8}{10.1007/978-3-030-48043-1\_8}
 
 \leavevmode\hypertarget{ref-wagenmakers2010bayesian}{}%
-Wagenmakers, E.-J., Lodewyckx, T., Kuriyal, H., \& Grasman, R. (2010). Bayesian hypothesis testing for psychologists: A tutorial on the {Savage--Dickey} method. \emph{Cognitive Psychology}, \emph{60}(3), 158--189.
+Wagenmakers, E.-J., Lodewyckx, T., Kuriyal, H., \& Grasman, R. (2010). Bayesian hypothesis testing for psychologists: A tutorial on the {Savage--Dickey} method. \emph{Cognitive Psychology}, \emph{60}(3), 158--189. doi:\href{https://doi.org/10.1016/j.cogpsych.2009.12.001}{10.1016/j.cogpsych.2009.12.001}
 
 \leavevmode\hypertarget{ref-wagenmakers2018bayesian}{}%
 Wagenmakers, E.-J., Marsman, M., Jamil, T., Ly, A., Verhagen, J., Love, J., \ldots{} others. (2018). Bayesian inference for psychology. Part i: Theoretical advantages and practical ramifications. \emph{Psychonomic Bulletin \& Review}, \emph{25}(1), 35--57. doi:\href{https://doi.org/10.3758/s13423-017-1343-3}{10.3758/s13423-017-1343-3}
