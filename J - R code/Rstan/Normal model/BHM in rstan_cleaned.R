@@ -138,7 +138,7 @@ datareal$f3 <- f3
 ################################################################################
 library(rstan) 
 # Adjust "myPath" below to your directory  
-hier_modelc_adj_07012022 <- stan(file = "/myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/R objects/rstan/log-normal model/rewritestanmodel3_trunc.stan", data = datareal, 
+hier_modelc_adj_07012022 <- stan(file = "/myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/K - R objects/rstan/log-normal model/rewritestanmodel3_trunc.stan", data = datareal, 
                         iter = 4000, chains = 4,
                         # , control = list(max_treedepth = 15, adapt_delta = 0.95)
                         warmup = 1000, cores = 4)
