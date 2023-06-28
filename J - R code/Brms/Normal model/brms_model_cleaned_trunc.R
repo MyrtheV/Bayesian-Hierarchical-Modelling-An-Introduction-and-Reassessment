@@ -147,7 +147,7 @@ brmmodel8_new03012022 <- brm(formula = bform,         # Model formula
                              core = 4,                   # Cores for parallel estimation 
                              #control = list(adapt_delta = 0.95),  # Control sampler's behavior, this avoided the problem of convergement 
                              # Finally we can save the model fit to a file 
-                             file = "/myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/R code/BRMSmodelfit18_03012022")
+                             file = "/myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/J - R code/BRMSmodelfit18_03012022")
 
 # For BF 
 brmmodel8_new_bf_03012022 <- brm(formula = bform,         # Model formula 
@@ -161,5 +161,5 @@ brmmodel8_new_bf_03012022 <- brm(formula = bform,         # Model formula
                              core = 4,                   # Cores for parallel estimation 
                              #control = list(adapt_delta = 0.95),  # Control sampler's behavior, this avoided the problem of convergement 
                              # Finally we can save the model fit to a file 
-                             file = "/myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/R code/BRMSmodelfit18_BF_03012022")
+                             file = "/myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/J - R code/BRMSmodelfit18_BF_03012022")
 

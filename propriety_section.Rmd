@@ -108,7 +108,7 @@ The symbolic distance hypothesis postulates that response times (RTs) are slower
 
 ## Bayes factor
 
-\Revision{Rather than submerging us in technical details or providing a formal justification of the Bayesian approach, we provide an intuition of Bayesian model comparison. A formal justification of Bayes factors is provided by @jeffreys1961theory, @kass1995bayes and @rouder2018teaching. The Bayes factor (BF) is a measure of how well one model predicts the data compared to another.}
+\Revision{Rather than submerging us in technical details or providing a formal justification of the Bayesian approach, we provide an intuition of Bayesian model comparison. A formal justification of Bayes factors is provided by} @jeffreys1961theory, @kass1995bayes and @rouder2018teaching. \Revision{The Bayes factor (BF) is a measure of how well one model predicts the data compared to another.}
 
 \Revision{Bayesian analysis allows for predictions of data from any model because models are fully specified with a probability distribution for the data and priors for all parameters. Let the vector of all parameters of a model be $\bm{\theta}$. With the prior distributions these parameters, $f(\bm{\theta})$, the prediction for data from the model can be computed by integrating over all parameters:}
 
