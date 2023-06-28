@@ -456,6 +456,13 @@ theme_set(theme_apa(base_size = 9))
 priorpredictionplotnew_2
 ```
 
+### Individual Effect Correlation 
+
+Up until now, we discussed the normal model from the manuscript. This model assumes that there is no correlation between the individual effects. As stated in the manuscript, it is also possible to allow for the estimation of the correlation between individual effects. This means, for instance, that we would expect that the estimations for the individual effects $\delta_{7,i}$ and $\delta_{3,i}$ are related. To allow for correlation between individual effects, we would have to adjust the formula in the `stan` file and the priors. For the model with correlation terms, we use the file `myModel_cor.stan`. Notice that we apply a different conceptualization of the model using matrix notation. The effects are called `beta`. 
+
+When including correlation between individual effects, we are estimating more parameters and have to specify priors on these parameters as well. In specific, we set a prior on the correlation matrices. These priors will be transformed for efficiency and set on so called Cholesky factors of the matrices by the following line of code `Lcorr ~ lkj_corr_cholesky(1)` [for more information on Cholesky factors see @stan2018a; section 1.13]. 
+
+
 ## Fit the Model 
 
 |    Now we have the required input, we can fit the model. 
@@ -473,7 +480,9 @@ model_fit <- stan(file = "myPath/rewritestanmodel3_julia.stan",
 ```
 \normalsize 
 
-We have already fitted the model and saved it in the R object `model_fit`. In case you do not want to wait until the model has been fitted but continue immediately with the rest of this tutorial, you can load this R object that contains the model estimates.  
+To estimate the model with the correlation between random effects, note that one would need to adjust the `file` argument to equal and `myModel_cor.stan`.  
+
+Back to our model without the correlation term form the manuscript. We have already fitted the model and saved it in the R object `model_fit`. In case you do not want to wait until the model has been fitted but continue immediately with the rest of this tutorial, you can load this R object that contains the model estimates.  
 &nbsp; 
 
 \scriptsize 

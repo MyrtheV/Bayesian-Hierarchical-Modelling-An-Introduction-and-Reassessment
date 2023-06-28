@@ -115,7 +115,7 @@ The other options do not require coding and are discussed in the paper.
 
 ### Formula 
 
-|    The formula is an object that specifies the dependent variable as a function of the independent variables. The `~` (tilde) separates the dependent variable (`rt`) on the left side from the independent variables on the right side. The formula distinguishes between general effects and individual deviations. The first part of the equation on the predictor side of the formula shown below (i.e., `1 + side + dif1 + dif2 + dif3 + dif4`) represents the general effects. The `1` represents the intercept, in the case of the symbolic distance effect $\mu_{\gamma}$, `side`, and `dif1` to `dif4` represent the general effects of side and distance ($\mu_{\beta}$ and $\mu_{\delta}$). Within the round brackets individual deviations and grouping variables are specified. In this case the grouping variable (`ind`) indicates that each participant has an individual effect. In other cases effects might vary per item, block, or even the combination of participant and item. The double bar (`||`) indicates that the correlation between the parameters should not be modeled. When using a single vertical bar (`|`), correlations across all individual effects (intercept, side and distance) are modeled. This approach, however, is a bit more difficult to interpret and would also not correspond to the implemented `Stan` model. 
+|    The formula is an object that specifies the dependent variable as a function of the independent variables. The `~` (tilde) separates the dependent variable (`rt`) on the left side from the independent variables on the right side. The formula distinguishes between general effects and individual deviations. The first part of the equation on the predictor side of the formula shown below (i.e., `1 + side + dif1 + dif2 + dif3 + dif4`) represents the general effects. The `1` represents the intercept, in the case of the symbolic distance effect $\mu_{\gamma}$, `side`, and `dif1` to `dif4` represent the general effects of side and distance ($\mu_{\beta}$ and $\mu_{\delta}$). Within the round brackets individual deviations and grouping variables are specified. In this case the grouping variable (`ind`) indicates that each participant has an individual effect. In other cases effects might vary per item, block, or even the combination of participant and item. The double bar (`||`) indicates that the correlation between the parameters should not be modeled. When using a single vertical bar (`|`), correlations across all individual effects (intercept, side and distance) are modeled. This approach, however, is a bit more difficult to interpret and would also not correspond to the implemented `Stan` model. We explain the estimation of the model with correlations across individual effects later on. 
 &nbsp;
 
 \scriptsize 
@@ -494,6 +494,45 @@ priorpredfigurecreate(bigdatapp3)
 ```
 \normalsize 
 
+### Individual Effect Correlation 
+
+Up until now, we discussed the normal model from the manuscript. This model assumes that there is no correlation between the individual effects. As stated in the manuscript, it is also possible to allow for the estimation of the correlation between individual effects. This means, for instance, that we would expect that the estimations for the individual effects $\delta_{7,i}$ and $\delta_{3,i}$ are related. To allow for correlation between individual effects, we would have to adjust the model formula. For the estimation of the digit classification task, we could use the following formula:   
+
+\scriptsize 
+```{r formulafitindcor, eval = FALSE}
+bform_cor <- brms::bf(rt2 ~ a + b, nl = TRUE, 
+                  lf(a ~ 0 + side + dif1 + dif2 + dif3 + dif4 + (0 + side + dif1 + dif2 + dif3 + dif4 | ind), center = TRUE),  
+                  lf(b ~ 0 + inter + (0 + inter | ind), cmc = FALSE)
+)
+```
+\normalsize 
+
+The difference is that instead of using the double bar `||`, we are now using a single bar `|` before `ind`, indicating that we allow individual effects to correlate. 
+
+This means that we are estimating more parameters and therefore we have to specify priors on these parameters as well. In specific, we can set a prior on the correlation matrix called `class = "cor"`. These priors will be transformed for efficiency and set on so called Cholesky factors of the matrices [for more information see @stan2018a; section 1.13]. In our example, we set a prior on the Cholesky factors directly, by defining `class = "L"`, shown in the last line of the code block: 
+
+\scriptsize 
+```{r priorscor, eval = FALSE}
+priorsmodel_cor <- c(set_prior("normal(0.5,1)", class = "b", lb = 0, nlpar = "b"),  
+                  set_prior("inv_gamma(13.8, 6.3)", class = "sd", coef="inter", group = "sub1", nlpar = "b"), 
+                  set_prior("normal(0,0.3)", class = "b", coef="side",  nlpar = "a"),  
+                  set_prior("inv_gamma(13.8,5.3)", class = "sd", coef="side", group = "sub1",  nlpar = "a"), 
+                  set_prior("normal(0,0.3)", class = "b", coef="dif1",  nlpar = "a"), 
+                  set_prior("inv_gamma(13.8,5.3)", class = "sd", coef="dif1", group = "sub1",  nlpar = "a"),
+                  set_prior("normal(0,0.3)", class = "b", coef="dif2",  nlpar = "a"),  
+                  set_prior("inv_gamma(13.8,5.3)", class = "sd", coef="dif2", group = "sub1",  nlpar = "a"),
+                  set_prior("normal(0,0.3)", class = "b", coef="dif3",  nlpar = "a"), 
+                  set_prior("inv_gamma(13.8,5.3)", class = "sd", coef="dif3", group = "sub1",  nlpar = "a"),
+                  set_prior("normal(0,0.3)", class = "b", coef="dif4",  nlpar = "a"),  
+                  set_prior("inv_gamma(13.8,5.3)", class = "sd", coef="dif4", group = "sub1",  nlpar = "a"),
+                  set_prior("inv_gamma(13.8, 6.3)", class = "sigma"), 
+                  set_prior("lkj_corr_cholesky(1)", class = "L"))
+
+```
+\normalsize 
+
+
+
 ## Fit the Model 
 
 |    Now that we have the required input, we can estimate the model.  
@@ -514,7 +553,9 @@ model_fit <- brm(formula = formula,                      # Model formula
 ```
 \normalsize 
 
-We have already estimated the model and saved it in the R object `brmmodel8_new03012022.rds`. In case you do not want to wait until the model has been fitted but continue immediately with the rest of this tutorial, you can load this R object that contains the model estimations.  
+To fit the model with the correlation between random effects, note that one would need to adjust `formula` and `priorsmodel` to the objects where these are saved in (i.e., `bform_cor` and `priorsmodel_cor`). 
+
+Back to our model without the correlation term form the manuscript. We have already estimated this model and saved it in the R object `brmmodel8_new03012022.rds`. In case you do not want to wait until the model has been fitted but continue immediately with the rest of this tutorial, you can load this R object that contains the model estimations.  
 &nbsp; 
 
 \scriptsize 
@@ -530,10 +571,10 @@ model_fit_bf <- readRDS("myPath/brmmodel8_new_bf_03012022l.rds")
 \scriptsize 
 ```{r loadmodelfits, show = FALSE, echo = FALSE}
 setwd('..')
-model_fit <- readRDS(file = "R objects/brms/Truncated/BRMSmodelfit18_03012022.rds")  
+model_fit <- readRDS(file = "K - R objects/brms/Truncated/BRMSmodelfit18_03012022.rds")  
 
 # For model comparison - sample_prior was set to "yes" 
-model_fit_bf <- readRDS("R objects/brms/Truncated/BRMSmodelfit18_BF_03012022.rds")  
+model_fit_bf <- readRDS("K - R objects/brms/Truncated/BRMSmodelfit18_BF_03012022.rds")  
 
 ```
 \normalsize 

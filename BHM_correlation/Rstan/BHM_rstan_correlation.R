@@ -157,9 +157,9 @@ library(rstan)
 
 hier_modelc_cor_06042023 <- stan(file = "myModel_cor_julia.stan", 
                                  data = datareal, 
-                                 iter = 2500, chains = 4,
+                                 iter = 4000, chains = 4,
                               #  control = list(max_treedepth = 15, adapt_delta = 0.97),
-                                 warmup = 2500, cores = 4)
+                                 warmup = 1000, cores = 4)
 
 saveRDS(hier_modelc_cor_06042023, "hier_modelc_cor_06042023.rds")
 

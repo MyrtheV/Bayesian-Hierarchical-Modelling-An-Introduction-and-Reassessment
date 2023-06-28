@@ -145,10 +145,11 @@ brmmodel9_new26102022 <- brm(formula = bform_cor,         # Model formula
                              warmup = 1000,              # Iterations used for warmup 
                              iter = 4000,                # Total iterations per chain 
                              chains = 4,                 # Number of chains 
-                             core = 4,                   # Cores for parallel estimation 
+                             core = 4#,                   # Cores for parallel estimation 
                              #control = list(adapt_delta = 0.95),  # Control sampler's behavior, this avoided the problem of convergement 
                              # Finally we can save the model fit to a file 
-                             file = "/myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/R code/BRMSmodelfit19_21102022")
+                             #file = "/myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/J - R code/BRMSmodelfit19_21102022"
+                             )
 
 # !!! Check this prior: # student_t(3, 0, 2.5)    sd                           a                default
 # student_t(3, 0, 2.5)    sd                           b                default
