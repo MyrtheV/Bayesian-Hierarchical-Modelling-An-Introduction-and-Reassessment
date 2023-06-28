@@ -11,18 +11,18 @@ With the recent development of easy-to-use tools for Bayesian analysis, psycholo
 This repository contains all the documents that are used to create the paper "Bayesian Hierarchical Modeling: Introduction and Reassessment". Here, we describe the content of the repository. Please read this information carefully before using the documents. 
 
 1. Manuscript    
-2. Folders A to H 
-3. Images 
-4. R code 
-5. R objects 
+2. Folders A to K  
+3. I - Images 
+4. J - R code 
+5. K - R objects 
 
 # 1. Manuscript    
 
 The manuscript is written in a R Markdown file called "manuscript.Rmd". It includes code for the prior visualizations that can be run by knitting the document. The folders "manuscript_cache", "manuscript_files" and "manuscript.tex" are provided when knitting the document. The files "apa6.csl" and "r-references.bib" are needed to knit the .rmd file. They contain a template for the APA style and the reference list. To only read the manuscript, you can open the "manuscript.pdf" file. 
 
-# 2. Folders A to H   
+# 2. Folders A to K    
 
-The repository contains eight folders (A to H), in the manuscript referred to as Online Supplements: 
+The repository contains 11 folders (A to K), in the manuscript referred to as Online Supplements: 
 
 - A: Model Parameterization  
 - B: Default Priors Rstan  
@@ -32,14 +32,17 @@ The repository contains eight folders (A to H), in the manuscript referred to as
 - F: Tutorial Log-Normal Model brms 
 - G: Trace Plots 
 - H: Posterior Distributions Tables 
+- I: Images 
+- J: R code 
+- K: R objects 
 
-Online Supplements A, B, C, D, E, F, and H are written in R Markdown, therefore their folder contains, next to the `.pdf` file, a separate `.rmd` file and documents necessary to knit the file. To only read the supplements, you can open the `.pdf` file in each folder. 
+Online Supplements A, B, C, D, E, F, and H are written in R Markdown, therefore their folder contains, next to the `.pdf` file, a separate `.rmd` file and documents necessary to knit the file. To only read the supplements, you can open the `.pdf` file in each folder. We will explain the other folders in more detail below. 
 
-# 3. Images 
+# 3. I - Images 
 
 This folder contains all the images that are used in the manuscript. They are inserted in "manuscript.Rmd" and shown in "manuscript.pdf". For the images that are created in R, the R code is provided in the "R objects" folder under "Figures". 
 
-# 4. R code 
+# 4. J - R code 
 
 This folder consists of five other folders: 
 
@@ -71,7 +74,7 @@ This folder contains two `.R` files. The file "priortransformFunction.R" contain
 
 In this folder are two folders "Log-normal model" and "Normal model" that contain R code estimating the log-normal and normal model using `Rstan` as done for the manuscript. Note that the code, estimating an Bayesian hierarchical model in `Rstan`, is explained in more detail tutorials C and E. 
 
-# 5. R objects 
+# 5. K - R objects 
 
 This folder consists of five other folders: 
 
