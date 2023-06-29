@@ -155,13 +155,13 @@ datareal$K <- 6  # intercept + side effect + digit effects (4)
 library(rstan) 
 # Don't forget to set the correct directory for the file path
 
-hier_modelc_cor_06042023 <- stan(file = "myModel_cor_julia.stan", 
+hier_modelc_cor_29062023 <- stan(file = "myModel_cor_julia.stan", 
                                  data = datareal, 
                                  iter = 4000, chains = 4,
                               #  control = list(max_treedepth = 15, adapt_delta = 0.97),
                                  warmup = 1000, cores = 4)
 
-saveRDS(hier_modelc_cor_06042023, "hier_modelc_cor_06042023.rds")
+saveRDS(hier_modelc_cor_29062023, "hier_modelc_cor_29062023.rds")
 
 summary(hier_modelc_cor_06042023, pars = c("beta", "s2_p", "sigma", "Omega"))$summary
 traceplot(hier_modelc_cor_06042023, pars = "beta")

@@ -137,19 +137,22 @@ bform_cor <- brms::bf(rt2 ~ a + b, nl = TRUE,
 )
 
 # Adjust 'myPath' to your directory 
-brmmodel9_new26102022 <- brm(formula = bform_cor,         # Model formula 
+brmmodel9_new28062023 <- brm(formula = bform_cor,         # Model formula 
                              data = indat1,              # Data frame with variables + dependent variable 
                              family = gaussian(),        # Response distribution 
                              prior = priorsmodel9_cor,       # Priors 
                              # sample_prior = TRUE, need to add this for model comparison  
-                             warmup = 1000,              # Iterations used for warmup 
-                             iter = 4000,                # Total iterations per chain 
+                             warmup = 2000,              # Iterations used for warmup 
+                             iter = 6000,                # Total iterations per chain 
                              chains = 4,                 # Number of chains 
                              core = 4#,                   # Cores for parallel estimation 
                              #control = list(adapt_delta = 0.95),  # Control sampler's behavior, this avoided the problem of convergement 
                              # Finally we can save the model fit to a file 
                              #file = "/myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/J - R code/BRMSmodelfit19_21102022"
                              )
+
+
+saveRDS(brmmodel9_new28062023, "brmmodel9_new28062023.rds")
 
 # !!! Check this prior: # student_t(3, 0, 2.5)    sd                           a                default
 # student_t(3, 0, 2.5)    sd                           b                default

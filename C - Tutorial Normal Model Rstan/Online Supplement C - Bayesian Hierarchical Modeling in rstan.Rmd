@@ -104,7 +104,7 @@ The other options do not require coding and are discussed in the paper.
 
 ### Stan file 
 
-|  The stan file `myModel.stan` is used to fit the full model and can be found under R objects > rstan > linear model. It contains descriptions for every line of code. The stan file is divided in three sections (in our case): 
+|  The stan file `myModel.stan` is used to fit the full model and can be found under *K - R objects > rstan > normal model*. It contains descriptions for every line of code. The stan file is divided in three sections (in our case): 
 
 1. Data 
 2. Parameters 
@@ -458,9 +458,9 @@ priorpredictionplotnew_2
 
 ### Individual Effect Correlation 
 
-Up until now, we discussed the normal model from the manuscript. This model assumes that there is no correlation between the individual effects. As stated in the manuscript, it is also possible to allow for the estimation of the correlation between individual effects. This means, for instance, that we would expect that the estimations for the individual effects $\delta_{7,i}$ and $\delta_{3,i}$ are related. To allow for correlation between individual effects, we would have to adjust the formula in the `stan` file and the priors. For the model with correlation terms, we use the file `myModel_cor.stan`. Notice that we apply a different conceptualization of the model using matrix notation. The effects are called `beta`. 
+\textcolor{blue}{Up until now, we discussed the normal model from the manuscript. This model assumes that there is no correlation between the individual effects. As stated in the manuscript, it is also possible to allow for the estimation of the correlation between individual effects. This means, for instance, that we would expect that the estimates for the individual effects $\delta_{7,i}$ and $\delta_{3,i}$ are related. To allow for correlation between individual effects, we would have to adjust the formula in the `stan` file and the priors. For the model with correlation terms, we use the file `myModel_cor.stan` that can be found in the folder} *K - R objects > rstan > normal model > correlation*. \textcolor{Notice that we apply a different conceptualization of the model using matrix notation. The effects are called `beta` and the individual effects are called `beta_p`. Because we are using matrices, the effects are stored a bit differently than for the other model. For example, `beta[3]` represents the general digit effect $\delta_{7}$, while `beta_p[1,3]` represents the digit effect for participant 1, $\delta_{7,1}$.} 
 
-When including correlation between individual effects, we are estimating more parameters and have to specify priors on these parameters as well. In specific, we set a prior on the correlation matrices. These priors will be transformed for efficiency and set on so called Cholesky factors of the matrices by the following line of code `Lcorr ~ lkj_corr_cholesky(1)` [for more information on Cholesky factors see @stan2018a; section 1.13]. 
+\textcolor{blue}{When including correlation between individual effects, we are estimating more parameters and have to specify priors for these parameters as well. In specific, we set a prior on the correlation matrices. These priors will be transformed for efficiency and set on so called Cholesky factors of the matrices by the following line of code `Lcorr ~ lkj_corr_cholesky(1)` [for more information on Cholesky factors see} @stan2018a; \textcolor{blue}{section 1.13]. }
 
 
 ## Fit the Model 
@@ -471,7 +471,7 @@ When including correlation between individual effects, we are estimating more pa
 \scriptsize 
 ``` {r modelfit, eval = FALSE}
 library(rstan) 
-model_fit <- stan(file = "myPath/rewritestanmodel3_julia.stan", 
+model_fit <- stan(file = "myPath/myModel.stan", 
                   data = myData_list, 
                   iter = 4000, 
                   chains = 4,
@@ -492,7 +492,7 @@ model_fit <- readRDS(file = "myPath/rstan_model_fit.rds")
 \normalsize 
 ```{r loadmodelfit2, echo = FALSE}
 setwd('..')
-model_fit <- readRDS(file = "R objects/rstan/normal model/hier_modelc_adj_07012022.rds")
+model_fit <- readRDS(file = "K - R objects/rstan/normal model/hier_modelc_adj_07012022.rds")
 ```
 
 ## Output 
@@ -1184,11 +1184,17 @@ plotmodelest_m7
 ```
 \normalsize 
 
+\textcolor{blue}{We can do the same for the model with correlation between the individual effects (see Figure 7) and see that the estimated effects are somewhat different.}  
+
+```{r modeldigitestplotcor, echo=FALSE, fig.cap="Model estimates for digit effect parameters in the normal model with correlation between individual effects. The points represent the mean parameter estimates for each individual. The violin plots on the right side show the variance of the individual parameter estimates.", fig.align = "left", fig.height = 11, fig.width = 1, out.width="75%"}
+knitr::include_graphics("Fig12_modelestimatefigure2_onlyrstancor_v2.png")
+```
+
 
 ## Model comparison 
 
 |    In case we have different models, we can compare them to check under which model the data is most likely. This can be done with the Bayes factor. In *rstan* the Bayes factor can be obtained by using the *bridgesampling* package. To be able to use this package, it is important that the *.stan* file is written in a way that it saves the constants (i.e., `target += normal_lpdf(mu4 | a3, sqrt(b3));`).   
-|    First, we fit all the models (except for the full model that we already fitted. 
+|    First, we fit all the models without correlation between individual effects (except for the full model that we already fitted. 
 &nbsp; 
 
 \scriptsize 

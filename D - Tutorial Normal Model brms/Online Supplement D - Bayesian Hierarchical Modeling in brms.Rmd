@@ -553,7 +553,7 @@ model_fit <- brm(formula = formula,                      # Model formula
 ```
 \normalsize 
 
-To fit the model with the correlation between random effects, note that one would need to adjust `formula` and `priorsmodel` to the objects where these are saved in (i.e., `bform_cor` and `priorsmodel_cor`). 
+To estimate the model with the correlation between individual effects, note that one would need to adjust `formula` and `priorsmodel` to the objects where these are saved in (i.e., `bform_cor` and `priorsmodel_cor`). 
 
 Back to our model without the correlation term form the manuscript. We have already estimated this model and saved it in the R object `brmmodel8_new03012022.rds`. In case you do not want to wait until the model has been fitted but continue immediately with the rest of this tutorial, you can load this R object that contains the model estimations.  
 &nbsp; 
