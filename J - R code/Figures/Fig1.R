@@ -1,7 +1,7 @@
 # Efron & Moris figure 
 # Model 
 # Load output BayesFactor package: 
-samplesindat5 <- readRDS("R objects/BF model to create figure 1B/BFmodelfit15.rds")
+samplesindat5 <- readRDS("K - R objects/BF model to create figure 1B/BFmodelfit15.rds")
 meanbfindat <- colMeans(samplesindat5)  # now BF model output with seperate effect mu's and different r scale (all set to 1)
 
 # From data, from proposal r code 

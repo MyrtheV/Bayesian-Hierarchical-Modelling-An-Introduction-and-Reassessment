@@ -5,7 +5,7 @@ library(rstan )
 
 # Load results
 # rstan
-resultsbsrstan <- read.csv("/myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/R objects/Model comparison/Bayes Factors per package/bssresults_07012022.csv")
+resultsbsrstan <- read.csv("/myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/K - R objects/Model comparison/Bayes Factors per package/bssresults_07012022.csv")
 
 ## Restructure 
 resultsbsrstan$package <- rep("Rstan", nrow(resultsbsrstan))

@@ -522,10 +522,10 @@ logmodel_fit_bf <- readRDS("myPath/BRMSmodelfit18_26052022_bf.rds")
 \scriptsize 
 ```{r loadmodelfits, show = FALSE, echo = FALSE}
 setwd('..')
-logmodel_fit <- readRDS(file = "R objects/brms/log-normal/brmmodel8log13012022.rds")  
+logmodel_fit <- readRDS(file = "K - R objects/brms/log-normal/brmmodel8log13012022.rds")  
 
 # For model comparison - sample_prior was set to "yes" 
-logmodel_fit_bf <- readRDS("R objects/brms/BF/brmmodel8log26052022_bf.rds")  
+logmodel_fit_bf <- readRDS("K - R objects/brms/BF/brmmodel8log26052022_bf.rds")  
 
 ```
 \normalsize 

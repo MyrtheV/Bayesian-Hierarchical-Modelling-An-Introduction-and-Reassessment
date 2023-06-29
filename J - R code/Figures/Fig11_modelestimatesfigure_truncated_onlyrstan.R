@@ -1,7 +1,7 @@
 # Model estimates figure 
 # Load fits 
 # For rstan the output is saved in hier_modelc_adj_07012022 (adjust "myPath" below to your directory)
-hier_modelc_adj_07012022 <- readRDS("myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/R objects/rstan/normal model/hier_modelc_adj_07012022.rds")
+hier_modelc_adj_07012022 <- readRDS("myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/K - R objects/rstan/normal model/hier_modelc_adj_07012022.rds")
 
 library(rstan)
 

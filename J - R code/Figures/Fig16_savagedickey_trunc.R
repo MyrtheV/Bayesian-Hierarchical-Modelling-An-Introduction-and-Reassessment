@@ -4,7 +4,7 @@ library(brms)
 
 # Load brms output 
 # For brms the output is saved in object brmmodel8_new_bf_03012022 (this is without saving the prior samples)
-brmmodel8_new_bf_03012022 <- readRDS("myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/R objects/brms/BF/brmmodel8_new_bf_03012022.rds") 
+brmmodel8_new_bf_03012022 <- readRDS("myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/K - R objects/brms/BF/brmmodel8_new_bf_03012022.rds") 
 
 savagedickeyfigure <- function(brmmodel8bf){
   # Obtain Savage-Dickey ratio 

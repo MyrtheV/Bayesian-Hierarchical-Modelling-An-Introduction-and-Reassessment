@@ -104,7 +104,7 @@ The other options do not require coding and are discussed in the paper.
 
 ### Stan file 
 
-|  The stan file `myLogModel.stan` is used to fit the full model and can be found under R objects > rstan > linear model. It contains descriptions for every line of code. The stan file is divided in three sections (in our case): 
+|  The stan file `myLogModel.stan` is used to fit the full model and can be found under K - R objects > rstan > linear model. It contains descriptions for every line of code. The stan file is divided in three sections (in our case): 
 
 1. Data 
 2. Parameters 
@@ -512,7 +512,7 @@ logmodel_fit <- readRDS(file = "myPath/rstan_logmodel_fit.rds")
 \normalsize 
 ```{r loadmodelfit2, echo = FALSE}
 setwd('..')
-logmodel_fit <- readRDS(file = "R objects/rstan/log-normal model/hier_logmodelc_adj13012022.rds")
+logmodel_fit <- readRDS(file = "K - R objects/rstan/log-normal model/hier_logmodelc_adj13012022.rds")
 ```
 
 ## Output 

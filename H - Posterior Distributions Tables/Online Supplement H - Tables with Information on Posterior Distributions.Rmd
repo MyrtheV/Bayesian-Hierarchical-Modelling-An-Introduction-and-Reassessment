@@ -71,7 +71,7 @@ library("ggbeeswarm")
 \normalsize 
 ```{r loadmodelfit1, echo = FALSE}
 setwd('..')
-model_fit <- readRDS(file = "R objects/rstan/normal model/hier_modelc_adj_07012022.rds")
+model_fit <- readRDS(file = "K - R objects/rstan/normal model/hier_modelc_adj_07012022.rds")
 ```
 
 ```{r geneftable1, results = "asis", cache = TRUE, echo = FALSE}
@@ -150,7 +150,7 @@ apa_table(fitrstanhiertable32,  # Data frame with results
 ### brms 
 ```{r loadmodelfits2, show = FALSE, echo = FALSE}
 setwd('..')
-model_fit <- readRDS(file = "R objects/brms/Truncated/BRMSmodelfit18_03012022.rds")  
+model_fit <- readRDS(file = "K - R objects/brms/Truncated/BRMSmodelfit18_03012022.rds")  
 
 ```
 
@@ -229,7 +229,7 @@ apa_table(fitbrmshiertable32,  # Data frame with results
 ### Rstan 
 ```{r loadmodelfit3, echo = FALSE}
 setwd('..')
-logmodel_fit <- readRDS(file = "R objects/rstan/log-normal model/hier_logmodelc_adj13012022.rds")
+logmodel_fit <- readRDS(file = "K - R objects/rstan/log-normal model/hier_logmodelc_adj13012022.rds")
 ```
 
 \scriptsize 
@@ -315,7 +315,7 @@ apa_table(fitrstanhiertable32,  # Data frame with results
 ```{r loadmodelfits4, show = FALSE, echo = FALSE}
 # Log model brms 
 setwd('..')
-logmodel_fit <- readRDS(file = "R objects/brms/log-normal/brmmodel8log13012022.rds")  
+logmodel_fit <- readRDS(file = "K - R objects/brms/log-normal/brmmodel8log13012022.rds")  
 
 
 ```

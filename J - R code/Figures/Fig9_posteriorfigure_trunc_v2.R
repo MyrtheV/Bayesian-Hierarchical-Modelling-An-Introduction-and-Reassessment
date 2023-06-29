@@ -1,9 +1,9 @@
 # Posterior distribution parameters 
 # For rstan the output is saved in hier_modelc_adj_07012022 (adjust "myPath" below to your directory)
-hier_modelc_adj_07012022 <- readRDS("myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/R objects/rstan/normal model/hier_modelc_adj_07012022.rds")
+hier_modelc_adj_07012022 <- readRDS("myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/K - R objects/rstan/normal model/hier_modelc_adj_07012022.rds")
 
 # For brms the output is saved in object brmmodel8_new03012022 (this is without saving the prior samples)
-brmmodel8_new03012022 <- readRDS("myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/R objects/brms/Posterior/brmmodel8_new03012022.rds")  
+brmmodel8_new03012022 <- readRDS("myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/K - R objects/brms/Posterior/brmmodel8_new03012022.rds")  
 
 # Used this link: https://cran.r-project.org/web/packages/bayesplot/vignettes/plotting-mcmc-draws.html 
 

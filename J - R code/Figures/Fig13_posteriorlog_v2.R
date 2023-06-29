@@ -1,10 +1,10 @@
 # Figure 13
 # Posterior distribution parameters - lognormal model 
 # For rstan the output is saved in hier_logmodelc_adj13012022 (adjust "myPath" below to your directory)
-hier_logmodelc_adj13012022 <- readRDS("myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/R objects/rstan/log-normal model/hier_logmodelc_adj13012022.rds")
+hier_logmodelc_adj13012022 <- readRDS("myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/K - R objects/rstan/log-normal model/hier_logmodelc_adj13012022.rds")
 
 # For brms the output is saved in object brmmodel8log13012022 (this is without saving the prior samples)
-brmmodel8log13012022 <- readRDS("myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/R objects/brms/log-normal/brmmodel8log13012022.rds")  
+brmmodel8log13012022 <- readRDS("myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/K - R objects/brms/log-normal/brmmodel8log13012022.rds")  
 
 
 # Used this link: https://cran.r-project.org/web/packages/bayesplot/vignettes/plotting-mcmc-draws.html 
