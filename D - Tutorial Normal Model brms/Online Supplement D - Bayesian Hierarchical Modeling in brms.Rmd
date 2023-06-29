@@ -36,7 +36,8 @@ knitr::opts_chunk$set(tidy.opts=list(width.cutoff=40), tidy=TRUE, echo = TRUE, m
   2.1 Formula  
   2.2 Family  
   2.3 Data  
-  2.4 Priors 
+  2.4 Priors  
+  2.5 Individual Effect Correlation 
 3. Fit model 
 4. Output   
   4.1 General Effects   
@@ -494,9 +495,9 @@ priorpredfigurecreate(bigdatapp3)
 ```
 \normalsize 
 
-### Individual Effect Correlation 
+### \textcolor{blue}{Individual Effect Correlation} 
 
-Up until now, we discussed the normal model from the manuscript. This model assumes that there is no correlation between the individual effects. As stated in the manuscript, it is also possible to allow for the estimation of the correlation between individual effects. This means, for instance, that we would expect that the estimations for the individual effects $\delta_{7,i}$ and $\delta_{3,i}$ are related. To allow for correlation between individual effects, we would have to adjust the model formula. For the estimation of the digit classification task, we could use the following formula:   
+\textcolor{blue}{Up until now, we discussed the normal model from the manuscript. This model assumes that there is no correlation between the individual effects. As stated in the manuscript, it is also possible to allow for the estimation of the correlation between individual effects. This means, for instance, that we would expect that the estimations for the individual effects} $\delta_{7,i}$ \textcolor{blue}{and} $\delta_{3,i}$ \textcolor{blue}{are related. To allow for correlation between individual effects, we would have to adjust the model formula. For the estimation of the digit classification task, we could use the following formula:}   
 
 \scriptsize 
 ```{r formulafitindcor, eval = FALSE}
@@ -507,9 +508,9 @@ bform_cor <- brms::bf(rt2 ~ a + b, nl = TRUE,
 ```
 \normalsize 
 
-The difference is that instead of using the double bar `||`, we are now using a single bar `|` before `ind`, indicating that we allow individual effects to correlate. 
+\textcolor{blue}{The difference is that instead of using the double bar} `||`\textcolor{blue}{, we are now using a single bar} `|` \textcolor{blue}{before} `ind`\textcolor{blue}{, indicating that we allow individual effects to correlate.} 
 
-This means that we are estimating more parameters and therefore we have to specify priors on these parameters as well. In specific, we can set a prior on the correlation matrix called `class = "cor"`. These priors will be transformed for efficiency and set on so called Cholesky factors of the matrices [for more information see @stan2018a; section 1.13]. In our example, we set a prior on the Cholesky factors directly, by defining `class = "L"`, shown in the last line of the code block: 
+\textcolor{blue}{This means that we are estimating more parameters and therefore we have to specify priors on these parameters as well. In specific, we can set a prior on the correlation matrix called} `class = "cor"`\textcolor{blue}{. These priors will be transformed for efficiency and set on so called Cholesky factors of the matrices [for more information see} @stan2018a; \textcolor{blue}{section 1.13]. In our example, we set a prior on the Cholesky factors directly, by defining} `class = "L"`\textcolor{blue}{, shown in the last line of the code block:}  
 
 \scriptsize 
 ```{r priorscor, eval = FALSE}
@@ -553,9 +554,9 @@ model_fit <- brm(formula = formula,                      # Model formula
 ```
 \normalsize 
 
-To estimate the model with the correlation between individual effects, note that one would need to adjust `formula` and `priorsmodel` to the objects where these are saved in (i.e., `bform_cor` and `priorsmodel_cor`). 
+\textcolor{blue}{To estimate the model with the correlation between individual effects, note that one would need to adjust} `formula` \textcolor{blue}{and} `priorsmodel` \textcolor{blue}{to the objects where these are saved in (i.e.,} `bform_cor` \textcolor{blue}{and} `priorsmodel_cor`\textcolor{blue}{).} 
 
-Back to our model without the correlation term form the manuscript. We have already estimated this model and saved it in the R object `brmmodel8_new03012022.rds`. In case you do not want to wait until the model has been fitted but continue immediately with the rest of this tutorial, you can load this R object that contains the model estimations.  
+\textcolor{blue}{Back to our model without the correlation term form the manuscript.} We have already estimated this model and saved it in the R object `brmmodel8_new03012022.rds`. In case you do not want to wait until the model has been fitted but continue immediately with the rest of this tutorial, you can load this R object that contains the model estimations.  
 &nbsp; 
 
 \scriptsize 
@@ -1270,6 +1271,12 @@ plotmodelest_m7brms <- ggplot(data=datafr_m7brms, aes(y=parest_m7brms4)) +
 plotmodelest_m7brms
 ```
 \normalsize 
+
+\textcolor{blue}{We can do the same for the model with correlation between the individual effects (see Figure 7) and see that the estimated effects are somewhat different.}  
+
+```{r modeldigitestplotcor, echo=FALSE, fig.cap="Model estimates for digit effect parameters in the normal model with correlation between individual effects. The points represent the mean parameter estimates for each individual. The violin plots on the right side show the variance of the individual parameter estimates.", fig.align = "left", fig.height = 11, fig.width = 1, out.width="75%"}
+knitr::include_graphics("Fig12_modelestimatefigure2_onlybrms_cor.png")
+```
 
 ## Model comparison 
 
