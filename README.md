@@ -1,6 +1,6 @@
 # Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment
 
-Note: This version of the abstract and repository are posted prior to formal peer review.
+Note: This version of the abstract and repository are posted prior to formal peer review. In the manuscript, changes compared to the previous version are in blue. 
 
 # Abstract 
 
@@ -11,18 +11,18 @@ With the recent development of easy-to-use tools for Bayesian analysis, psycholo
 This repository contains all the documents that are used to create the paper "Bayesian Hierarchical Modeling: Introduction and Reassessment". Here, we describe the content of the repository. Please read this information carefully before using the documents. 
 
 1. Manuscript    
-2. Folders A to H 
-3. Images 
-4. R code 
-5. R objects 
+2. Folders A to K  
+3. I - Images 
+4. J - R code 
+5. K - R objects 
 
 # 1. Manuscript    
 
-The manuscript is written in a R Markdown file called "manuscript.Rmd". It includes code for the prior visualizations that can be run by knitting the document. The folders "manuscript_cache", "manuscript_files" and "manuscript.tex" are provided when knitting the document. The files "apa6.csl" and "r-references.bib" are needed to knit the .rmd file. They contain a template for the APA style and the reference list. To only read the manuscript, you can open the "manuscript.pdf" file. 
+The manuscript is written in a R Markdown file called "manuscript.Rmd". It includes code for the prior visualizations that can be run by knitting the document. The folders "manuscript_cache", "manuscript_files" and "manuscript.tex" are provided when knitting the document. The files "apa6.csl" and "r-references.bib" are needed to knit the `.rmd` file. They contain a template for the APA style and the reference list. To only read the manuscript, you can open the "manuscript.pdf" file. 
 
-# 2. Folders A to H   
+# 2. Folders A to K    
 
-The repository contains eight folders (A to H), in the manuscript referred to as Online Supplements: 
+The repository contains 11 folders (A to K), in the manuscript referred to as Online Supplements: 
 
 - A: Model Parameterization  
 - B: Default Priors Rstan  
@@ -32,14 +32,17 @@ The repository contains eight folders (A to H), in the manuscript referred to as
 - F: Tutorial Log-Normal Model brms 
 - G: Trace Plots 
 - H: Posterior Distributions Tables 
+- I: Images 
+- J: R code 
+- K: R objects 
 
-Online Supplements A, B, C, D, E, F, and H are written in R Markdown, therefore their folder contains, next to the `.pdf` file, a separate `.rmd` file and documents necessary to knit the file. To only read the supplements, you can open the `.pdf` file in each folder. 
+Online Supplements A, B, C, D, E, F, and H are written in R Markdown, therefore their folder contains, next to the `.pdf` file, a separate `.rmd` file and documents necessary to knit the file. To only read the supplements, you can open the `.pdf` file in each folder. Folder G contains `.pdf` files with trace plots for all the parameters of the models in the manuscript and the corresponding R code to create the trace plots. We will explain the other folders in more detail below. 
 
-# 3. Images 
+# 3. I - Images 
 
-This folder contains all the images that are used in the manuscript. They are inserted in "manuscript.Rmd" and shown in "manuscript.pdf". For the images that are created in R, the R code is provided in the "R objects" folder under "Figures". 
+This folder contains images that are used in the manuscript. They are inserted in "manuscript.Rmd" and shown in "manuscript.pdf". For the images that are created in R, the R code is provided in the "R objects" folder under "Figures". 
 
-# 4. R code 
+# 4. J - R code 
 
 This folder consists of five other folders: 
 
@@ -53,7 +56,7 @@ We will describe each folder.
 
 ## 4.1 Brms 
 
-This folder contains two folders "Log-normal model" and "Normal model" and contain R code estimating the log-normal and normal model using `brms` as done for the manuscript. Note that the code, estimating an Bayesian hierarchical model in `brms`, is explained in more detail tutorials D and F. 
+This folder contains two folders "Log-normal model" and "Normal model" and contain R code estimating the log-normal and normal model using `brms` as done for the manuscript. The folder "Normal model" also contains a folder "correlation" with the code for estimating a normal model with correlation between individual effects. Note that the code, estimating an Bayesian hierarchical model in `brms`, is explained in more detail tutorials D and F. 
 
 ## 4.2 Figures 
 
@@ -69,9 +72,9 @@ This folder contains two `.R` files. The file "priortransformFunction.R" contain
 
 ## 4.5 Rstan 
 
-In this folder are two folders "Log-normal model" and "Normal model" that contain R code estimating the log-normal and normal model using `Rstan` as done for the manuscript. Note that the code, estimating an Bayesian hierarchical model in `Rstan`, is explained in more detail tutorials C and E. 
+In this folder are two folders "Log-normal model" and "Normal model" that contain R code estimating the log-normal and normal model using `Rstan` as done for the manuscript. The folder "Normal model" also contains a folder "correlation" with the code for estimating a normal model with correlation between individual effects. Note that the code, estimating an Bayesian hierarchical model in `Rstan`, is explained in more detail tutorials C and E. 
 
-# 5. R objects 
+# 5. K - R objects 
 
 This folder consists of five other folders: 
 
@@ -88,7 +91,7 @@ As the name of this folder tells you, the folder contains the fit of a normal mo
 
 ## 5.2 brms 
 
-This folder consists of four folders: "BF", "log-normal", "Posterior", and "Truncated". In the BF folder, you can find the model fit that has been used to obtain the Bayes factor by the Savage-Dickey density ratio (`.rds` files): "brmmodel8_new_bf_03012022.rds" for the normal model and "brmmodel8log26052022_bf.rds" for the log-normal model. The "Posterior"" folder contains the normal model fit without obtaining the Bayes factor (`.rds` file). Therefore, the models in the two folders only differ in the specification of one option. For the "BF"", the option `sample_prior` in the fit function is set to `TRUE`, while this is set to `FALSE` in fit located in the "Posterior"" folder. The "log-normal" folder contains the log-normal model fit ("brmmodel8log13012022.rds") and the log-normal fit used to obtain the Bayes factor ("BRMSmodelfit18_26052022_bf.rds", this is a duplicate of the log-normal model fit in the "BF" folder). The "Truncated" folder mainly contains duplicates of previously discussed model fits, but it also contains the model fit of the side model ("side_model_fit.rds" and "side_model_fit_12042022.rds"). The fit of the models can be loaded as an object in R, instead of fitting the model yourself. Therefore, it contains the result we worked with in this study. 
+This folder consists of four folders: "BF", "correlation", "log-normal", "Posterior", and "Truncated". In the BF folder, you can find the model fit that has been used to obtain the Bayes factor by the Savage-Dickey density ratio (`.rds` files): "brmmodel8_new_bf_03012022.rds" for the normal model and "brmmodel8log26052022_bf.rds" for the log-normal model. The "Posterior"" folder contains the normal model fit without obtaining the Bayes factor (`.rds` file). Therefore, the models in the two folders only differ in the specification of one option. For the "BF"", the option `sample_prior` in the fit function is set to `TRUE`, while this is set to `FALSE` in fit located in the "Posterior"" folder. The "log-normal" folder contains the log-normal model fit ("brmmodel8log13012022.rds") and the log-normal fit used to obtain the Bayes factor ("BRMSmodelfit18_26052022_bf.rds", this is a duplicate of the log-normal model fit in the "BF" folder). The "Truncated" folder mainly contains duplicates of previously discussed model fits, but it also contains the model fit of the side model ("side_model_fit.rds" and "side_model_fit_12042022.rds"). The "correlation" folder contains the model fit of the normal model with correlation between individual estimates ("brmmodel9_new28062023"). The fit of the models can be loaded as an object in R, instead of fitting the model yourself. Therefore, it contains the result we worked with in this study. 
 
 
 ## 5.3 Model Comparison 
@@ -97,7 +100,7 @@ The Model Comparison folder contains two folders "Bayes Factors per package" and
 
 ## 5.4 rstan 
 
-In this folder, you can find again two other folders: "normal model"" and "log-normal model". As the name tells you, these folders contain the `rstan` materials for the normal model and the log-normal model. They contain the `.stan` files for all the models (null model, side model, digit model and full model) and the results of the full model fit that is saved in the `.RDS` file (this is an R object). The fit of the full model can be loaded as an object in R, instead of fitting the model yourself. Therefore, it also contains the result we worked with in this study. The "normal model" folder also contains the `.stan` files used for the sensitivity analysis. "myModel.stan" is a duplicate of the full normal model saved under "rewritestanmodel3_trunc.stan". "rstan_model_fit.rds" is a duplicate of "hier_modelc_adj_07012022.rds". "myLogModel.stan" is a duplicate of the full log-normal model saved under "logstanmodel3.stan". "rstan_logmodel_fit.rds" is a duplicate of "hier_logmodelc_adj13012022.rds". 
+In this folder, you can find again two other folders: "normal model"" and "log-normal model". As the name tells you, these folders contain the `rstan` materials for the normal model and the log-normal model. They contain the `.stan` files for all the models (null model, side model, digit model and full model) and the results of the full model fit that is saved in the `.RDS` file (this is an R object). The fit of the full model can be loaded as an object in R, instead of fitting the model yourself. Therefore, it also contains the result we worked with in this study. The "normal model" folder also contains the `.stan` files used for the sensitivity analysis. "myModel.stan" is a duplicate of the full normal model saved under "rewritestanmodel3_trunc.stan". "rstan_model_fit.rds" is a duplicate of "hier_modelc_adj_07012022.rds". "myLogModel.stan" is a duplicate of the full log-normal model saved under "logstanmodel3.stan". "rstan_logmodel_fit.rds" is a duplicate of "hier_logmodelc_adj13012022.rds". The "normal model" folder also contains a folder "correlation" with the `.stan` file to estimate a normal model with correlation between individual effects called "myModel_cor.stan" and it's model fit saved in "hier_modelc_cor_29062023.rds".
 
 Other documents in the repository that are not discussed here are not of much interest, but are necessary to run the `.Rmd` files. 
 

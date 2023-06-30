@@ -28,7 +28,7 @@
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \hypersetup{
   pdftitle={Bayesian Hierarchical Modeling: An Introduction and Reassessment},
-  pdfauthor={Myrthe Veenman1, Angelika Stefan2, \& Julia Haaf2},
+  pdfauthor={Myrthe Veenman1, Angelika M. Stefan2, \& Julia M. Haaf3},
   pdflang={en-EN},
   pdfkeywords={Multilevel, Tutorial, rstan, brms, Bayes factor},
   hidelinks,
@@ -151,6 +151,7 @@
 \definecolor{mypink}{RGB}{255, 230, 255}
 \usepackage{todonotes}
 \newcommand{\Julia}[1]{\todo[inline, color=mypink]{#1}}
+\newcommand{\Revision}[1]{\textcolor{blue}{#1}}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{tabularx}
@@ -190,7 +191,7 @@
 \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
 \title{Bayesian Hierarchical Modeling: An Introduction and Reassessment}
-\author{Myrthe Veenman\textsuperscript{1}, Angelika Stefan\textsuperscript{2}, \& Julia Haaf\textsuperscript{2}}
+\author{Myrthe Veenman\textsuperscript{1}, Angelika M. Stefan\textsuperscript{2}, \& Julia M. Haaf\textsuperscript{3}}
 \date{}
 
 
@@ -202,7 +203,7 @@ Correspondence concerning this article should be addressed to Myrthe Veenman, Wa
 
 }
 
-\affiliation{\vspace{0.5cm}\textsuperscript{1} Leiden University\\\textsuperscript{2} University of Amsterdam}
+\affiliation{\vspace{0.5cm}\textsuperscript{1} Leiden University\\\textsuperscript{2} Universität der Bundeswehr München\\\textsuperscript{3} University of Amsterdam}
 
 \abstract{
 With the recent development of easy-to-use tools for Bayesian analysis, psychologists have started to embrace Bayesian hierarchical modeling. Bayesian hierarchical models provide an intuitive account of inter- and intraindividual variability and are particularly suited for the evaluation of repeated-measures designs. Here, we provide guidance for model specificaton and interpretation in Bayesian hierarchical modeling and describe common pitfalls that can arise in the process of model fitting and evaluation. Our introduction gives particular emphasis to prior specification and prior sensitivity, as well as to the calculation of Bayes factors for model comparisons. We illustrate the use of state-of-the-art software programs \texttt{Stan} and \texttt{brms}. The result is an overview over best practices in Bayesian hierarchical modeling that, as we hope, will help psychologists in making the best use of Bayesian hierarchical modeling.
@@ -235,36 +236,40 @@ However, there are challenges to the Bayesian way of hierarchical modeling (Roud
   Practical instructions for Bayes factor model comparison.
 \end{itemize}
 
-Our tutorial is directed at researchers who have a basic understanding of Bayesian inference and parameter estimation and are planning to perform more complex Bayesian analyses.
+Our tutorial is directed at researchers who have a basic \textcolor{blue}{conceptual} understanding of Bayesian inference and parameter estimation and are planning to perform more complex Bayesian analyses \textcolor{blue}{of psychological phenomena. We hope to achieve a balance of detail and overview---while we want to provide guidance for a full Bayesian workflow, similar to Gelman et al.} (2020) \textcolor{blue}{and Schad et al.}(2021; 2022)\textcolor{blue}{, we don't shy away from in-depth explanations for the most curious scientists. To ensure that a broad audience is able to follow the tutorial, we limit and carefully explain equations. However, rudimentary knowledge of calculus is advantageous to fully understand the Bayesian analyses. }
 
-The application of Bayesian hierarchical analysis will be illustrated using a digit classification task collected by Rouder, Lu, Speckman, Sun, and Jiang (2005). In an experimental task participants repeatedly indicated whether a target digit (i.e., 2, 3, 4, 6, 7, or 8) was greater or smaller than 5. The participants in the task performed multiple trials per condition (i.e., digit). Therefore, observations are nested in participants. Our analyses focus on two effects that can potentially occur in this digit classification task: The digit effect and the side effect. According to the symbolic distance hypothesis (Moyer \& Landauer, 1967) processing of numbers is analogue. If numbers are closer on the number line, we may confuse them more, and comparing them is more difficult. In line with this hypothesis, the digit effect postulates that response times (RTs) are slower when digits are closer to 5. Additionally, we may hypothesize that RTs are affected by whether the target digit was smaller or greater than 5, yet it is unclear which side of 5 would lead to faster or slower RTs. The digit classification task is a standard task that usually would be analyzed in a 3 (digit) by 2 (side) within-subjects ANOVA. In this tutorial, we show how inferences can be improved using a hierarchical Bayesian model instead.
+The application of Bayesian hierarchical analysis will be illustrated using a digit classification task collected by Rouder, Lu, Speckman, Sun, and Jiang (2005). In an experimental task participants repeatedly indicated whether a target digit (i.e., 2, 3, 4, 6, 7, or 8) was greater or smaller than 5. The participants in the task performed multiple trials per condition (i.e., digit). Therefore, observations are nested in participants. Our analyses focus on two effects that can potentially occur in this digit classification task: The digit effect and the side effect. According to the symbolic distance hypothesis (Moyer \& Landauer, 1967) processing of numbers is analogue. If numbers are closer on the number line, we may confuse them more, and comparing them is more difficult. In line with this hypothesis, the digit effect postulates that response times (RTs) are slower when digits are closer to 5. Additionally, we may hypothesize that RTs are affected by whether the target digit was smaller or greater than 5, yet it is unclear which side of 5 would lead to faster or slower RTs. \textcolor{blue}{The digit classification task is a standard task that usually would be analyzed in a 3 (digit, closest to 5, further away from 5, furthest away from 5) by 2 (side, greater or smaller than 5) within-subjects ANOVA.} In this tutorial, we show how inferences can be improved using a hierarchical Bayesian model instead.
 
 \begin{figure}[H]
 
-\includegraphics[width=0.95\linewidth]{Images/Fig1_meanrtandhierplot_v2} \hfill{}
+\includegraphics[width=0.95\linewidth]{I - Images/Fig1_meanrtandhierplot_v2} \hfill{}
 
-\caption{Panel A shows the response times in seconds for two conditions of the digit classification task (i.e., digits 3 and 4). The grey lines represent the individual effects, and the blue line the aggregated effect. Panel B shows how individual estimates are shrunken towards the general trend. Sample represents the observed effect per participant in seconds, while Model represents the estimated effects per participant. }\label{fig:figure1}
+\caption{Panel A shows the average response times in seconds for two conditions of the digit classification task (i.e., digits 3 and 4). The grey lines represent the average within individual effects, and the blue line the aggregated effect over all individuals. Panel B shows how individual estimates are shrunken towards the general trend. Sample represents the observed effect per participant in seconds, while Model represents the estimated effects per participant. }\label{fig:figure1}
 \end{figure}
 
 \hypertarget{why-multilevel-modeling}{%
 \subsection{Why Multilevel Modeling?}\label{why-multilevel-modeling}}
 
-Before diving into hierarchical modeling, let us consider two alternative approaches: Analyzing aggregated data and analyzing the data separately for each participant. Analyses of aggregated data such as the ANOVA from the scenario above examine a general effect that is assumed to be consistent across subjects. For instance, when investigating whether there is an effect of digit on RT, the mean RT for each participant is computed for each digit-condition, and a repeated-measures ANOVA is conducted on these aggregated scores. Analyses of aggregated data cannot investigate whether a trend is consistent across participants. Therefore, when this option is applied and individual variability is ignored, the general trend can be an inaccurate representation of the true general trend (Rouder, Morey, \& Pratte, 2013; Haaf \& Rouder, 2017; van Doorn, Aust, Haaf, Stefan, and Wagenmakers, 2021). This is shown in Panel A of Figure \ref{fig:figure1} where some of the individual trends (i.e., slopes of the grey lines) differ from the general trend (i.e., slope of the blue line). If every participant takes part in each condition, the person variability affects all conditions, thus inducing a correlation across conditions. For example, participants in a digit classification task repeatedly respond to target digits inducing a correlation between the responses to the target digits, such as between target digit 3 and target digit 4. Therefore, the observations are not independent as we assume if we perform analysis on aggregated data. As a result, the type I error rate of a test of the effect increases: there is a higher probability of concluding that there is an effect if there is no effect (Rouder \& Lu, 2005).
+Before diving into hierarchical modeling, let us consider two alternative approaches: Analyzing aggregated data and analyzing the data separately for each participant. Analyses of aggregated data such as the ANOVA from the scenario above examine a general effect that is assumed to be consistent across subjects. For instance, when investigating whether there is an effect of digit on RT, the mean RT for each participant is computed for each digit-condition, and a repeated-measures ANOVA is conducted on these aggregated scores. Analyses of aggregated data cannot investigate whether a trend is consistent across participants. Therefore, when this option is applied and individual variability is ignored, the general trend can be an inaccurate representation of the true general trend (Rouder, Morey, \& Pratte, 2013; Haaf \& Rouder, 2017; van Doorn, Aust, Haaf, Stefan, and Wagenmakers, 2021).
+
+\textcolor{blue}{A pattern where the general trend does not reflect individual trends is shown in Panel A of Figure} \ref{fig:figure1}\textcolor{blue}{. The slopes of the grey lines reflect individual trends, and some of them differ considerably from the general trend shown as the slope of the blue line.} If every participant takes part in each condition, the person variability affects all conditions, thus inducing a correlation across conditions. For example, participants in a digit classification task repeatedly respond to target digits inducing a correlation between the responses to the target digits, such as between target digit 3 and target digit 4. \textcolor{blue}{Therefore, analyses on aggregated data do not appropriately account for differential experiment effects} (Doorn, Aust, Haaf, Stefan, \& Wagenmakers, 2021, 2023). As a result, the type I error rate of a test of the effect increases: there is a higher probability of concluding that there is an effect if there is no effect (Rouder \& Lu, 2005).
 
 A second alternative analysis method is to conduct an analysis on each participant's data independently. For example, in the digit classification task, we would estimate one digit effect per person (cf.~the grey lines in Figure 1A), but no overall effect (cf.~the blue line in Figure 1A). Therefore, when analyzing participant data independently, it is hard to draw any general conclusions.
 
-In hierarchical analyses, the general or overall effect is called fixed effect, and the individual-specific deviations from this effect are called random effects (Rouder \& Lu, 2005). We can also estimate individual effects, not as deviations from an overarching effect, but as effects for each individual, as obtained from a per-participant analysis. In this tutorial, we will use the terms general effect, individual deviation, and individual effects instead of fixed and random effects, because we believe these terms are better suited for the interpretation of our analyses.
+\textcolor{blue}{It is clear that neither of the alternative approaches yield satisfactory results by themselves. Conceptually, a hierarchical analysis provides a compromise between the aggregated and independent approach by drawing benefits from each method. The motivation for hierarchical models, as well as their general mathematical structure, has been covered by several (tutorial) articles} (e.g., Efron \& Morris, 1977; Singmann \& Kellen, 2019; West, Welch, \& Galecki, 2022)\textcolor{blue}{, as well as text books} (e.g., Gelman \& Hill, 2006; Hox, Moerbeek, \& Van de Schoot, 2017; Nicenboim, Schad, \& Vasishth, 2023).
+
+\textcolor{blue}{In hierarchical analyses, the general or overall effect is sometimes called fixed effect, and the individual-specific deviations from this effect are in that case referred to as random effects (Rouder \& Lu, 2005). We can also estimate individual effects, not as deviations from an overarching effect, but as effects for each individual, as obtained from a per-participant analysis. Throughout this tutorial, we will use the terms general effect, individual deviation, and individual effect.}
 
 If estimated for each participant independently, observed individual effects are quite variable because they are perturbed by sample noise. In hierarchical modeling, these individual effects are optimally and automatically corrected towards the general trend (Efron \& Morris, 1977). This phenomenon, also called `shrinkage', is illustrated in Panel B of Figure \ref{fig:figure1}. The rightmost observation in the figure is in sample quite large compared to the other observed effects. The estimated effect (green point) is drastically corrected towards the mean. Conversely, the general trend is only influenced slightly by individuals showing a highly divergent trend. By adding the individual variability to the model, we no longer assume independence between observations, but the overall effect in the model leaves the possibility to generalize the effect. Therefore, hierarchical analysis can be considered a middle ground between an independent analysis and an analysis of aggregated data.
 
-The Bayesian framework offers an intuitive approach for hierarchical modeling (Rouder \& Lu, 2005; Lynch, 2007). The flexibility of the Bayesian approach facilitates the implementation of complex hierarchical models (Rouder, Morey, \& Pratte, 2013). It also allows for the inclusion of prior knowledge into the analysis, as well as the monitoring of evidence for specific hypotheses as the data accumulate (Wagenmakers et al., 2018). A complete discussion of the Bayesion approach is beyond the scope of this manuscript. We refer the interested reader to Etz and Vandekerckhove (2018) and Wagenmakers and colleagues (2018).
+The Bayesian framework offers a more intuitive approach for hierarchical modeling (Rouder \& Lu, 2005; Lynch, 2007). The flexibility of the Bayesian approach facilitates the implementation of complex hierarchical models (Rouder, Morey, \& Pratte, 2013). It also allows for the inclusion of prior knowledge into the analysis, as well as the monitoring of evidence for specific hypotheses as the data accumulate (Wagenmakers et al., 2018). A complete discussion of the Bayesion approach is beyond the scope of this manuscript. We refer the interested reader to Etz and Vandekerckhove (2018) and Wagenmakers and colleagues (2018).
 
 \hypertarget{model-specification}{%
 \section{Model Specification}\label{model-specification}}
 
 In the following section, we specify two models that can be used for our application example: a normal and a log-normal model.\footnote{\href{https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/blob/main/A\%20-\%20Model\%20Parameterization\%20/Online-Supplement-A---Model-Parameterization-for-Aggregated-and-Individual-Models.pdf}{Online Supplement A} provides the parameterization for models of aggregated and individual data, to illustrate the difference with hierarchical models.} We are aware that many psychologists do not engage with equations on a daily basis. In this section, however, we try to accessibly summarize the key considerations of model specification. We encourage everyone to read on and not skip the section. Additionally, we provide a non-technical verbal summary.
 
-Throughout the section, we assume that each observation \(Y_{ijk}\) is the response time from participant \(i\) in trial \(k\) of condition \(j\). The condition \(j\) is the digit presented to the participant, and can take the values 2, 3, 4, 6, 7, and 8. We further assume that the digit side (\(x\)) is recorded using effect coding where a value of -0.5 indicates that the digit is smaller than 5, and a value of 0.5 indicates that the digit is larger than 5. Additionally, we assume that the digits presented in the trial are dummy-coded in the data using four variables (\(u\), \(v\), \(w\), \(z\)). If digits 2 and 8 were presented all four variables are zero. The dummy variables represent the digits 3 (\(u\)), 4 (\(v\)), 6 (\(w\)), and 7 (\(z\)), and each take the value 1 if the respective digit was presented in the trial, and 0 if it was not.
+Throughout the section, we assume that each observation \(Y_{ijk}\) is the response time from participant \(i\) in trial \(k\) of condition \(j\). The condition \(j\) is the digit presented to the participant, and can take the values 2, 3, 4, 6, 7, and 8. We further assume that the digit side (\(x\)) is recorded using effect coding where a value of -0.5 indicates that the digit is smaller than 5, and a value of 0.5 indicates that the digit is larger than 5. Additionally, we assume that the digits presented in the trial are dummy-coded in the data using four variables (\(u\), \(v\), \(w\), \(z\)). If digits 2 and 8 were presented all four variables are zero. The dummy variables represent the digits 3 (\(u\)), 4 (\(v\)), 6 (\(w\)), and 7 (\(z\)), and each take the value 1 if the respective digit was presented in the trial, and 0 if it was not (for more on contrast coding, we refer to Pinheiro \& Bates, 2006; and Singmann \& Kellen, 2019).
 
 \hypertarget{normal-model}{%
 \subsection{Normal Model}\label{normal-model}}
@@ -322,7 +327,8 @@ z_j =
 \end{cases}
 \end{aligned}
 \end{align*}
-The model equation shows that, for instance, for participant \emph{i} = 1 and digit \emph{j} = 7, the mean RT is modeled by: \(\gamma_{i = 1} - \frac{1}{2} \beta_{i = 1} + \delta_{7,i = 1}\). If all \(\delta\)s are positive, then the model equation indicates that individuals respond fastest when the digits 2 and 8 are presented, as in this situation there are no digit effects in the equation.
+
+\textcolor{blue}{The model equation enables us to compute the expected response time $Y_{ij}$ for a participant $i$ when presented with a specific probe. For example, if participant $i = 1$ is presented with digit $j = 7$, $x_j$ takes the value $-\frac{1}{2}$ and $u_j$ takes the value $1$. The parameters $v_j$, $w_j$, and $z_j$ take the value zero, such that the equation for the expected value reduces to: $\gamma_{i} + \frac{1}{2} \beta_{i} + \delta_{7,i}$. Let us assume that the participant 1's mean response time across all items is $\gamma_{1} = 0.5$, they respond generally faster to digits to the right of five, as expressed by $\beta_{1} = 0.2$, and they respond slower to digit 7, given by $\delta_{7,1} = 0.25$. Then their expected response time for the digit 7 can be calculated by $0.5 - 0.5 * 0.2 + 1 * 0.25$.}
 
 The intercept \(\gamma_i\), the side effect \(\beta\), and the digit effects \(\delta\) are person-specific. This means that for these parameters, the model will produce one estimate for each participant. The multilevel model assumes that these individual-level effects in turn follow a normal distribution:
 
@@ -341,25 +347,28 @@ The means (\(\mu_{\gamma}\), \(\mu_{\beta}\), \(\mu_{\delta}\)) of these normal 
 \hypertarget{log-normal-model}{%
 \subsection{Log-normal Model}\label{log-normal-model}}
 
-A normal model may not be appropriate in case of more complex theories, hypotheses, or data structures. For example, the data in the example are response times. The normal model, however, can yield negative values, which seems very problematic. In addition, RT distributions are right-skewed. A better representation of the data at hand is therefore given by a log-normal model (Schramm \& Rouder, 2019). This means that Equation \eqref{eq:datalevel} has to be adjusted:
+A normal model may not be appropriate in case of more complex theories, hypotheses, or data structures. For example, the data in the example are response times. \textcolor{blue}{Response times cannot be negative. The normal model, however, can yield negative values. When using the normal model for response times, we are assigning probability to negative values that are not possible. This could be problematic.} In addition, RT distributions are right-skewed. A better representation of the data at hand is therefore given by a log-normal model (Schramm \& Rouder, 2019). This means that Equation \eqref{eq:datalevel} has to be adjusted:
 
 \begin{equation}
 Y_{ijk} \sim \text{LogNormal}(\gamma_{i} + x_j \beta_{i} + u_j \delta_{7i} + v_j \delta_{6i} + w_j \delta_{4i} + z_j \delta_{3i}, \sigma^2).  
 \end{equation}
-Note that the only change in the model formulation is the change of the likelihood function from a normal distribution to a log-normal distribution. The location parameter of the log-normal distribution is described through the same combination of parameters as the mean of the normal model. However, it has a different interpretation. For example, for a location parameter of \(\mu = 0\) and a scale parameter of \(\sigma^2 = 1\), the mode of the log-normal distribution is \(0.368\), and the mean is \(1.65\).
+
+\textcolor{blue}{Note that the only change in the model formulation is the change from a normal distribution to a log-normal distribution. The density function describes the probability model that is assumed to be underlying the data. When the parameters of this probability model are known, the joint probability of the data can be inferred from the density function. The log-normal distribution only assigns probability to positive data values, and is, just as the RT distributions, right-skewed. Therefore, the log-normal distribution is a better match for the RT data.} The location parameter of the log-normal distribution is described through the same combination of parameters as the mean of the normal model. However, it has a different interpretation. For example, for a location parameter of \(\mu = 0\) and a scale parameter of \(\sigma^2 = 1\), the mode of the log-normal distribution is \(0.368\), and the mean is \(1.65\).
 
 \hypertarget{summary}{%
 \subsection{Summary}\label{summary}}
 
-In summary, the models are placed directly on the raw RT data. The only difference between the normal and the log-normal models is the likelihood distribution. The normal model just assumes a symmetric normal distibution that can take on any value. The log-normal model assumes a log-normal distribution, which is restricted to positive values and has a right skew.
+In summary, the models are placed directly on the raw RT data. The only difference between the normal and the log-normal models is the probability distribution. The normal model just assumes a symmetric normal distribution that can take on any value. The log-normal model assumes a log-normal distribution, which is restricted to positive values and has a right skew.
 
 Both the normal and the log-normal models contain the following parameters: \(\gamma_i\) corresponds to the participant's overall response time, \(\beta_i\) corresponds to the participant's side effect, and the four \(\delta_{\cdot i}\) correspond to the effects between the digits furthest away from 5 (2 or 8) and the other digits. These person-specific effects all come from parent distributions. This results in the hierarchical structure shown in Figure \ref{fig:hierarchyplot}. The figure highlights the relationship between the parameters and the data.
+
+\textcolor{blue}{Up until now, we specified models without a correlation between the individual effects. This means, for instance, that we do not expect the estimations for the individual effects $\delta_{7, i}$ and $\delta_{3, i}$ to be related. However, in cases where we would expect the estimation of individual effects to be related, we could estimate the correlation coefficient between individual effects. This would add complexity to the model. For the sake of the tutorial, we will focus on the models without individual effect correlation, but we illustrate the estimation of the model with correlation between the individual effects in} \href{https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment}{Online Supplement C and D}.
 
 In Bayesian modeling, prior distributions are needed to complete model specification. In the next section, we will take you through the process of setting these priors, followed by sections on Bayesian estimation and hypothesis testing for both the normal and log-normal model. In every section, we will first explain the normal model, followed by an illustration of the log-normal model.
 
 \begin{figure}[H]
 
-\includegraphics[width=0.7\linewidth]{Images/Fig2_Hierarchical structure} \hfill{}
+\includegraphics[width=0.7\linewidth]{I - Images/Fig2_Hierarchical structure} \hfill{}
 
 \caption{Hierarchical structure of the normal and log-normal models for the digit classification task.}\label{fig:hierarchyplot}
 \end{figure}
@@ -376,7 +385,18 @@ For our models, priors are needed on the general effects (\(\mu_{\gamma}\), \(\m
 
 In many cases substantive researchers fear committing to prior settings because they are unsure about their choices for the type and settings of the distribution. Therefore, they tend to choose wide priors to indicate little prior knowledge about the parameter values (Aczel et al., 2018). These include default priors offered by programming packages, such as \texttt{rstan} (Stan Development Team, 2019a; illustrated in \href{https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/blob/main/B\%20-\%20Default\%20Priors\%20Rstan/Online-Supplement-B---Default-Priors-Rstan.pdf}{Online Supplement B}) and \texttt{brms} (Bürkner, 2017, 2018). Wide priors are priors that allocate (approximately) equal probability density to a great range of values, such as a uniform distribution without bounds (Gelman, 2006). However, wide priors can be problematic. First, since the distribution is spread out across a wide range of values, the probability density on any specific parameter value is very low. Therefore, any effect is unlikely under the prior as a wide range of effects is deemed plausible. This influences model comparisons: the support for the null hypothesis becomes increasingly large. This is also referred to as the Jeffreys-Lindley paradox (Lindley, 1957).
 
-Another important issue is that wide priors are often improper, that is, the probability density does not integrate to one (Hobert \& Casella, 1996). An example of an improper prior is a uniform prior distribution ranging from minus infinity to infinity. In case of improper priors, an estimation of the general and individual effects cannot be provided. However, even proper priors can result in improper posteriors (Hobert \& Casella, 1996). Although estimation should not be possible in this situation, statistical software might still provide results without notifying the user that the posterior distribution does not exist. If users are not aware of this problem, this can result in misleading conclusions. Therefore, it is important to check if \emph{(a)} the priors are proper and \emph{(b)} the priors result in proper posteriors. There is no fail-safe method that guarantees proper posteriors for hierarchical models. The best approach is to choose well-reasoned informative priors for the model, for instance, by using the proposed four-step procedure below.
+Another important issue is that wide priors are often \textcolor{blue}{improper probability distributions} (Hobert \& Casella, 1996). \textcolor{blue}{A prior is proper if two conditions hold: 1. All values of the probability distribution are equal or greater than zero, and 2. the probability distribution sums to one for discrete data or integrates to one for continuous data. An example of a proper and improper probability distribution are provided in Figure} \ref{fig:properfigure}. \textcolor{blue}{The figure shows two hypothetical priors for parameter $\theta$. The first condition can be assessed by checking the y-values---both priors have only positive values as function output (0.1, 0.2, and 0.4). To assess the second condition, we need to sum up the function values. Panel A shows a proper distribution where the values sum to 1; panel B shows an improper distribution where the values sum to 1.2.}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{manuscript_files/figure-latex/properfigure-1} 
+
+}
+
+\caption{Two hypothetical priors for a discrete parameter $\theta$. A. A proper probability distribution that sums to one. B. An improper probability distribution that sums to 1.2.}\label{fig:properfigure}
+\end{figure}
+
+A \textcolor{blue}{more common} example of an improper prior is a uniform prior distribution ranging from minus infinity to infinity. In case of improper priors, \textcolor{blue}{it is often impossible to obtain correct estimation of general and individual effects in hierarchical models because the resulting posteriors will again be improper probability distributions.} However, even proper priors can result in improper posteriors (Hobert \& Casella, 1996). Although estimation should not be possible in this situation, statistical software might still provide results without notifying the user that the posterior distribution does not exist. If users are not aware of the impropriety problem, this can result in misleading conclusions. Therefore, it is important to check if \emph{(a)} the priors are proper and \emph{(b)} the priors result in proper posteriors. \textcolor{blue}{Unfortunately,} there is no fail-safe method that guarantees proper posteriors for hierarchical models. The best approach is to choose well-reasoned informative priors for the model, for instance, by using the proposed four-step procedure below. \textcolor{blue}{Priors that are proper and not too diffuse will in most cases lead to proper posteriors.}
 
 \hypertarget{procedure}{%
 \subsection{Procedure}\label{procedure}}
@@ -403,7 +423,7 @@ Note that although distributions within a distributional family share the same f
 
 \begin{figure}[H]
 
-\includegraphics[width=1\linewidth]{Images/Fig4_distrtypefigure_v3} \hfill{}
+\includegraphics[width=1\linewidth]{I - Images/Fig5_distrtypefigure_v3} \hfill{}
 
 \caption{Common probability density distributions that may be used as priors. Panel A shows normal distributions varying in mean and standard deviation. Panel B shows inverse gamma distributions that differ in the shape and scale parameter. Panel C shows Student's \textit{t}-distributions that differ in the location and scale parameter. For all three \textit{t}-distributions, the degrees of freedom are set to 3.}\label{fig:distritypeplot}
 \end{figure}
@@ -418,16 +438,16 @@ For this step, it is important to consider the scale on which variables are meas
 \hypertarget{step-3-prior-predictions}{%
 \subsection{Step 3: Prior Predictions}\label{step-3-prior-predictions}}
 
-A key advantage of model specification with priors is that we can obtain preditions on what the data would look like that are generated from the model. These prior predictions allow us to make the implications of our specified priors more concrete. Researchers can look at relevant statistic that summarize the simulated data and decide if they correspond to reasonable observations for their specific research context. If the simulated data are in line with the researchers' expectations, the priors can be used for the analysis. If the simulated data do not match the expectations, the priors have to be adjusted (Step 4).
+A key advantage of model specification with priors is that we can obtain predictions on what the data would look like that are generated from the model (Etz, Haaf, Rouder, \& Vandekerckhove, 2018; Lee \& Vanpaemel, 2018). These prior predictions allow us to make the implications of our specified priors more concrete. Researchers can look at relevant statistic that summarize the simulated data and decide if they correspond to reasonable observations for their specific research context. If the simulated data are in line with the researchers' expectations, the priors can be used for the analysis. If the simulated data do not match the expectations, the priors have to be adjusted (Step 4).
 
 \begin{figure}[H]
 
-\includegraphics[width=1\linewidth]{Images/Fig5_priorpredfigure_v2} \hfill{}
+\includegraphics[width=1\linewidth]{I - Images/Fig6_priorpredfigure_v2} \hfill{}
 
 \caption{Side and digit effects from predicted data. Violins represent the distribution of predicted effects across 1000 simulation runs. The blue points are the average effects across simultions. Panel A shows the prior predictions for the normal model based on the default priors of \textit{brms}. Panel B shows the prior predictions for the normal model based on the selected priors. Panel C shows the prior predictions for the log-normal model based on the priors chosen for the normal model. Panel D shows the prior predictions for the log-normal model based on the selected priors.}\label{fig:priorpredfigurepanel}
 \end{figure}
 
-The simulation proceeds as follows: First, one random draw from each prior distribution is taken. This is plugged into the individual effect distributions (Equation (2)). Then, the likelihood of the model, such as specified in Equations (1) and (3), is used to simulate observations per condition. This means that for \emph{n} participants, \emph{n} random values for the model parameters are generated based on the priors, which will result in the \emph{k} observations per \emph{j} conditions. This process is repeated \emph{m} times, where \emph{m} is the number of simulations drawn. Note that the more simulations are conducted, the closer one gets to the full picture because enough samples from the prior distribution are needed. Finally, we can visualize the simulated data. Figure \ref{fig:priorpredfigurepanel} shows prior predictions for the key effects from the digit classification task. For this task, we mainly care about the side effect and digit effects corresponding to the \(\beta\)s and the \(\delta\)s from the model. Here, the prior predictions for the average side effect and the average digit effect across participants are depicted.
+The simulation proceeds as follows: First, one random draw from each prior distribution is taken. This is plugged into the individual effect distributions (Equation (2)). Then, the probability of the model, such as specified in Equations (1) and (3), is used to simulate observations per condition. This means that for \emph{n} participants, \emph{n} random values for the model parameters are generated based on the priors, which will result in the \emph{k} observations per \emph{j} conditions. This process is repeated \emph{m} times, where \emph{m} is the number of simulations drawn. Note that the more simulations are conducted, the closer one gets to the full picture because enough samples from the prior distribution are needed. Finally, we can visualize the simulated data. Figure \ref{fig:priorpredfigurepanel} shows prior predictions for the key effects from the digit classification task. For this task, we mainly care about the side effect and digit effects corresponding to the \(\beta\)s and the \(\delta\)s from the model. Here, the prior predictions for the average side effect and the average digit effect across participants are depicted.
 
 For step 3, the intention is not to compare the actual data of interest to the data predicted by the priors. Instead, the researchers' \emph{expectations} of plausible data are compared to the prior predictions. Therefore, prior predictive checks are conducted \emph{before} looking at the actual data. If the prior predictions match the expectations, the priors can be used for the analysis. If they do not match the expectations, the priors need to be adjusted.
 
@@ -441,9 +461,9 @@ In the following two sections, we will provide a walk-through of all four steps 
 \hypertarget{normal-model-1}{%
 \subsection{Normal Model}\label{normal-model-1}}
 
-In the symbolic distance model, we have to specify priors for the parameters \(\mu_{\gamma}\), \(\mu_{\beta}\), \(\mu_{\delta}\), \(\sigma^2_{\gamma}\), \(\sigma^2_{\beta}\), and \(\sigma^2_{\delta}\). The parameters \(\mu_{\gamma}\), \(\mu_{\beta}\), and \(\mu_{\delta}\) can be positive or negative. All variance terms (\(\sigma_{\gamma}^2\), \(\sigma_{\beta}^2\), \(\sigma_{\delta}^2\), and \(\sigma^2\)) are constrained to be positive. If there is no information from previous studies, researchers might be inclined to use the default priors in \texttt{brms} as a starting point.
+In the symbolic distance model, we have to specify priors for the parameters \(\mu_{\gamma}\), \(\mu_{\beta}\), \(\mu_{\delta}\), \(\sigma^2_{\gamma}\), \(\sigma^2_{\beta}\), and \(\sigma^2_{\delta}\). The parameters \(\mu_{\gamma}\), \(\mu_{\beta}\), and \(\mu_{\delta}\) can be positive or negative. All variance terms (\(\sigma_{\gamma}^2\), \(\sigma_{\beta}^2\), \(\sigma_{\delta}^2\), and \(\sigma^2\)) are constrained to be positive. If there is no information from previous studies, researchers might be inclined to use the default priors \textcolor{blue}{of software packages, often reasonably uninformative priors,} as a starting point.
 
-In \texttt{brms}, different default priors are set on different types of parameters (Bürkner, 2017). The prior on the group-level regression weights (\(\mu_{\beta}\), \(\mu_{\delta}\)) is a normal distribution with a mean of 0 and a standard deviation of 1. The prior on the intercept \(\mu_{\gamma}\) is a scaled and shifted Student's \emph{t}-distribution with 3 degrees of freedom, a location parameter of 1, and a scale parameter of 10. \texttt{brms} specifies priors on standard deviations (\(\sqrt{\sigma^2}\)) instead of variances. For the normal model, this means that priors are set on \(\sigma_{\gamma}\), \(\sigma_{\beta}\), \(\sigma_{\delta}\) and \(\sigma\), instead of on \(\sigma_{\gamma}^2\), \(\sigma_{\beta}^2\), \(\sigma_{\delta}^2\) and \(\sigma^2\). The default prior on the standard deviations is a central, scaled Student's \emph{t}-distribution with 3 degrees of freedom and a scale parameter of 10 that is truncated at zero. To summarize, the default priors would be set the following way:
+\textcolor{blue}{We take the reasonably uninformative priors as a starting point as well specifying priors on different types of parameters. These priors were previously used as} default priors in \texttt{brms} (Bürkner, 2017). The prior on the group-level regression weights (\(\mu_{\beta}\), \(\mu_{\delta}\)) is a normal distribution with a mean of 0 and a standard deviation of 1. The prior on the intercept \(\mu_{\gamma}\) is a scaled and shifted Student's \emph{t}-distribution with 3 degrees of freedom, a location parameter of 1, and a scale parameter of 10. \texttt{brms} specifies priors on standard deviations (\(\sqrt{\sigma^2}\)) instead of variances. For the normal model, this means that priors are set on \(\sigma_{\gamma}\), \(\sigma_{\beta}\), \(\sigma_{\delta}\) and \(\sigma\), instead of on \(\sigma_{\gamma}^2\), \(\sigma_{\beta}^2\), \(\sigma_{\delta}^2\) and \(\sigma^2\). The default prior on the standard deviations is a central, scaled Student's \emph{t}-distribution with 3 degrees of freedom and a scale parameter of 10 that is truncated at zero. To summarize, the default priors would be set the following way:
 
 \begin{equation}
 \begin{aligned}
@@ -452,7 +472,7 @@ In \texttt{brms}, different default priors are set on different types of paramet
 \sigma, \sigma_{\gamma}, \sigma_{\beta}, \sigma_{\delta} &\sim \text{Truncated-Student's t}_{+}(3, 0, 10). 
 \end{aligned}
 \end{equation}
-The prior distributions \texttt{brms} specifies on the standard deviations can be transformed to prior distributions on variances. Prior distributions on variances have a smaller scale than priors on standard deviation. Note, however, that the transformation of the prior distributions is not as simple as the transformation of the parameter itself. In our \href{https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/tree/main/R\%20code/Prior\%20transformation}{Online Supplement}, we provide R-code with a numeric solution to the transformation. For the \texttt{brms} priors, we obtain the following implied prior distributions on variances:
+The prior distributions specified on the standard deviations can be transformed to prior distributions on variances (\(var\)). Prior distributions on variances have a smaller scale than priors on standard deviation (\(sd\)). Note, however, that the transformation of the prior distributions is not as simple as the transformation of the parameter itself. \textcolor{blue}{If we formulate a prior on standard deviations, there is always an implied prior on the variances as well. If we think of the distribution as $f(x)$, $x$ can either be defined as $\sqrt{(var)}$, if we formulated the prior on the standard deviation, or $x$ can be defined as ${sd}^2$ if we formulated the prior on the variance. From this, we can derive the implied distribution $f(var)$ or $f(sd)$. Notably, this is not the same as calculating $\sqrt{(f(x))}$ or $f(x)^2$. To transform the priors on standard deviations to variances, we try to find the parameters that match the prior distribution to the implied distribution.} In \href{https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/tree/main/R\%20code/Prior\%20transformation}{Online Supplement J}, we provide R-code with a numeric solution to the transformation. For the \texttt{brms} priors, we obtain the following implied prior distributions on variances:
 
 \begin{equation}
 \begin{aligned}
@@ -469,9 +489,9 @@ The priors are visualized on the right side of Figure \ref{fig:priorvisualizatio
 \caption{Visualization of \textit{brms} default prior settings for the normal model. On the right, the prior distributions on general effects parameters are shown. On the left, the implied distribution of the individual effects for every parameter based on these priors are presented. }\label{fig:priorvisualizationbrms2}
 \end{figure}
 
-We will continue with step 3 of the prior specification process and check what the expected data would look like according to the selected priors. The results of the prior prediction for the symbolic distance effect with the priors from Equation \eqref{eq:chosenpriors1} with the number of participants \(n = 10\), the number of trials per condition \(k = 60\), and the number of simulations \(m = 1000\) are shown in panel A of Figure \ref{fig:priorpredfigurepanel}. Code for the simulations can be found in our \href{https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment}{Online Supplement}.
+We will continue with step 3 of the prior specification process and check what the expected data would look like according to the selected priors. The results of the prior prediction for the symbolic distance effect with the priors from Equation \eqref{eq:chosenpriors1} with the number of participants \(n = 10\), the number of trials per condition \(k = 60\), and the number of simulations \(m = 1000\) are shown in panel A of Figure \ref{fig:priorpredfigurepanel}. Code for the simulations can be found in \href{https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/blob/main/R\%20code/Figures/Fig5_priorpredictions_trunc_v3.R}{Online Supplement J}.
 
-The figure shows the difference in RTs between digits for every repetition averaged across subjects (i.e., 1000 grey dots per effect). The blue dots represent the mean effect. Using the default prior from \texttt{brms}, the mean effects are expected to be around zero, with a mean effect of zero. However, the range around this mean is very wide, ranging from -10 to 10 second effects. Most of the trials are in a smaller range of -5 to 5 second effects. This means that according to our priors, we would expect the effects to fall in this range. For this task, where participants have to respond as fast as possible, such large RT effects are unlikely. Therefore, it seems reasonable to adjust the priors.
+The figure shows the difference in RTs between digits for every repetition averaged across subjects (i.e., 1000 grey dots per effect). The blue dots represent the mean effect. Using the \textcolor{blue}{reasonably uninformatieve priors}, the mean effects are expected to be around zero, with a mean effect of zero. However, the range around this mean is very wide, ranging from -10 to 10 second effects. Most of the trials are in a smaller range of -5 to 5 second effects. This means that according to our priors, we would expect the effects to fall in this range. For this task, where participants have to respond as fast as possible, such large RT effects are unlikely. Therefore, it seems reasonable to adjust the priors.
 
 \begin{figure}[H]
 
@@ -480,7 +500,7 @@ The figure shows the difference in RTs between digits for every repetition avera
 \caption{Visualization of the adjusted prior settings for the normal model. On the right, the prior distributions on general effects parameters are shown. On the left, the implied distribution of the individual effects for every parameter based on these priors are presented. }\label{fig:priorvisualization2}
 \end{figure}
 
-The normal distribution on \(\mu_{\beta}\) and \(\mu_{\delta}\) seems reasonable if we assume that a two-sided hypothesis about the symbolic distance effect is tested. However, we expect less variance around this mean. Therefore, we decrease the setting for the variation. The wide tails of the Student's \emph{t}-distribution could be one of the reasons for the high range in variation. We change the prior for \(\mu_{\gamma}\) to a normal distribution that has more narrow tails. As RTs cannot be negative, we adjust the prior to be positive only by truncating the normal distribution using a lower bound of zero. Finally, we would like to use a more common conjugate prior for the variances to ensure obtaining a proper posterior distribution.\footnote{Conjugate priors result in posterior distributions that belong to the same distribution family as the prior distribution (Fink, 1997). For a normal likelihood, these are the normal distribution for the mean and the inverse gamma distribution for the variance.} Therefore, we choose an inverse gamma distribution. We can also be more specific about the expected RTs. Based on our knowledge of these types of tasks (e.g., Haaf \& Rouder, 2017), it seems highly plausible that participants will respond within a second or two. We would expect effects in the range of 10 milliseconds to 100 milliseconds. We adjust our priors using these new distribution types and settings, evaluate the prior predictions (shown in panel B of Figure \ref{fig:priorpredfigurepanel}) and arrive at the following priors:\footnote{Because response times cannot be negative the prior for the overall baseline \(\mu_\gamma\) is a truncated normal with a lower bound of zero.}
+The normal distribution on \(\mu_{\beta}\) and \(\mu_{\delta}\) seems reasonable if we assume that a two-sided hypothesis about the symbolic distance effect is tested. However, we expect less variance around this mean. Therefore, we decrease the setting for the variation. The wide tails of the Student's \emph{t}-distribution could be one of the reasons for the high range in variation. We change the prior for \(\mu_{\gamma}\) to a normal distribution that has more narrow tails. As RTs cannot be negative, we adjust the prior to be positive only by truncating the normal distribution using a lower bound of zero. Finally, we would like to use a more common conjugate prior for the variances to ensure obtaining a proper posterior distribution.\footnote{Conjugate priors result in posterior distributions that belong to the same distribution family as the prior distribution (Fink, 1997a). For a normal model, these are the normal distribution for the mean and the inverse gamma distribution for the variance.} \footnote{\textcolor{blue}{However, in rstan, non-conjugate priors are commonly applied} (e.g., Gelman, 2006).} Therefore, we choose an inverse gamma distribution. We can also be more specific about the expected RTs. Based on our knowledge of these types of tasks (e.g., Haaf \& Rouder, 2017), it seems highly plausible that participants will respond within a second or two. We would expect effects in the range of 10 milliseconds to 100 milliseconds. We adjust our priors using these new distribution types and settings, evaluate the prior predictions (shown in panel B of Figure \ref{fig:priorpredfigurepanel}) and arrive at the following priors:\footnote{Because response times cannot be negative the prior for the overall baseline \(\mu_\gamma\) is a truncated normal with a lower bound of zero.}
 
 \begin{equation}
 \begin{aligned}
@@ -511,9 +531,10 @@ The adjusted priors are visualized in Figure \ref{fig:priorvisualization2}. The 
 \hypertarget{log-normal-model-1}{%
 \subsection{Log-normal model}\label{log-normal-model-1}}
 
-We follow the same procedure for prior specification in the log-normal model. As before, we prefer to apply conjugate priors. The conjugate priors that we applied to the normal model are also conjugate priors for the log-normal model. As a starting point, we can therefore use the adjusted priors of the normal model and perform a prior prediction, shown in panel C of Figure \ref{fig:priorpredfigurepanel}. These priors result in a slightly higher variance in RTs than we would expect, and, importantly, the mean response time differences are not centered around zero in all conditions. This pattern is inconsistent with our expectations, which means that prior distributions for the log-normal model need to be adjusted.
+We follow the same procedure for prior specification in the log-normal model. As before, we prefer to apply conjugate priors. \textcolor{blue}{The conjugate priors that we applied to the normal model are also conjugate priors for the log-normal model} (Fink, 1997b). \textcolor{blue}{For instance, with a normal distribution as prior for the mean of the log-normal model, we assume that the mean of the parameter can be either negative, zero, or positive, and assign a higher probability to values closer to zero. If the mean of the log-normal distribution is smaller than zero, this means that the peak of the log-normal distribution moves closer to zero, i.e., that response times are quicker but still larger than zero. When applying the normal distribution as prior, the posterior of the mean in the log-normal model will result in a normal distribution as well.}
+As a starting point, we can use the adjusted priors of the normal model and perform a prior prediction, shown in panel C of Figure \ref{fig:priorpredfigurepanel}. These priors result in a slightly higher variance in RTs than we would expect, and, importantly, the mean response time differences are not centered around zero in all conditions. This pattern is inconsistent with our expectations, which means that prior distributions for the log-normal model need to be adjusted.
 
-The transformation of the prior distributions is not as simple as the transformation of the parameter itself. Panel C shows that with the same priors as for the normal model, we obtain different data for the log-normal model compared to the normal model (panel B). Therefore, we adjusted the priors until the simulated data matched our expectations and looked like panel B. This yields the following priors that result in the prior prediction shown in panel D of Figure \ref{fig:priorpredfigurepanel}:\footnote{For the overall baseline \(\mu_\gamma\) we adjusted the prior based on our expectation of the expected overall response times. A mean parameter of -0.5 for the log-normal likelihood corresponds to a mean response time of 1.}
+The transformation of the prior distributions is not as simple as the transformation of the parameter itself. Panel C shows that with the same priors as for the normal model, we obtain different data for the log-normal model compared to the normal model (panel B). Therefore, we adjusted the priors until the simulated data matched our expectations and looked like panel B. This yields the following priors that result in the prior prediction shown in panel D of Figure \ref{fig:priorpredfigurepanel}:\footnote{For the overall baseline \(\mu_\gamma\) we adjusted the prior based on our expectation of the expected overall response times. A mean parameter of -0.5 for the log-normal distribution corresponds to a mean response time of 1.}
 
 \begin{equation}
 \begin{aligned}
@@ -543,7 +564,7 @@ Setting the same prior distribution on the standard deviations instead of on the
 \hypertarget{prior-sensitivity}{%
 \subsection{Prior sensitivity}\label{prior-sensitivity}}
 
-In the previous sections, we decided on one set of prior distributions for each of the proposed models. However, researchers may find it difficult to settle on a single set of prior distributions in practice. This raises the question: What happens if you cannot decide on one prior? If several possibilities seem plausible, it is possible to use them all separately for the analysis and investigate their influence on the analysis results. This is called a prior sensitivity analysis (Roos, Martins, Held, \& Rue, 2015). Generally, when it comes to prior specification, it is important to be \emph{transparent} and to provide a justification for the selected prior distributions (Stefan, Katsimpokis, Gronau, \& Wagenmakers, 2021). Prior distributions are rarely inadmissible. However, as we demonstrated earlier, their usefulness in constraining model predictions can vary. Therefore, providing a justification of prior distributions in a paper can help readers gauge the generative quality of a presented model. When multiple justifiable prior distributions are applied to the same analysis, it is important to be transparent about this to avoid the impression of cherry-picking priors. If priors are chosen for their best fit to the data, this can lead to overfitting and spurious results. Prior sensitivity analyses and transparency about the prior specification process more generally, can therefore help to increase trust in the research results.
+In the previous sections, we decided on one set of prior distributions for each of the proposed models. However, researchers may find it difficult to settle on a single set of prior distributions in practice. This raises the question: What happens if you cannot decide on one prior? If several possibilities seem plausible, it is possible to use them all separately for the analysis and investigate their influence on the analysis results. This is called a prior sensitivity analysis (Roos, Martins, Held, \& Rue, 2015). Generally, when it comes to prior specification, it is important to be \emph{transparent} and to provide a justification for the selected prior distributions (Stefan, Katsimpokis, Gronau, \& Wagenmakers, 2022). Prior distributions are rarely inadmissible. However, as we demonstrated earlier, their usefulness in constraining model predictions can vary. Therefore, providing a justification of prior distributions in a paper can help readers gauge the generative quality of a presented model. When multiple justifiable prior distributions are applied to the same analysis, it is important to be transparent about this to avoid the impression of cherry-picking priors. If priors are chosen for their best fit to the data, this can lead to overfitting and spurious results. Prior sensitivity analyses and transparency about the prior specification process more generally, can therefore help to increase trust in the research results.
 
 \hypertarget{bayesian-parameter-estimation}{%
 \section{Bayesian Parameter Estimation}\label{bayesian-parameter-estimation}}
@@ -564,19 +585,19 @@ where \(\bm{\theta}\) now represents all parameters except for \(\mu_{\beta}\). 
 
 An approximation for the marginal posterior distribution can be obtained by assessing the empirical distribution of MCMC samples for the parameter of interest disregarding the other parameters. Since the frequency of combinations of samples in the joint posterior is determined by their posterior plausibility, this procedure is equivalent to a multidimensional integration across all other parameters.
 
-Every sampling algorithm requires the specification of the number of samples (also called iterations) that are drawn from the posterior distribution. Furthermore, all MCMC sampling methods have in common that results depend (somewhat) on chosen starting values, that is, initial parameter values for which the unnormalized posterior (i.e., likelihood times prior) is evaluated. This dependency can be assessed if the sampling algorithm is repeated several times (i.e., chains) with different starting values. Since the first few iterations of a chain---often called warm-up or burn-in---are somewhat dependent on the starting value, these samples are typically discarded.
+Every sampling algorithm requires the specification of the number of samples (also called iterations) that are drawn from the posterior distribution. Furthermore, all MCMC sampling methods have in common that results depend (somewhat) on chosen starting values, that is, initial parameter values that \textcolor{blue}{are fed to the sampler in the first iteration}. This dependency can be assessed if the sampling algorithm is repeated several times (i.e., chains) with different starting values. Since the first few iterations of a chain---often called warm-up or burn-in---are somewhat dependent on the starting value, these samples are typically discarded.
 
-Before interpreting the estimation results, it has to be checked whether the posterior distribution of the parameters has converged, meaning that a stationary posterior distribution has been reached (Vehtari, Gelman, Simpson, Carpenter, \& Bürkner, 2021). We will explain these convergence checks in more detail in the section Model Diagnostics.
+Before interpreting the estimation results, it has to be checked whether the posterior distribution of the parameters has converged, meaning that a stationary posterior distribution has been reached (Vehtari, Gelman, Simpson, Carpenter, \& Bürkner, 2021a). We will explain these convergence checks in more detail in the section Model Diagnostics.
 
 \hypertarget{software}{%
 \subsection{Software}\label{software}}
 
-There are many different programs available to fit Bayesian hierarchical models, that is, to obtain samples from the joint posterior distribution of parameters. In this tutorial, we focus on two of the most commonly used \texttt{R} packages, \texttt{rstan} (Stan Development Team, 2019a) and \texttt{brms} (Bürkner, 2017, 2018). We assume that readers are somewhat familiar with \texttt{R}. The package \texttt{rstan} provides the most modern algorithms and flexibility in model set-up. The package \texttt{brms} was created as an overlay to \texttt{rstan} and is based on the well-known \texttt{lme4} syntax (Bates, Mächler, Bolker, \& Walker, 2015). The goal of \texttt{brms} is to ease the transition to Bayesian hierarchical modeling for novice users of Bayesian statistics. The packages work similarly for the normal and log-normal model. In this section, we explain how a model can be fitted in each package using code snippets. In addition, we offer a separate R Markdown file for each package in our \href{https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment}{Online Supplement} that explains in more depth how to analyze the full symbolic distance effect model with the specific package.
+There are many different programs available to fit Bayesian hierarchical models, that is, to obtain samples from the joint posterior distribution of parameters. In this tutorial, we focus on two of the most commonly used \texttt{R} packages, \texttt{rstan} (Stan Development Team, 2019a) and \texttt{brms} (Bürkner, 2017, 2018). We assume that readers are somewhat familiar with \texttt{R}. The package \texttt{rstan} provides the most modern algorithms and flexibility in model set-up. The package \texttt{brms} was created as an overlay to \texttt{rstan} and is based on the well-known \texttt{lme4} syntax (Bates, Mächler, Bolker, \& Walker, 2015). The goal of \texttt{brms} is to ease the transition to Bayesian hierarchical modeling for novice users of Bayesian statistics. The packages work similarly for the normal and log-normal model. In this section, we explain how a model can be fitted in each package using code snippets. In addition, we offer separate R Markdown files for each package in \href{https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment}{Online Supplements C-F} that explains in more depth how to analyze the full symbolic distance effect model with the specific package.
 
 \hypertarget{rstan}{%
 \subsubsection{Rstan}\label{rstan}}
 
-\texttt{Rstan} allows the application of \texttt{Stan} (Carpenter et al., 2017), a probabilistic programming language, in \texttt{R}. The package uses a version of the Hamiltonian Monte Carlo (HMC) algorithm, No-U-turn sampler (NUTS; Hoffman \& Gelman, 2014), for sampling. \texttt{Rstan} requires two files: a \texttt{.stan} file containing the model specification and an R script containing the code for the model fitting. In the \texttt{.stan} file, the parameters, priors, and the likelihood are specified. An example \texttt{.stan} file of a simple, non-hierarchical normal model, where the variance is already known and the mean has to be estimated, is shown below (adapted example from Nicenboim, Schad, \& Vasishth, 2021, Chapter 10). The \texttt{.stan} file for the symbolic distance effect, including explanations, can be found in the \href{https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/blob/main/R\%20objects/rstan/normal\%20model/myModel.stan}{Online Supplement}. The file is divided into three sections: \texttt{data}, \texttt{parameters}, and \texttt{model}.
+\texttt{Rstan} allows the application of \texttt{Stan} (Carpenter et al., 2017), a probabilistic programming language, in \texttt{R}. The package uses a version of the Hamiltonian Monte Carlo (HMC) algorithm, No-U-turn sampler (NUTS; Hoffman \& Gelman, 2014), for sampling. \texttt{Rstan} requires two files: a \texttt{.stan} file containing the model specification and an R script containing the code for the model fitting. In the \texttt{.stan} file, the parameters, priors, and the \textcolor{blue}{probability distribution of the data} are specified. An example \texttt{.stan} file of a simple, non-hierarchical normal model, where the variance is already known and the mean has to be estimated, is shown below (adapted example from Nicenboim, Schad, \& Vasishth, 2021, Chapter 10). The file is divided into three sections: \texttt{data}, \texttt{parameters}, and \texttt{model}.
 
 \scriptsize
 
@@ -595,7 +616,7 @@ There are many different programs available to fit Bayesian hierarchical models,
 \NormalTok{model \{}
   \SpecialCharTok{/}\ErrorTok{/}\NormalTok{ Priors}\SpecialCharTok{:} 
 \NormalTok{  target }\SpecialCharTok{+}\ErrorTok{=} \FunctionTok{normal\_lpdf}\NormalTok{(mu }\SpecialCharTok{|} \DecValTok{0}\NormalTok{, }\DecValTok{20}\NormalTok{);}
-  \SpecialCharTok{/}\ErrorTok{/}\NormalTok{ Likelihood}\SpecialCharTok{:} 
+  \SpecialCharTok{/}\ErrorTok{/}\NormalTok{ Probability model}\SpecialCharTok{:} 
   \ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{N)}
 \NormalTok{    target }\SpecialCharTok{+}\ErrorTok{=} \FunctionTok{normal\_lpdf}\NormalTok{(y[i] }\SpecialCharTok{|}\NormalTok{ mu, sigma);}
 \NormalTok{\}}
@@ -604,7 +625,7 @@ There are many different programs available to fit Bayesian hierarchical models,
 
 \normalsize
 
-The \texttt{data} section specifies the variables in the dataset, as well as constant values in the model. For the symbolic distance effect model, the \texttt{data} section contains the total number of observations, the participant index variable, the response time variable in the dataset, the condition for every response time (side of the digit and the digit indicator, i.e., variables \(x_j\), \(u_j\), \(v_j\), \(w_j\) and \(z_j\) from \eqref{eq:datalevel}) and the prior specification according to Equations \eqref{eq:chosenpriors2var} and \eqref{eq:chosenpriorslogvar}. The \texttt{parameters} section specifies all parameters that are estimated. These are the general and individual effects. The last section, \texttt{model}, contains the likelihood function and priors, as specified earlier in this article.
+The \texttt{data} section specifies the variables in the dataset, as well as constant values in the model. For the symbolic distance effect model, the \texttt{data} section contains the total number of observations, the participant index variable, the response time variable in the dataset, the condition for every response time (side of the digit and the digit indicator, i.e., variables \(x_j\), \(u_j\), \(v_j\), \(w_j\) and \(z_j\) from \eqref{eq:datalevel}) and the prior specification according to Equations \eqref{eq:chosenpriors2var} and \eqref{eq:chosenpriorslogvar}. The \texttt{parameters} section specifies all parameters that are estimated. These are the general and individual effects. The last section, \texttt{model}, contains the probability function and priors, as specified earlier in this article. \textcolor{blue}{Instead of using} \texttt{y{[}i{]}\ \textasciitilde{}\ normal(mu,\ sigma)} \textcolor{blue}{to estimate parameters, such as the mean from the example, we used the} \texttt{target} \textcolor{blue}{specification} (for a in-depth explanation see Nicenboim, Schad, \& Vasishth, 2021, Chapter 10). \textcolor{blue}{Both methods indicate in this case that} \texttt{y{[}i{]}} \textcolor{blue}{is normally distributed with the mean} \texttt{mu} \textcolor{blue}{and the variance} \texttt{sigma}. \textcolor{blue}{However, the target method saves constant terms that are required for model comparison} (Gronau, Singmann, \& Wagenmakers, 2020) The \texttt{.stan} file for the symbolic distance effect, including explanations, can be found in \href{https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/blob/main/R\%20objects/rstan/normal\%20model/myModel.stan}{Online Supplement K}.
 
 In the corresponding \texttt{R} file, the model is fitted to the data using the \texttt{stan} function, as shown below. In this function, it is possible to specify the number of iterations, chains and warm-up samples in the Monte Carlo sampling procedure. Next to these specifications, the function requires a directory path to the \texttt{.stan} file and an \texttt{R} object of type list containing the data (here called \texttt{myData\_list}). Every element of the \texttt{data} section in the \texttt{.stan} file needs to be specified with the same name in the data object.
 ~
@@ -623,12 +644,12 @@ In the corresponding \texttt{R} file, the model is fitted to the data using the 
 
 \normalsize
 
-The package \texttt{rstan} offers a lot of flexibility. It is possible to specify the likelihood and priors in the exact way as is wished. However, this comes with the price of some technical knowledge. The commented code for fitting the full symbolic distance effect model using \texttt{rstan}, can be found in \href{https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/blob/main/C\%20-\%20Tutorial\%20Normal\%20Model\%20Rstan/Online-Supplement-C---Bayesian-Hierarchical-Modeling-in-rstan.pdf}{Online Supplement C: \emph{Bayesian Hierarchical Modeling in Rstan}}.
+The package \texttt{rstan} offers a lot of flexibility. It is possible to specify the probability model and priors in the exact way as is wished. However, this comes with the price of some technical knowledge. The commented code for fitting the full symbolic distance effect model using \texttt{rstan}, can be found in \href{https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/blob/main/C\%20-\%20Tutorial\%20Normal\%20Model\%20Rstan/Online-Supplement-C---Bayesian-Hierarchical-Modeling-in-rstan.pdf}{Online Supplement C: \emph{Bayesian Hierarchical Modeling in Rstan}}.
 
 \hypertarget{brms}{%
 \subsubsection{Brms}\label{brms}}
 
-The \texttt{R} package \texttt{brms} also allows fitting Bayesian models using \texttt{Stan}. However, model specification and model fitting can be achieved using a much simplified \texttt{R}-script. Model specification is based on a formula syntax that is similar to the notation in the popular \texttt{lme4} package for frequentist hierarchical modeling (Bates, Mächler, Bolker, \& Walker, 2015). The formula is an object that specifies the dependent variable as a function of the independent variables. The \texttt{\textasciitilde{}} (tilde) separates the dependent variable (\texttt{rt}) on the left side from the independent variables on the right side. The formula distinguishes between general effects and individual deviations. The first part of the equation on the predictor side of the formula shown below (i.e., \texttt{1\ +\ side\ +\ dif1\ +\ dif2\ +\ dif3\ +\ dif4}) represents the general effects. The \texttt{1} represents the intercept, in the case of the symbolic distance effect \(\mu_{\gamma}\), \texttt{side}, and \texttt{dif1} to \texttt{dif4} represent the general effects of side and distance (\(\mu_{\beta}\) and \(\mu_{\delta}\)). Within the round brackets individual deviations and grouping variables are specified. In this case the grouping variable (\texttt{ind}) indicates that each participant has an individual effect. In other cases effects might vary per item, block, or even the combination of participant and item. The double bar (\texttt{\textbar{}\textbar{}}) indicates that the correlation between the parameters should not be modeled. When using a single ba (\texttt{\textbar{}}) then correlations across all individual effects (intercept, side and distance) are modeled. This approach, however, is a bit more difficult to interpret and would also not correspond to the implemented \texttt{Stan} model.
+The \texttt{R} package \texttt{brms} also allows fitting Bayesian models using \texttt{Stan}. However, model specification and model fitting can be achieved using a much simplified \texttt{R}-script \textcolor{blue}{alone}. Model specification is based on a formula syntax that is similar to the notation in the popular \texttt{lme4} package for frequentist hierarchical modeling (Bates, Mächler, Bolker, \& Walker, 2015). The formula is an object that specifies the dependent variable as a function of the independent variables. The \texttt{\textasciitilde{}} (tilde) separates the dependent variable (\texttt{rt}) on the left side from the independent variables on the right side. The formula distinguishes between general effects and individual deviations. The first part of the equation on the predictor side of the formula shown below (i.e., \texttt{1\ +\ side\ +\ dif1\ +\ dif2\ +\ dif3\ +\ dif4}) represents the general effects. The \texttt{1} represents the intercept, in the case of the symbolic distance effect \(\mu_{\gamma}\), \texttt{side}, and \texttt{dif1} to \texttt{dif4} represent the general effects of side and distance (\(\mu_{\beta}\) and \(\mu_{\delta}\)). Within the round brackets individual deviations and grouping variables are specified. In this case the grouping variable (\texttt{ind}) indicates that each participant has an individual effect. In other cases effects might vary per item, block, or even the combination of participant and item. The double bar (\texttt{\textbar{}\textbar{}}) indicates that the correlation between the parameters should not be modeled. When using a single ba (\texttt{\textbar{}}) then correlations across all individual effects (intercept, side and distance) are modeled. This approach, however, is a bit more difficult to interpret and would also not correspond to the implemented \texttt{Stan} model.
 
 \scriptsize
 
@@ -685,7 +706,7 @@ For our example, we will use the data set by Rouder et al.~(2005). The data are 
 
 \begin{figure}[H]
 
-\includegraphics[width=1\linewidth]{Images/Fig8_traceplots3pnew_v2} \hfill{}
+\includegraphics[width=1\linewidth]{I - Images/Fig9_traceplots3pnew_v2} \hfill{}
 
 \caption{Panel A and B show the trace plot of the digit parameter $\mu_{\delta_{6}}$ for both packages. Panel C shows the estimated $\hat{R}$ for all individual effects per parameter group. The stars represent the $\hat{R}$ of the general effects. Panel D illustrates the variation in the estimated number of effective samples per parameter group. The dashed lines represent the total number of iterations for each package. The stars represent the number of effective samples of the general effects.}\label{fig:traceplots3p}
 \end{figure}
@@ -693,17 +714,17 @@ For our example, we will use the data set by Rouder et al.~(2005). The data are 
 \hypertarget{model-fitting}{%
 \subsubsection{Model Fitting}\label{model-fitting}}
 
-The model is fitted using the packages \texttt{rstan} and \texttt{brms}. For \texttt{rstan}, four chains are run with 4000 iterations per chain, of which 1000 serve as warm-up. This results in a total of 12000 samples from the joint posterior distribution. For \texttt{brms}, four chains are run with 6000 iterations per chain, of which 1000 serve as warm-up. This results in a total of 20000 draws from the joint posterior distribution.
+The model is fitted using the packages \texttt{rstan} and \texttt{brms}. \textcolor{blue}{We used different settings for} \texttt{rstan} \textcolor{blue}{and} \texttt{brms} \textcolor{blue}{due to the difference between the models for these packages. Although we tried to make the models as similar as possible, the models are not identical. This is partly due to differences in prior specification (i.e., specifying prior on the variances versus standard deviations).} For \texttt{rstan}, four chains are run with 4000 iterations per chain, of which 1000 serve as warm-up. This results in a total of 12000 samples from the joint posterior distribution. For \texttt{brms}, four chains are run with 6000 iterations per chain, of which 1000 serve as warm-up. This results in a total of 20000 draws from the joint posterior distribution.
 
 \hypertarget{model-diagnostics}{%
 \subsubsection{Model Diagnostics}\label{model-diagnostics}}
 
-Before we can interpret the results, we have to evaluate whether they are reliable. Specifically, it has to be checked whether the sampling chains of the parameters have converged, meaning that a stationary posterior distribution has been reached (Vehtari, Gelman, Simpson, Carpenter, \& Bürkner, 2021). If convergence is not achieved, the posterior estimates may change substantially if the sampling algorithm was run with more iterations or different starting values. The most common convergence measures are trace plots and the \(\hat{R}\) statistic. We will also discuss an additional check provided by \texttt{rstan} and \texttt{brms}, namely, the number of effective samples. For a critical evaluation of currently used convergence statistics, we recommend the interested reader to consult Vehtari et al.~(2019).
+Before we can interpret the results, we have to evaluate whether they are reliable. Specifically, it has to be checked whether the sampling chains of the parameters have converged, meaning that a stationary posterior distribution has been reached (Vehtari, Gelman, Simpson, Carpenter, \& Bürkner, 2021a). If convergence is not achieved, the posterior estimates may change substantially if the sampling algorithm was run with more iterations or different starting values. The most common convergence measures are trace plots and the \(\hat{R}\) statistic. We will also discuss an additional check provided by \texttt{rstan} and \texttt{brms}, namely, the number of effective samples. For a critical evaluation of currently used convergence statistics, we recommend the interested reader to consult Vehtari et al.~(2019).
 
 \hypertarget{trace-plot}{%
 \paragraph{Trace plot}\label{trace-plot}}
 
-Trace plots show the sampled parameter value at each iteration. If the distributions have converged, the plot should look like a hairy caterpillar (Lee \& Wagenmakers, 2013, p. 99): the iterations move up and down, but have much overlap in the middle. If multiple chains are used, iterations are shown per chain. In this case, the chains should overlap. If the posterior distribution did not converge, one chain could, for instance, be found on top of the figure, while all other chains are on the bottom (for an illustration see Vehtari, Gelman, Simpson, Carpenter, \& Bürkner, 2019). Or, perhaps the first half of the chain is on the top of the graph and the second half on the bottom. The trace plot does not include burn-in samples, since these will not be used for parameter estimation.
+Trace plots show the sampled parameter value at each iteration. If the distributions have converged, the plot should look like a hairy caterpillar (Lee \& Wagenmakers, 2013, p. 99): the iterations move up and down, but have much overlap in the middle. If multiple chains are used, iterations are shown per chain. In this case, the chains should overlap. If the posterior distribution did not converge, one chain could, for instance, be found on top of the figure, while all other chains are on the bottom (for an illustration see Vehtari, Gelman, Simpson, Carpenter, \& Bürkner, 2021b). Or, perhaps the first half of the chain is on the top of the graph and the second half on the bottom. The trace plot does not include burn-in samples, since these will not be used for parameter estimation.
 
 When inspecting the trace plots of the symbolic distance effect parameters in the normal model, the posterior distributions of the parameters appear to have converged as the iterations come together and look similar to a caterpillar. The trace plot of one of the parameters, \(\delta_{6, i}\), is shown in panel A for \texttt{rstan} and panel B for \texttt{brms} of Figure \ref{fig:traceplots3p}. The trace plot in panel B shows less overlap in the middle, indicating that \texttt{brms} had a bit more dependency within chains. This might be a sign of slight issues. However, not that much to be too concerned. Trace plots for other parameters can be found in
 \href{https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/tree/main/G\%20-\%20Trace\%20Plots\%20}{Online Supplement G}.
@@ -711,16 +732,16 @@ When inspecting the trace plots of the symbolic distance effect parameters in th
 \hypertarget{hatbmr}{%
 \paragraph{\texorpdfstring{\(\hat{\bm{R}}\)}{\textbackslash hat\{\textbackslash bm\{R\}\}}}\label{hatbmr}}
 
-Next to a visual inspection of convergence, a numerical inspection is usually performed as well. A common approach is to check \(\hat{R}\), also called the Gelman-Rubin Diagnostic (Gelman \& Rubin, 1992). \(\hat{R}\) is the ratio of between-chain variance and within-chain variance (Sorensen \& Vasishth, 2015). If the chains diverge, the between-chain variance will be higher than the within-chain variance, resulting in a \(\hat{R}\) greater than 1. This indicates that the chains have not converged. There are different types of \(\hat{R}\), such as the split- and rank-based \(\hat{R}\) (Gelman et al., 2013; Vehtari, Gelman, Simpson, Carpenter, \& Bürkner, 2019). Even though researchers tend to trust convergence statistics more than visual inspection, these statistics are also not fool-proof. Therefore, the development of better convergence statistics is a current topic in Bayesian analysis methods.
+Next to a visual inspection of convergence, a numerical inspection is usually performed as well. A common approach is to check \(\hat{R}\), also called the Gelman-Rubin Diagnostic (Gelman \& Rubin, 1992). \(\hat{R}\) is the ratio of between-chain variance and within-chain variance (Sorensen \& Vasishth, 2015). If the chains diverge, the between-chain variance will be higher than the within-chain variance, resulting in a \(\hat{R}\) greater than 1. This indicates that the chains have not converged. \textcolor{blue}{The current adhered criteria is that $\hat{R}$ should not exceed 1.01 }(Vehtari, Gelman, Simpson, Carpenter, \& Bürkner, 2021b). There are different types of \(\hat{R}\), such as the split- and rank-based \(\hat{R}\) (Gelman et al., 2013; Vehtari, Gelman, Simpson, Carpenter, \& Bürkner, 2021b). Even though researchers tend to trust convergence statistics more than visual inspection, these statistics are also not fool-proof. \textcolor{blue}{For instance, in hierarchical modeling, with many parameters, it is more likely that parameters will exceed the threshold while there are no issues with the parameter estimation. It is, therefore, advisable to evaluate parameters carefully.} The development of better convergence statistics is a current topic in Bayesian analysis methods.
 
-The \(\hat{R}\) values for all individual and general symbolic distance effect parameters computed by \texttt{rstan} and \texttt{brms} are shown in panel C of Figure \ref{fig:traceplots3p}. The figure shows that \(\hat{R}\)'s are not substantially greater than 1. Therefore, it seems that the distributions have converged.
+The \(\hat{R}\) values for all individual and general symbolic distance effect parameters computed by \texttt{rstan} and \texttt{brms} are shown in panel C of Figure \ref{fig:traceplots3p}. The figure shows that \(\hat{R}\)'s are not substantially greater than \textcolor{blue}{1.01}. Therefore, it seems that the distributions have converged.
 
 \hypertarget{number-of-effective-samples}{%
 \paragraph{Number of Effective Samples}\label{number-of-effective-samples}}
 
-Another popular convergence statistic is the number of effective samples. This statistic is concerned with the dependence of posterior samples. In MCMC algorithms, the samples are to some degree dependent on one another: the parameter values at iteration \emph{i} are similar to the parameter values at iteration \emph{i-1}. The number of effective samples represents the estimated total number of \emph{independent} draws from the posterior for every model parameter (Stan Development Team, 2018a, sec. 15.4). If the number of effective samples is low, this indicates a high dependency of iterations in the sampling procedure. Therefore, the number of effective samples can be seen as a measure of the amount of new information about the posterior distribution that is provided by the total number of samples drawn from the posterior. A common rule for interpretation is that the number should be close to or even greater than the number of total iterations (Carpenter, 2018; Vehtari, Gelman, Simpson, Carpenter, \& Bürkner, 2019).
+Another popular convergence statistic is the number of effective samples (ESS). This statistic is concerned with the dependence of posterior samples. In MCMC algorithms, the samples are to some degree dependent on one another: the parameter values at iteration \emph{i} are similar to the parameter values at iteration \emph{i-1}. The number of effective samples represents the estimated total number of \emph{independent} draws from the posterior for every model parameter (Stan Development Team, 2018a, sec. 15.4). If the number of effective samples is low, this indicates a high dependency of iterations in the sampling procedure. Therefore, the number of effective samples can be seen as a measure of the amount of new information about the posterior distribution that is provided by the total number of samples drawn from the posterior. \textcolor{blue}{A common rule for interpretation is that the number of effective samples should equal at least 100 per chain} (Vehtari, Gelman, Simpson, Carpenter, \& Bürkner, 2021b). \textcolor{blue}{In the case of four chains, this would mean a value of 400 or higher. The higher the value the better. To get a better understanding of convergence, Vehtari and colleagues (2021) recommended evaluating different quantities of the posterior distribution instead, using so-called Bulk- and Tail-ESS. Bulk-ESS evaluates the center of the posterior distribution, while Tail-ESS evaluates the tails of the posterior distribution. For this tutorial, we focus on the basic calculation of the number of effective samples suggested by Gelman et al.} (2013) \textcolor{blue}{and improved by Vehtari et al.} (2021b).
 
-For the symbolic distance effect, the estimated number of effective samples is provided in panel D of Figure \ref{fig:traceplots3p}. For the package \texttt{rstan} the number is generally high, much higher than the actual number of samples depicted by the green dashed line. The \texttt{brms} package shows much more variation. The lowest effective sample sizes can be found for the intercept parameters. Table 1 also displays the number of effective samples for the general effects parameters in the \texttt{rstan} model. If the number of effective samples is too low, \texttt{brms} and \texttt{rstan} will return a warning. Here, this was not case, and all other diagnostics were good, so we continue with the interpretation of the estimates.
+For the symbolic distance effect, the estimated number of effective samples is provided in panel D of Figure \ref{fig:traceplots3p}. For the package \texttt{rstan} the number is generally high, much higher than the actual number of samples depicted by the green dashed line. The \texttt{brms} package shows much more variation. The lowest effective sample sizes can be found for the intercept parameters. Table 1 also displays the number of effective samples for the general effects parameters in the \texttt{rstan} model. If the number of effective samples is too low, \texttt{brms} and \texttt{rstan} will return a warning. Here, this was not case, and all other diagnostics were good, so we continue with the interpretation of the estimates. \textcolor{blue}{The difference between the model diagnostics of} \texttt{rstan} \textcolor{blue}{and} \texttt{brms} \textcolor{blue}{can be partly explained by the difference in model parametrization, such as the difference in the prior specification (i.e., specifying priors on variances versus priors on standard deviations). We equated the models where sensible which resulted in models that are fairly comparable. }
 
 \hypertarget{estimation-results}{%
 \subsubsection{Estimation Results}\label{estimation-results}}
@@ -729,9 +750,9 @@ Considering acceptable to good convergence diagnostics, we can now interpret the
 
 \begin{figure}[H]
 
-\includegraphics[width=1\linewidth]{Images/Fig9_posteriormu_v2} \hfill{}
+\includegraphics[width=1\linewidth]{I - Images/Fig10_posteriormu_v3} \hfill{}
 
-\caption{The posterior distributions for the general effects estimated by the two packages. The middle line within the distributions represents the posterior mean. The shaded area within the distributions represent 95\% credible intervals.}\label{fig:modelposteriorsmufigure3}
+\caption{Panel A shows the empirical mean RTs per digit. The standard error is represented by bars around the dots. Panel B and C show the posterior distributions for the general effects estimated by the two packages. The middle line within the distributions represents the posterior mean. The shaded area within the distributions represent 95\% credible intervals.}\label{fig:modelposteriorsmufigure3}
 \end{figure}
 
 \hypertarget{general-effects}{%
@@ -739,11 +760,11 @@ Considering acceptable to good convergence diagnostics, we can now interpret the
 
 For the symbolic distance effect, there are two main questions we want to answer. First, we want to know whether there is a digit effect and, second, we want to know whether there is a side effect. Therefore, the key model parameters for general effects are \(\mu_{\beta}\), \(\mu_{\delta_{3}}\), \(\mu_{\delta_4}\), \(\mu_{\delta_6}\), and \(\mu_{\delta_{7}}\). In the following section, we will focus our reporting on these parameters.
 
-The posterior distributions for the focal parameters in the normal model are presented in Figure \ref{fig:modelposteriorsmufigure3}. The posterior means estimated by \texttt{rstan} and \texttt{brms} can be found in \href{https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/tree/main/H\%20-\%20Posterior\%20Distributions\%20Tables}{Online Supplement H}. The credible interval displayed in the figure is the Bayesian version of a confidence interval and provides a measure of uncertainty about the parameter value (Wagenmakers et al., 2018).
+The posterior distributions for the focal parameters in the normal model are presented in Figure \ref{fig:modelposteriorsmufigure3}. The posterior means estimated by \texttt{rstan} and \texttt{brms} can be found in \href{https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/tree/main/H\%20-\%20Posterior\%20Distributions\%20Tables}{Online Supplement H}. The credible interval displayed in the figure is the Bayesian version of a confidence interval and provides a measure of uncertainty about the parameter value (Wagenmakers et al., 2018). \textcolor{blue}{In contrast to the confidence interval, the credible interval provides the probability that a parameter lies within a certain range. However, the credible interval does not provide evidence to conclude whether an effect is zero or not }(Wagenmakers, Lee, Rouder, \& Morey, 2020).
 
 The parameter estimates produced by the two packages look very similar. The \texttt{brms} estimates seem to be slightly higher with slightly more narrow posterior distributions compared to \texttt{rstan}. All parameters are presented on a scale of seconds. As expected, the effects are small. For instance, \(\mu_{\delta_{7}}\) has a posterior mean of 0.012, corresponding to a 11 millisecond effect.
 
-For the digit effects, positive parameter estimates indicate that the response is slower for the non-baseline digits, that is, digits that are closer to 5. The parameters \(\mu_{\delta_{6}}\) and \(\mu_{\delta_{4}}\) are distributed around higher values and their credible intervals do not contain zero. Note that this result is consistent with the symbolic distance hypothesis that the digits 4 and 6 have the highest response times because they are closest to the 5, the comparison value. The 95\% credible intervals of \(\mu_{\delta_{7}}\) and \(\mu_{\delta_{3}}\) contain zero. Therefore, it is plausible that the response times do not differ substantially from the baseline condition. The posterior distribution of the side effect \(\mu_{\beta}\) is centered around zero with a posterior mean of -0.007 and a 95\% credible interval ranging from -0.046 to 0.031. This indicates a small to non-existent side effect.
+For the digit effects, positive parameter estimates indicate that the response is slower for the non-baseline digits, that is, digits that are closer to 5. The parameters \(\mu_{\delta_{6}}\) and \(\mu_{\delta_{4}}\) are distributed around higher values. Note that this result is consistent with the symbolic distance hypothesis that the digits 4 and 6 have the highest response times because they are closest to the 5, the comparison value. The posterior distribution of the side effect \(\mu_{\beta}\) is centered around zero with a posterior mean of -0.007 and a 95\% credible interval ranging from -0.046 to 0.031. \textcolor{blue}{Note that the credible interval overlaps with zero. Commonly, this is misinterpreted as an absence of an effect. However, credible intervals should only be used for parameter estimation. In cases where the credible overlaps with zero,  the effect is likely small, but can be non-zero.}
 
 \hypertarget{individual-effects}{%
 \paragraph{Individual effects}\label{individual-effects}}
@@ -779,22 +800,22 @@ Posterior means of the variances for the digit and side effects are all very clo
 
 \begin{figure}[H]
 
-\includegraphics[width=1\linewidth]{Images/Fig10_randompar_v2} \hfill{}
+\includegraphics[width=1\linewidth]{I - Images/Fig11_randompar_v2} \hfill{}
 
 \caption{The posterior means for individual effect parameters with 95\% credible intervals as estimated by \textit{rstan}, shown in increasing order. The dashed line represents the general posterior mean. Pink intervals contain zero, blue interval do not contain zero.}\label{fig:randomparfigure}
 \end{figure}
 
 Figure \ref{fig:randomparfigure} shows the posterior means and 95\% credible intervals for the individual effects of all 52 participants. Estimates are printed in increasing order, from lowest to highest. Pink intervals indicate that the 95\% credible interval contains zero, while blue intervals are either entirely above or below zero. A corresponding figure with individual effect estimates for \texttt{brms} can be found in \href{https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/blob/main/D\%20-\%20Tutorial\%20Normal\%20Model\%20brms/Online-Supplement-D---Bayesian-Hierarchical-Modeling-in-brms.pdf}{Online Supplement D}.
 
-The largest variation across participants can be seen for the intercept parameter. This means that participants vary considerably in their baseline response times. There is also considerable individual variation in the digit effects (\(\delta\)'s). However, most of the intervals contain zero which implies that the effects might be small or non-existent. The variability is most pronounced for the effect parameters of the digits close to 5. For these digits, there are also more intervals that do not contain zero, indicating that an effect might be present on the subject level. The posterior mean of the individual side effect (\(\beta_{i}\)) varies between -0.05 and 0.05. Again, all but four 95\% credible intervals include zero indicating uncertainty about the existence of an effect for anyone. The credible intervals of the side effect and digit effects \(\delta_{7}\) and \(\delta_{3}\) indicate that different subjects may show opposite effects (Haaf \& Rouder, 2019).
+The largest variation across participants can be seen for the intercept parameter. This means that participants vary considerably in their baseline response times. There is also considerable individual variation in the digit effects (\(\delta\)'s). \textcolor{blue}{However, most of the intervals contain zero which implies that the effects might be small or non-existent.} The variability is most pronounced for the effect parameters of the digits close to 5. For these digits, there are also more intervals that do not contain zero, indicating that an effect might be present on the subject level. The posterior mean of the individual side effect (\(\beta_{i}\)) varies between -0.05 and 0.05. Again, all but four 95\% credible intervals include zero indicating uncertainty about the existence of an effect for anyone. The credible intervals of the side effect and digit effects \(\delta_{7}\) and \(\delta_{3}\) indicate that different subjects may show opposite effects (Haaf \& Rouder, 2019).
 
-Finally, Figure \ref{fig:modelestimatesfigure3} shows how the relationship between individuals' digit effects.\footnote{The design and code for this figure are by Langen (2020).} The posterior means of individual effects are represented by the dots. The right side of each plot represents the distribution of the individual estimates. Note that this distribution is not the posterior distribution of the general effect. It rather corresponds to the left side of Figure 6. The two panels of Figure \ref{fig:modelestimatesfigure3} show that the estimates are almost identical between \texttt{Stan} and \texttt{brms}. This means that differences in the parametrization between the packages did not influence the results of the parameter estimation.
+\textcolor{blue}{The individual variation can also be visualized differently, for example by connecting individual estimates for each parameter. This type of variation can reveal correlations between individual parameter estimates, for example, participants scoring high on one digit parameter may also score high on another digit parameter.} Figure \ref{fig:modelestimatesfigure3} shows the relationship between individuals' digit effects.\footnote{The design and code for this figure are by Langen (2020).} The posterior means of individual effects are represented by the dots. The right side of each plot represents the distribution of the individual estimates. Note that this distribution is not the posterior distribution of the general effect. It rather corresponds to the left side of Figure 6.
 
 \begin{figure}[H]
 
-\includegraphics[width=0.75\linewidth]{Images/Fig11_modelestimatefigure2_onlyrstan_v2} \hfill{}
+\includegraphics[width=0.75\linewidth]{I - Images/Fig12_modelestimatefigure2_onlyrstan_v2} \hfill{}
 
-\caption{Model estimates for digit effect parameters in \textit{rstan}. The points represent the mean parameter estimates for each individual. The violin plots on the right side show the variance of the individual parameter estimates. The size of effects is not very constistent within a person.}\label{fig:modelestimatesfigure3}
+\caption{Model estimates for digit effect parameters in \textit{rstan}. The points represent the mean parameter estimates for each individual. The violin plots on the right side show the variance of the individual parameter estimates. }\label{fig:modelestimatesfigure3}
 \end{figure}
 
 \hypertarget{log-normal-model-2}{%
@@ -814,7 +835,7 @@ Before interpreting the results, we have to check if the posterior distributions
 
 \begin{figure}[H]
 
-\includegraphics[width=1\linewidth]{Images/Fig12_traceplots3plog_v2} \hfill{}
+\includegraphics[width=1\linewidth]{I - Images/Fig13_traceplots3plog_v2} \hfill{}
 
 \caption{Panel A and B show the trace plot of the digit parameter \(\\mu_{\\delta_{6}}\) in the log-normal model for both packages. Panel C shows the estimated \(\\hat{R}\) for all individual effects per parameter group. The stars represent the \(\\hat{R}\) of the general effects. Panel D illustrates the variation in the estimated number of effective samples per parameter group. The dashed lines represent the total number of iterations for each package. The stars represent the number of effective samples of the general effects.}\label{fig:traceplotlog}
 \end{figure}
@@ -829,7 +850,7 @@ We inspect the posterior distributions for the general effect parameters present
 
 \begin{figure}[H]
 
-\includegraphics[width=1\linewidth]{Images/Fig13_posteriormulog_v2} \hfill{}
+\includegraphics[width=1\linewidth]{I - Images/Fig14_posteriormulog_v2} \hfill{}
 
 \caption{The posterior distributions for the general effects in the log-normal model estimated by the two packages. The middle line within the distributions represents the posterior mean. The shaded area within the distributions represent 95\% credible intervals.}\label{fig:postplotlog}
 \end{figure}
@@ -843,9 +864,9 @@ We note that the values of the parameter estimates for the log-normal model cann
 &= 0.017 
 \end{aligned}
 \end{equation}
-This value corresponds to the median estimate of \(\mu_{\delta_{3}}\) from the normal model. Calculating the mean estimate of \(\mu_{\delta_{3}}\) would be similar, but more complicated as the mean of a log-normal distribution also depends on its variance.
+This value corresponds to the median estimate of \(\mu_{\delta_{3}}\) from the normal model. Calculating the mean estimate of \(\mu_{\delta_{3}}\) would be similar, but more complicated as the mean of a log-normal distribution also depends on its variance. \textcolor{blue}{This approach can also be used iteratively. This means that the approach above is applied to every iteration in the chain. This results in a posterior distribution of the effect quantifying the posterior uncertainty.}
 
-One property of these parameter estimates we can immediately interpret is their sign (i.e., positive, negative or zero). A positive estimate indicates that the RT increases, whereas a negative effect indicates a decrease. When inspecting the general digit effect parameters, they all appear to positively influence the RT. This is in line with our expectations since the baseline RT in the model is set equal to the RT for the digits furthest away from 5 and the symbolic distance effect postulates that RT should increase as the digits become closer to five. The side effect is close to zero, with a posterior mean of -0.008 and a 95\% credible interval from -0.022 to 0.007. Thus, the general effect of side seems small or negligible.
+One property of these parameter estimates we can immediately interpret is their sign (i.e., positive, negative or zero). A positive estimate indicates that the RT increases, whereas a negative effect indicates a decrease. When inspecting the general digit effect parameters, they all appear to positively influence the RT. This is in line with our expectations since the baseline RT in the model is set equal to the RT for the digits furthest away from 5 and the symbolic distance effect postulates that RT should increase as the digits become closer to five. The side effect is close to zero, with a posterior mean of -0.008 and a 95\% credible interval from -0.022 to 0.007. \textcolor{blue}{This indicates that the general effect of side is small.}
 
 \hypertarget{individual-effects-1}{%
 \paragraph{Individual effects}\label{individual-effects-1}}
@@ -882,21 +903,21 @@ Figure \ref{fig:randomparplotlog} shows the individual estimates for the digit a
 
 \begin{figure}[H]
 
-\includegraphics[width=1\linewidth]{Images/Fig14_randomparlog_v2} \hfill{}
+\includegraphics[width=1\linewidth]{I - Images/Fig15_randomparlog_v2} \hfill{}
 
 \caption{The posterior means for individual effect parameters in the log-normal model with 95\% credible intervals as estimated by \textit{rstan}, shown in increasing order. The dashed line represents the general posterior mean. Pink intervals contain zero, blue interval do not contain zero.}\label{fig:randomparplotlog}
 \end{figure}
 
-We can further inspect the individual estimates for the digit effects in Figure \ref{fig:modeldigitestplotlog}. The figure shows the individual estimates for the digit effects with the distribution of the variability of the individual estimates (not the posterior distribution of the general effect). The figure illustrates that there is considerable variance in the point estimates of the individual digit effects. However, compared to the normal model there is considerably more hierarchical shrinkage.
+We can further inspect the individual estimates for the digit effects in Figure \ref{fig:modeldigitestplotlog}. The figure shows the individual estimates for the digit effects with the distribution of the variability of the individual estimates (not the posterior distribution of the general effect). The figure illustrates that there is considerable variance in the point estimates of the individual digit effects. However, compared to the normal model there is considerably more hierarchical shrinkage. \textcolor{blue}{This means that in the log-normal model, the individual effects are corrected more towards the group mean, compared to the normal model. Or, the group mean in the log-normal model is not affected as much by individuals showing a divergent trend compared to the normal model. Whether we should prefer a model with more shrinkage depends on the theoretical considerations. If more individual variation is expected, less shrinkage would be preferred. However, the advantage of more shrinkage is that outliers do not influence the estimation of the effect as much. }
 
 \hypertarget{model-comparison}{%
 \section{Model Comparison}\label{model-comparison}}
 
-The symbolic distance effect postulates that response times (RTs) are slower when digits are closer to 5 (digit effects), and that RTs may be influenced by whether the target digit is smaller or greater than 5 (side effect). Using Bayesian estimation, we are not able to directly test these hypotheses. Credible intervals often contain zero, but they always also contain lots of other values that have a chance of being the ``true'' parameter value, making them unsuitable to test hypotheses. Therefore, our goal for the following section is to set up a Bayesian hypothesis test for the parameters of interest in our model. Specifically, we will achieve this by comparing the predictive accuracy of a null model where we set one or some parameters to zero, and and effects models where these parameters are unconstrained.
+The symbolic distance effect postulates that response times (RTs) are slower when digits are closer to 5 (digit effects), and that RTs may be influenced by whether the target digit is smaller or greater than 5 (side effect). Using Bayesian estimation, we are not able to directly test these hypotheses. Credible intervals often contain zero, but they always also contain lots of other values that have a chance of being the ``true'' parameter value, making them unsuitable to test hypotheses. Therefore, our goal for the following section is to set up a Bayesian hypothesis test for the parameters of interest in our model. Specifically, we will achieve this by comparing the predictive accuracy of a null model where we set one or some parameters to zero, and and effects models where these parameters are unconstrained. \textcolor{blue}{This approach is called Bayes factor model comparison.}
 
 \begin{figure}[H]
 
-\includegraphics[width=0.75\linewidth]{Images/Fig15_inddiflogplot_onlyrstan_v2} \hfill{}
+\includegraphics[width=0.75\linewidth]{I - Images/Fig16_inddiflogplot_onlyrstan_v2} \hfill{}
 
 \caption{Model estimates for digit effect parameters in the log-normal model in \textit{rstan}. The points represent the mean parameter estimates for each individual. The violin plots on the right side show the variance of the individual parameter estimates.}\label{fig:modeldigitestplotlog}
 \end{figure}
@@ -904,23 +925,27 @@ The symbolic distance effect postulates that response times (RTs) are slower whe
 \hypertarget{bayes-factor}{%
 \subsection{Bayes factor}\label{bayes-factor}}
 
-The Bayes factor (BF) is a measure of how well one model predicts the data compared to another (Jeffreys, 1961; Kass \& Raftery, 1995; Rouder \& Morey, 2018). The Bayes factor is defined as the probability of the data under one model compared to the probability of the data under another model. For instance, the Bayes factor comparing a null model (\(\mathcal{M}_0\)) and a full model (\(\mathcal{M}_{\text{F}}\)) can be obtained by:
+\textcolor{blue}{Rather than submerging us in technical details or providing a formal justification of the Bayesian approach, we provide an intuition of Bayesian model comparison. A formal justification of Bayes factors is provided by} Jeffreys (1961), Kass and Raftery (1995) and Rouder and Morey (2018). \textcolor{blue}{The Bayes factor (BF) is a measure of how well one model predicts the data compared to another.}
+
+\textcolor{blue}{Bayesian analysis allows for predictions of data from any model because models are fully specified with a probability distribution for the data and priors for all parameters. Let the vector of all parameters of a model be $\bm{\theta}$. With the prior distributions of these parameters, $f(\bm{\theta})$, the prediction for data from the model can be computed by integrating over all parameters:}
 
 \begin{equation}
-\text{BF}_{0\text{F}} = \frac{P(\bm{Y} | \mathcal{M}_0)}{P(\bm{Y} | \mathcal{M}_{\text{F}})}. 
+p(\bm{Y} | \mathcal{M}) = \int_{\bm{\Theta}} p(\bm{Y} | \mathcal{M}, \bm{\theta})f(\bm{\theta})d\bm{\theta}. 
 \end{equation}
 
-The Bayes factor can also be interpreted as the relative evidence of two competing models. Bayes factors have a few very convenient characteristics. One of them is that Bayes factors are transitive, that is, evidence for the full model over the null model can be obtained by flipping numerator and denominatior in equation 13. For a full overview of the advantages of Bayesian inference with Bayes factor, see Wagenmakers et al. (2018).
-
-Our models consist of several parameters. Therefore, computing the Bayes factor of, for example, the normal model versus the log-normal model becomes somewhat difficult. Let the vector of all parameters of the normal model be \(\bm{\theta_\text{n}}\) and the vector of all parameters for the log-normal model be \(\bm{\theta_{\text{l}}}\). With the prior distributions for the two models, \(f(\bm{\theta_\text{n}})\) and \(f(\bm{\theta_\text{l}})\), the Bayes factor can be calculated by the following ratio of marginal likelihoods:
+\textcolor{blue}{Note that $\int_{\bm{\Theta}}$ refers to a multidimensional integral over the entire parameter space. As our models consist of many parameters, computing these predictions for any one model becomes somewhat difficult. Once the integral is computed, the resulting probability distribution of the data, $p(\bm{Y} | \mathcal{M})$ is not a function of the model parameters anymore. This marginal probability distribution is therefore also referred to as the marginal likelihood. Before observing the data, the marginal likelihood serves as prediction for possible data; once the data are observed, the function tells us how well these specific observations were predicted by the model. The Bayes factor then is the ratio of marginal likelihoods of two models, or the relative predictive accuracy of $\mathcal{M}_1$ over $\mathcal{M}_2$:}
 
 \begin{equation}
-\text{BF}_{\text{nl}} = \frac{\int_{-\infty}^{\infty}P(\bm{Y} | \mathcal{M}_\text{n}, \bm{\theta_{\text{n}}})f(\bm{\theta_{\text{n}}})d\bm{\theta_{\text{n}}}}{\int_{-\infty}^{\infty}P(\bm{Y} | \mathcal{M}_\text{l}, \bm{\theta_{\text{l}}})f(\bm{\theta_{\text{l}}})d\bm{\theta_{\text{l}}}}. 
+\text{BF}_{1,2} = \frac{P(\bm{Y} | \mathcal{M}_1)}{P(\bm{Y} | \mathcal{M}_2)}. 
 \end{equation}
 
-Imagine this results in \(\text{BF}_{\text{nl}} = 100\). This means that the data are 100 times more likely under the normal model than under the log-normal model, clear evidence in favor of the normal model. But how do we know whether a Bayes factor of 100-to-1, or 10-to-1 or 3-to-1. As a reminder, Bayes factors are the relative predictive accuracy of two models for the observed data. Therefore, Bayes factors are odds or ratios. Odds themselves are directly interpretable without the need for decisions or cutoffs. For example, if a presidential candidate is favored 10-to-1 over another one, then these are just the odds, and it is beside the point whether these are large or not. According to this line of thought, Rouder et al. (2018) argue that researchers should take a similar approach when interpreting and reporting Bayes factors. While there exist rules of thumb to categorize Bayes factors verbally, we suggest researchers use their research context to form substantive conclusions based on Bayes factors, not arbitrary rules of thumb.
+\textcolor{blue}{There is a second popular interpretation of the Bayes factor as the relative evidence of two competing models. One of the key insights from Bayes' rule is that these two things, the relative predictive accuracy of two models for the data, and the relative evidence from the data for the two models, are one and the same} (Rouder \& Morey, 2018).
 
-Same as the posterior distribution, Bayes factors can rarely be computed analytically due to the multidimensional integrals involved. The difficulty to compute Bayes factors is one of the major drawbacks of Bayesian inference. However, several algorithms are available to estimate Bayes factor from posterior samples. In the following section we will present two methods to obtain Bayes factors for the symbolic distance effect.
+Bayes factors have a few very convenient characteristics. One of them is that Bayes factors are transitive, that is, evidence for the full model over the null model can be obtained by flipping numerator and denominator in equation 13. For a full overview of the advantages of Bayesian inference with Bayes factor, see Wagenmakers and colleagues (2018).
+
+Imagine that \(\text{BF}_{1,2} = 100\). This means that the data are 100 times more likely under the normal model than under the log-normal model, clear evidence in favor of the normal model. \textcolor{blue}{But how do we know whether a Bayes factor of 100-to-1, or 10-to-1 or 3-to-1 is big enough?} As a reminder, Bayes factors are the relative predictive accuracy of two models for the observed data. Therefore, Bayes factors are odds or ratios. Odds themselves are directly interpretable without the need for decisions or cutoffs. For example, if a presidential candidate is favored 10-to-1 over another one, then these are just the odds, and it is beside the point whether these are large or not. According to this line of thought, Rouder et al. (2018) argue that researchers should take a similar approach when interpreting and reporting Bayes factors. While there exist rules of thumb to categorize Bayes factors verbally, we suggest researchers use their research context to form substantive conclusions based on Bayes factors, not arbitrary rules of thumb.
+
+\textcolor{blue}{Same as the posterior distribution, Bayes factors can rarely be computed analytically.} The difficulty to compute Bayes factors is one of the major drawbacks of Bayesian inference. However, several algorithms are available to estimate Bayes factor from posterior samples. In the following section we will present two methods to obtain Bayes factors for the symbolic distance effect. \textcolor{blue}{The first method that we discuss, Savage-Dickey density ratio, tests the general effect while disregarding individual variation (similar to type III sums of squares in ANOVA models). This means that the compared models differ in only a single parameter, that is, the general effect parameter, and individual effects are present in both models. The Savage-Dickey density ratio is computationally efficient, but can only be used for tests of a single parameter value as described before. This is why we additionally introduce a second approach, bridge-sampling, that is less computationally efficient, but more versatile. In this manuscript, we will use bridge sampling to test the general effects and individual variation together, as well as to compare the predictive accuracy of the normal and log-normal model. There have been discussions on which method should be preferred without consensus} (Doorn, Aust, Haaf, Stefan, \& Wagenmakers, 2021, 2023; Rouder, Schnuerch, Haaf, \& Morey, 2023; Singmann et al., 2023). \textcolor{blue}{Therefore, we illustrate the use of the two approaches and discuss their potential.}
 
 \hypertarget{savage-dickey-density-ratio}{%
 \subsubsection{Savage-Dickey Density Ratio}\label{savage-dickey-density-ratio}}
@@ -931,12 +956,12 @@ Figure \ref{fig:sdratioplotall} shows a visualization of the SDD-ratio for the s
 
 \begin{figure}[H]
 
-\includegraphics[width=0.6\linewidth]{Images/Fig16_sdrplotside_v2} \hfill{}
+\includegraphics[width=0.6\linewidth]{I - Images/Fig17_sdrplotside_v2} \hfill{}
 
 \caption{The prior and posterior distribution of the side parameter estimated by the \textit{brms} package. The dots represent the height of the distributions at zero. The ratio of these dots indicates the Savage-Dickey density ratio. The Bayes factor represents the evidence for the hypothesis that the effect equals zero. A Bayes factor above one indicates that the evidence is in favor of the null hypothesis.}\label{fig:sdratioplotall}
 \end{figure}
 
-With \texttt{rstan}, the SDD-ratio can be computed by fitting a density function to the posterior distribution obtained from the MCMC samples, and comparing the value of this density function at \(\mu_{\beta} = 0\) to the value of the prior distribution at \(\mu_{\beta} = 0\). This is illustrated in the code block below. First, we extract the posterior samples for the parameter \(\mu_{\beta}\), the general effect of side. We apply the \texttt{logspline} function (Kooperberg, 2019) to the samples to obtain an estimate of the log-density of the posterior distribution. The density at the zero is calculated with the \texttt{dlogspline} function. Finally, we compare the estimated density of the posterior to the density of the prior.
+With \texttt{rstan}, the SDD-ratio can be computed by fitting a density function to the posterior distribution obtained from the MCMC samples, and comparing the value of this density function at \(\mu_{\beta} = 0\) to the value of the prior distribution at \(\mu_{\beta} = 0\). This is illustrated in the code block below. First, we extract the posterior samples for the parameter \(\mu_{\beta}\), the general effect of side. We apply the \texttt{logspline} function (Kooperberg, 2019) to the samples to obtain an estimate of the log-density of the posterior distribution. The density at the zero is calculated with the \texttt{dlogspline} function. Finally, we compare the estimated density of the posterior to the density of the prior. \textcolor{blue}{This process is explained in further detail by Van Ravenzwaaij and Etz} (2021).
 
 \scriptsize
 
@@ -993,7 +1018,7 @@ Using bridge sampling we are able to estimate Bayes factors between any models o
   Null model: In this model, there is no side or digit effect on the RT. The digit parameters \(\delta_{3}\) to \(\delta_{7}\) and side parameters \(\beta\) are set to zero.
 \end{enumerate}
 
-Note that models models 2-4 are nested in the most complex full model, and the null model is nested in models 3 and 4, but models 3 and 4 are not nested. Additionally, the models differ by several parameters. For example, compared to the full model the Digit model restricts the side parameter for all participants to zero. Using bridge sampling, we can estimate the marginal likelihood for each model separately, and then compute Bayes factors as their ratios (Equation 14).
+\textcolor{blue}{Note that models 2-4 are nested in the most complex full model, and the null model is nested in models 2 and 3, but models 2 and 3 are not nested}. Additionally, the models differ by several parameters. For example, compared to the full model the Digit model restricts the side parameter for all participants to zero. Using bridge sampling, we can estimate the marginal likelihood for each model separately, and then compute Bayes factors as their ratios (Equation 14).
 
 To obtain the marginal likelihood for a specific model in \texttt{rstan} with bridge sampling (Gronau et al., 2017), the \texttt{bridgesampling} package can be used (Gronau, Singmann, \& Wagenmakers, 2020). To obtain the Bayes factor comparing the side model and the full model, we first have to fit both models. Then, we use the \texttt{bridge\_sampler} function from the \texttt{bridgesampling} package to obtain the marginal likelihood of the data under each of the models. Finally, the models are compared using the \texttt{bf} function from the \texttt{bridgesampling} package.
 ~
@@ -1031,11 +1056,11 @@ In the \texttt{brms} package, Bayes factors based on bridge sampling can be obta
 
 Even though bridge sampling is a flexible method for obtaining Bayes factors, it is still an estimation method based on posterior samples. Therefore, as with any Bayes factor estimation method, we advice to take two precautions with bridge sampling. First, it is always wise to increase the number of iterations when performing model comparison. The reason is that convergence of estimation of posterior distributions and convergence of estimation of the marginal likelihood can differ. Therefore, a rule of thumb is to use ten times the number of iterations than we would usually use for estimation. The second precaution is to conduct a stability analysis. Both the posterior samples from the model estimation procedure and the estimate of the marginal likelihood from the bridge sampling can be variable. Therefore, stability may best be assessed by repeating the entire process of fitting each model and applying the bridge sampling function several times.
 
-We assess the stability of the obtained Bayes factor by repeating the estimating process ten times with \texttt{rstan} and \texttt{brms}, respectively. The results are shown in Figure \ref{fig:bsbfestimatesbrmsrstan}. The figure shows the evidence in favor of the null, digit and side model against the full model. All Bayes factors are larger than one. Therefore, it can be concluded that the data are more likely under less complex models. There is almost no variation in the computed Bayes factors per model, indicating that the Bayes factor estimate is stable. However, the Bayes factor estimates in \texttt{rstan} generally show stronger evidence than Bayes factor estimates based on \texttt{brms}. It is important to note that this difference is not due to the bridge sampling function, but a result of a difference in parametrization. However, for both packages, the conclusion is the same: the data are least likely to have occurred under the full model. In case the estimates are unstable, it is recommended to further increase the number of posterior samples.
+We assess the stability of the obtained Bayes factor by repeating the estimating process ten times with \texttt{rstan} and \texttt{brms}, respectively. The results are shown in Figure \ref{fig:bsbfestimatesbrmsrstan}. The figure shows the evidence in favor of the null, digit and side model against the full model. All Bayes factors are larger than one. Therefore, it can be concluded that the data are more likely under less complex models. There is almost no variation in the computed Bayes factors per model, indicating that the Bayes factor estimate is stable. However, the Bayes factor estimates in \texttt{rstan} generally show stronger evidence than Bayes factor estimates based on \texttt{brms}. \textcolor{blue}{It is important to note that this difference is not due to the bridge sampling function (i.e., there is a little to no variation of Bayes factor estimates within packages), but a result of a difference in parametrization. The models for} \texttt{rstan} \textcolor{blue}{and} \texttt{brms} \textcolor{blue}{are similar but not identical, partly due to the difference in prior specification (i.e., variances versus standard deviations).} However, for both packages, the conclusion is the same: the data are least likely to have occurred under the full model. In case the estimates are unstable, it is recommended to further increase the number of posterior samples.
 
 \begin{figure}[H]
 
-\includegraphics[width=0.7\linewidth]{Images/Fig17_normalbfplot01} \hfill{}
+\includegraphics[width=0.7\linewidth]{I - Images/Fig18_normalbfplot01} \hfill{}
 
 \caption{The BF estimates of the other models (0; null, side and digit model) against the full model (1). The green triangles represent the estimates using \textit{rstan}. The orange dots represent the \textit{brms} estimates. The dashed line represents a $\text{BF}_{01}$ of 1. }\label{fig:bsbfestimatesbrmsrstan}
 \end{figure}
@@ -1047,7 +1072,7 @@ Finally, it is time to answer our research question: Is there a symbolic distanc
 
 The full model including the side and digit effects performs worst compared to all other models in the Bayes factor model comparison. However, we did find non-zero digit effects in the model estimation. How is this possible?
 
-A possible explanation is a lack of individual variability in the digit and side effects. The full model assumes that participants vary in the digit and side effect, and we specified our expectations about this size of the variability in the prior. However, if there is a lack of individual variability in the effects, the full model is punished for the complexity added by the individual variation (illustrated by Rouder et al., 2021). To investigate this idea, we can reformulate the prior distributions on the variance parameters to indicate a smaller individual variation or, even more extreme, remove these individual effects from the model entirely. Then, we can calculate the posterior model probabilities for all specified models.
+A possible explanation is a lack of individual variability in the digit and side effects. The full model assumes that participants vary in the digit and side effect, and we specified our expectations about this size of the variability in the prior. However, if there is a lack of individual variability in the effects, the full model is punished for the complexity added by the individual variation (illustrated by Rouder et al., 2021). To investigate this idea, we can reformulate the prior distributions on the variance parameters to indicate a smaller individual variation or, even more extreme, remove these individual effects from the model entirely. Then, we can calculate the posterior model probabilities for all specified models. \textcolor{blue}{Typically in sensitivity analyses, the sensitivity of the Bayes factor on the width of the prior on effect size is assessed} (e.g., van Doorn et al., 2021)\textcolor{blue}{. However, in our case the prior distributions on the variance parameters are key to understand sensitivity.}
 
 Specifically, we will compare models from three scenarios: scenario 1 specifies large individual differences equivalent to Equation \eqref{eq:chosenpriors2var}. For the models in scenario 2, we adjust the priors on \(\sigma^2_{\beta}\) and \(\sigma^2_{\delta}\) in the following way:
 
@@ -1066,10 +1091,11 @@ Y_{ijk} \sim \text{Normal}(\gamma_{i} + x_j \mu_\beta + u_j \mu_{\delta{7}} + v_
 \end{equation}
 Note that the null model is the same in all three scenarios.
 
-To obtain the posterior model probability for each model in every scenario, we first compute the Bayes factor of every model against the null model. This includes the trivial Bayes factor of the null model against the null model, resulting in ten Bayes factors in total. Next, we calculate the sum of all these Bayes factors and divide each Bayes factor by this sum. This results in the posterior model probabilities shown in Table 5.\footnote{Note that it would be possible to calculate the posterior model probabilities directly from the marginal likelihoods. However, marginal likelihoods are often not computed explicitly in the model fitting process (e.g., when using the bayes\_factor function in the \texttt{brms} package), so we believe that readers might find it easier to compute posterior model probabilities from Bayes factors.} All posterior model probabilities from the table and the posterior probability of the null model (see table note) sum to one.
+To obtain the posterior model probability for each model in every scenario, we first compute the Bayes factor of every model against the null model. This includes the trivial Bayes factor of the null model against the null model. \textcolor{blue}{This setup results in 10 models, and, therefore, 10 Bayes factors. We assume that all models are equally likely, resulting in a prior model probability for each model of 1/10.} Next, we calculate the sum of all these Bayes factors and divide each Bayes factor by this sum. This results in the posterior model probabilities shown in Table \ref{tab:postmodprob}.\footnote{Note that it would be possible to calculate the posterior model probabilities directly from the marginal likelihoods. However, marginal likelihoods are often not computed explicitly in the model fitting process (e.g., when using the bayes\_factor function in the \texttt{brms} package), so we believe that readers might find it easier to compute posterior model probabilities from Bayes factors.} All posterior model probabilities from the table and the posterior probability of the null model (see table note) sum to one.
 
 \begin{table}[H]
-\caption{Posterior Model Probabilities}
+\caption{Posterior Model Probabilities Normal Models}
+\label{tab:postmodprob}
 \begin{tabularx}{\textwidth}{XXXX}
 \toprule
  & \multicolumn{1}{c}{Scenario 1} & \multicolumn{1}{c}{Scenario 2} & \multicolumn{1}{c}{Scenario 3}\\
@@ -1080,13 +1106,37 @@ Full model & $0.43*10^{-158}$ & $0.47*10^{-61}$ & $0.05$\\
 \bottomrule
 \end{tabularx}
 \begin{tablenotes}[para]
-\textit{Note.} Scenario 1: large individual differences. Scenario 2: small individual differences. Scenario 3: no individual differences. The posterior model probability of the null model is the same in every scenario and equals $0.50*10^{107}$. 
+\textit{Note.} Scenario 1: large individual differences. Scenario 2: small individual differences. Scenario 3: no individual differences. The posterior model probability of the null model is the same in every scenario and equals $0.50*10^{-107}$. 
 \end{tablenotes}
 \end{table}
 
-The table shows that the digit model without individual digit effects from scenario 3 has the highest posterior model probability, followed by the full model without individual digit and side effects (scenario 3). This means that the data are most likely under these models than the other eight models included in the comparison. In addition, the models with smaller prior expectations for individual differences (scenario 2), have higher posterior model probabilities than the models in scenario 1. Thus, decreasing our expectations of the size of the individual digit and side effects, or completely removing them, results in higher posterior model probabilities. Together with Figure \ref{fig:randomparfigure}, showing the small differences in individual effects (also illustrated by Haaf et al., 2019), this result supports the notion that side and digit effects are small and there is a lack in individual variability.
+The table shows that the digit model without individual digit effects from scenario 3 has the highest posterior model probability, followed by the full model without individual digit and side effects (scenario 3). This means that the data are most likely under these models than the other eight models included in the comparison. In addition, the models with smaller prior expectations for individual differences (scenario 2), have higher posterior model probabilities than the models in scenario 1. \textcolor{blue}{Thus, decreasing the variability of the size of the individual digit and side effects (scenario 2), or completely removing the variance (scenario 3), results in higher posterior model probabilities.} Together with Figure \ref{fig:randomparfigure}, showing the small differences in individual effects (also illustrated by Haaf et al., 2019), this result supports the notion that side and digit effects are small and there is a lack in individual variability.
 
-This example illustrates the benefits of comparing hierarchical models of varying complexity. While individual differences are a common phenomenon in psychology, there are instances where general effects are sufficient to describe the data adequately, or where only a random intercept, but no random slopes are necessary. As shown in Table 5, Bayesian model comparisons can help researchers to identify the model that best describes the data.
+\hypertarget{section}{%
+\subsubsection{\texorpdfstring{\textcolor{blue}{Log-normal Model}}{}}\label{section}}
+
+\textcolor{blue}{We can take a similar approach for the log-normal model to compare the hierarchical models on varying complexity. We evaluate their performance in two scenarios that correspond to scenario 1 and 3 for the normal model. This means that in scenario 1 for the log-normal model, we estimated a null, digit, side and full model based on the prior specified in Equation 8, specifying large individual differences. For scenario 2, we remove individual variability from the side, digit, and full model. This resulted in the following posterior model probabilities shown in Table} \ref{tab:postmodproblog}.
+
+\begin{table}[H]
+\caption{Posterior Model Probabilities Log-normal Models}
+\label{tab:postmodproblog}
+\begin{tabularx}{\textwidth}{XXXX}
+\toprule
+ & \multicolumn{1}{l}{Scenario 1} & \multicolumn{1}{l}{Scenario 3}\\
+\midrule
+Digit model & $26.61 * 10^9$ & $48.55 * 10^{15}$\\
+Side model & $0.25 * 10^{-49}$  & $0.50 * 10^{-52}$ \\
+Full model & $11.02 * 10^7$ &  $96.84 * 10^{14}$\\
+\bottomrule
+\end{tabularx}
+\begin{tablenotes}[para]
+\textit{Note.} Scenario 1: large individual differences. Scenario 2: no individual differences. The posterior model probability of the null model is the same in every scenario and equals $0.86*10^{-51}$. 
+\end{tablenotes}
+\end{table}
+
+\textcolor{blue}{The table shows that the digit model without individual digit effects from scenario 2 has the highest posterior model probability. This is in line with our findings for the normal model. Finally, we can compare the normal model with the highest marginal likelihood to the log-normal with the highest marginal likelihood. The normal digit model from scenario 3 to the log-normal model from scenario 2. The log marginal likelihood for the normal digit model without individual differences was $6441.04$ while the log marginal likelihood for the log-normal digit model without individual differences was $10637.45$. This indicates that the Bayes factor is strongly in favor of the log-normal digit model over the normal digit model.}
+
+The examples illustrate the benefits of comparing hierarchical models of varying complexity. While individual differences are a common phenomenon in psychology, there are instances where general effects are sufficient to describe the data adequately, or where only a random intercept, but no random slopes are necessary. As shown in Tables \ref{tab:postmodprob} and \ref{tab:postmodproblog}, Bayesian model comparisons can help researchers to identify the model that best describes the data.
 
 \hypertarget{discussion}{%
 \section{Discussion}\label{discussion}}
@@ -1097,7 +1147,7 @@ As prior distributions influence model estimation and model comparison, it is im
 
 We illustrated different methods to obtain Bayes factors. We want to emphasize the importance of checking the variability of the Bayes factor estimate, the Bayes factor sensitivity to prior distributions, and to ensure that the Bayes factor estimate is based on a sufficient number of posterior samples.
 
-This tutorial showed the application of two R packages: \texttt{rstan} and \texttt{brms}. Which package to use depends mostly on the complexity of the model and your technical background. For the non-technical user, we recommend using \texttt{brms} because of its intuitive model specification. However, the default prior setup can be unsuitable for a specific research context and might need to be adapted. Additionally, users are limited to predefined parametrizations. \texttt{rstan} offers the most flexibility in model and prior specification. This flexibility comes with a cost: if the prior or the model is not well defined, results can be misleading.
+This tutorial showed the application of two R packages: \texttt{rstan} and \texttt{brms}. Which package to use depends mostly on the complexity of the model and your technical background. For the non-technical user, we recommend using \texttt{brms} because of its intuitive model specification. However, the default prior setup can be unsuitable for a specific research context and \textcolor{blue}{(virtually) always needs} to be adapted. Additionally, users are limited to predefined parametrizations. \texttt{rstan} offers the most flexibility in model and prior specification. This flexibility comes with a cost: if the prior or the model is not well defined, results can be misleading.
 
 \hypertarget{further-recommendations}{%
 \subsection{Further Recommendations}\label{further-recommendations}}
@@ -1105,16 +1155,16 @@ This tutorial showed the application of two R packages: \texttt{rstan} and \text
 With this tutorial, we attempted to cover the most relevant topics that researchers encounter when starting with Bayesian hierarchical modeling. However, there are still many remaining issues and recommendations that we could not discuss. Here, we would like to point to further references in the literature if researchers want to continue mastering Bayesian hierarchical modeling.
 
 First, we kept the discussion of the software packages and code fairly brief. We provide further code examples for the digit classification task in the \href{https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment}{Online Supplement}. For different models, it may be useful to study additional tutorials and books. For \texttt{rstan}, we recommend the \texttt{Stan} manual (Stan Development Team, 2018b, 2018a). For \texttt{brms} there are several useful tutorials (Bürkner, 2017, 2018; Bürkner \& Vuorre, 2019). There are also several resources for Bayesian estimation with other samplers (Lee \& Wagenmakers, 2013; Rouder, Morey, \& Pratte, 2013). Two other useful tutorials for Bayesian modeling are Schad, Betancourt, and
-Vasishth (2019) and Schad, Nicenboim, Bürkner, Betancourt, and Vasishth (2021).
+Vasishth (2021) and Schad, Nicenboim, Bürkner, Betancourt, and Vasishth (2022). \textcolor{blue}{There are also other R software packages for Bayesian multilevel modeling besides} \texttt{brms} \textcolor{blue}{and} \texttt{rstan}\textcolor{blue}{, such as} \texttt{BayesFactor}(Morey \& Rouder, 2018) \textcolor{blue}{and} \texttt{rstanarm}(Goodrich, Gabry, Ali, \& Brilleman, 2020)\textcolor{blue}{, that we did not illustrate in this tutorial. However, most of these other R software packages are more limited, for instance, in model specification and prior settings.}
 
-Second, we did not discuss study planning. When planning an experiment, researchers may want to determine the number of participants required to gain conclusive results. Bayesian analysis has the advantage that an optional stopping paradigm may be employed (Rouder, 2014; Schönbrodt, Wagenmakers, Zehetleitner, \& Perugini, 2017). Schönbrodt and Wagenmakers (2018) and Stefan and colleagues (2019) introduced Bayes factor design analysis for fixed and sequential designs. However, these approaches to study planning have not yet been fully extended to a hierarchical setup (but see recent efforts by Vasishth et al., 2021). The extension to nested designs is not entirely trivial because, in addition to planning the number of participants, we also need to consider the number of trials (Rouder \& Haaf, 2018). While we think there remains some open questions on the topic, the tutorial by Stefan and colleagues (2019) is a good place to start for applied researchers.
+Second, we did not discuss study planning. When planning an experiment, researchers may want to determine the number of participants required to gain conclusive results. Bayesian analysis has the advantage that an optional stopping paradigm may be employed (Rouder, 2014; Schönbrodt, Wagenmakers, Zehetleitner, \& Perugini, 2017). Schönbrodt and Wagenmakers (2018) and Stefan and colleagues (2019) introduced Bayes factor design analysis for fixed and sequential designs. However, these approaches to study planning have not yet been fully extended to a hierarchical setup (but see recent efforts by Vasishth et al., 2023). The extension to nested designs is not entirely trivial because, in addition to planning the number of participants, we also need to consider the number of trials (Rouder \& Haaf, 2018). While we think there remains some open questions on the topic, the tutorial by Stefan and colleagues (2019) is a good place to start for applied researchers.
 
-\hypertarget{potential-technical-issues}{%
-\subsection{Potential Technical Issues}\label{potential-technical-issues}}
+\hypertarget{section-1}{%
+\subsection{\texorpdfstring{\textcolor{blue}{Technical Possibilities are Endless}}{}}\label{section-1}}
 
 One key advantage of Bayesian over frequentist hierarchical modeling is that complex modeling leads to fewer convergence issues in the Bayesian framework. This advantage, however, does not imply that there are no technical issues in the Bayesian framework. One possible technical issue is with the choice of priors when using \texttt{Stan} for estimation. The \texttt{Stan} algorithm is most efficient with specific prior distributions. For example, it may be beneficial to use a truncated \(t\)-distribution on standard deviation parameters instead of an inverse gamma distribution on variances (Gelman, 2006). Using priors not recommended by the \texttt{Stan} team may lead to more issues with convergence. In this tutorial, we highlight that choosing priors based on their predictions on data is beneficial. We still think this is the best path for substantive researchers. If one wants more flexibility in choices of priors or has continuous issues with convergence with their chosen prior distributions, then it might be worth considering using \texttt{JAGS} instead of \texttt{Stan}. \texttt{JAGS} (Plummer, 2003) has a similar functionality and syntax as \texttt{Stan}. While \texttt{Stan} tends to be more efficient in the sampling phase, especially in case of correlated parameters (Hecht, Weirich, \& Zitzmann, 2021), the \texttt{JAGS} algorithm could be more flexible and less affected by the choice of priors.
 
-Another technical issue may arise with the estimation of Bayes factors. Here, we highlighted two approaches, the Savage-Dickey density ratio (Wagenmakers, Lodewyckx, Kuriyal, \& Grasman, 2010) and bridge sampling (Gronau et al., 2017). We already highlighted the drawbacks of the SD density ratio. Yet, bridge sampling may also fail in some cases. Failures of the bridge sampling algorithm are identified by unstable Bayes factors across repeated sampling runs. There are improvements to the algorithm that are specifically developed for hierarchical models (Gronau, Wagenmakers, Heck, \& Matzke, 2019). Yet, it remains crucial to assess the stability of Bayes factor estimates.
+Another technical issue may arise with the estimation of Bayes factors. Here, we highlighted two approaches, the Savage-Dickey density ratio (Wagenmakers, Lodewyckx, Kuriyal, \& Grasman, 2010) and bridge sampling (Gronau et al., 2017). We already highlighted the drawbacks of the SD density ratio. \textcolor{blue}{Bayes factor estimates can also be biased (i.e., display a consistent deviation from the true Bayes factor value). However, bridge sampling has shown to be relatively unbiased} (Sarafoglou et al., 2021). Yet, bridge sampling may also fail in some cases. Failures of the bridge sampling algorithm are identified by unstable Bayes factors across repeated sampling runs. There are improvements to the algorithm that are specifically developed for hierarchical models (Gronau, Wagenmakers, Heck, \& Matzke, 2019). Yet, it remains crucial to assess the stability of Bayes factor estimates.
 
 \hypertarget{living-with-uncertainty}{%
 \subsection{Living with Uncertainty}\label{living-with-uncertainty}}
@@ -1213,10 +1263,7 @@ Bürkner, P.-C. (2017). {brms}: An {R} package for {Bayesian} multilevel models 
 Bürkner, P.-C. (2018). Advanced {Bayesian} multilevel modeling with the {R} package {brms}. \emph{The R Journal}, \emph{10}(1), 395--411. doi:\href{https://doi.org/10.32614/RJ-2018-017}{10.32614/RJ-2018-017}
 
 \leavevmode\hypertarget{ref-burkner2019ordinal}{}%
-Bürkner, P.-C., \& Vuorre, M. (2019). Ordinal regression models in psychology: A tutorial. \emph{Advances in Methods and Practices in Psychological Science}, \emph{2}(1), 77--101.
-
-\leavevmode\hypertarget{ref-neff2018}{}%
-Carpenter, B. (2018). We were measuring the speed of stan incorrectly -- it's faster than we thought in some cases due to antithetical sampling {[}blog post{]}. Retrieved from \url{https://statmodeling.stat.columbia.edu/2018/01/18/\%20measuring-speed-stan-incorrectly-faster-thought-cases-due-antithetical-sampling/}
+Bürkner, P.-C., \& Vuorre, M. (2019). Ordinal regression models in psychology: A tutorial. \emph{Advances in Methods and Practices in Psychological Science}, \emph{2}(1), 77--101. doi:\href{https://doi.org/10.1177/251524591882319}{10.1177/251524591882319}
 
 \leavevmode\hypertarget{ref-carpenter2017stan}{}%
 Carpenter, B., Gelman, A., Hoffman, M. D., Lee, D., Goodrich, B., Betancourt, M., \ldots{} Riddell, A. (2017). Stan: A probabilistic programming language. \emph{Journal of Statistical Software}, \emph{76}(1).
@@ -1230,6 +1277,12 @@ Clarke, E., \& Sherrill-Mix, S. (2017). \emph{Ggbeeswarm: Categorical scatter (v
 \leavevmode\hypertarget{ref-dickey1970weighted}{}%
 Dickey, J. M., \& Lientz, B. P. (1970). The weighted likelihood ratio, sharp hypotheses about chances, the order of a {Markov} chain. \emph{The Annals of Mathematical Statistics}, \emph{41}, 214--226.
 
+\leavevmode\hypertarget{ref-van2021bayes}{}%
+Doorn, J. van, Aust, F., Haaf, J. M., Stefan, A. M., \& Wagenmakers, E.-J. (2021). Bayes factors for mixed models. \emph{Computational Brain \& Behavior}, 1--13. doi:\href{https://doi.org/10.1007/s42113-021-00113-2}{10.1007/s42113-021-00113-2}
+
+\leavevmode\hypertarget{ref-van2023bayes}{}%
+Doorn, J. van, Aust, F., Haaf, J. M., Stefan, A. M., \& Wagenmakers, E.-J. (2023). Bayes factors for mixed models: Perspective on responses. \emph{Computational Brain \& Behavior}, 1--13. doi:\href{https://doi.org/10.1007/s42113-022-00158-x}{10.1007/s42113-022-00158-x}
+
 \leavevmode\hypertarget{ref-R-Rcpp_b}{}%
 Eddelbuettel, D., \& Balamuta, J. J. (2017). {Extending extit{R} with extit{C++}: A Brief Introduction to extit{Rcpp}}. \emph{PeerJ Preprints}, \emph{5}, e3188v1. doi:\href{https://doi.org/10.7287/peerj.preprints.3188v1}{10.7287/peerj.preprints.3188v1}
 
@@ -1239,6 +1292,9 @@ Eddelbuettel, D., \& François, R. (2011). {Rcpp}: Seamless {R} and {C++} integr
 \leavevmode\hypertarget{ref-efron1977stein}{}%
 Efron, B., \& Morris, C. (1977). Stein's paradox in statistics. \emph{Scientific American}, \emph{236}(5), 119--127.
 
+\leavevmode\hypertarget{ref-etz2018bayesian}{}%
+Etz, A., Haaf, J. M., Rouder, J. N., \& Vandekerckhove, J. (2018). Bayesian inference and testing any hypothesis you can specify. \emph{Advances in Methods and Practices in Psychological Science}, \emph{1}(2), 281--295. doi:\href{https://doi.org/10.1177/2515245918773087}{10.1177/2515245918773087}
+
 \leavevmode\hypertarget{ref-etz2018introduction}{}%
 Etz, A., \& Vandekerckhove, J. (2018). Introduction to {Bayesian} inference for psychology. \emph{Psychonomic Bulletin \& Review}, \emph{25}(1), 5--34. doi:\href{https://doi.org/10.3758/s13423-017-1262-3}{10.3758/s13423-017-1262-3}
 
@@ -1246,58 +1302,73 @@ Etz, A., \& Vandekerckhove, J. (2018). Introduction to {Bayesian} inference for 
 Fernández-i-Marín, X. (2016). {ggmcmc}: Analysis of {MCMC} samples and {B}ayesian inference. \emph{Journal of Statistical Software}, \emph{70}(9), 1--20. doi:\href{https://doi.org/10.18637/jss.v070.i09}{10.18637/jss.v070.i09}
 
 \leavevmode\hypertarget{ref-Fink1997}{}%
-Fink, D. (1997). A compendium of conjugate priors. https://www.johndcook.com/CompendiumOfConjugatePriors.pdf.
+Fink, D. (1997a). A compendium of conjugate priors. https://www.johndcook.com/CompendiumOfConjugatePriors.pdf.
+
+\leavevmode\hypertarget{ref-fink1997compendium}{}%
+Fink, D. (1997b). A compendium of conjugate priors.
 
 \leavevmode\hypertarget{ref-R-bayesplot}{}%
 Gabry, J., Simpson, D., Vehtari, A., Betancourt, M., \& Gelman, A. (2019). Visualization in {Bayesian} workflow. \emph{Journal of the Royal Statistical Society}, \emph{182}, 389--402. doi:\href{https://doi.org/10.1111/rssa.12378}{10.1111/rssa.12378}
 
 \leavevmode\hypertarget{ref-gelman2006prior}{}%
-Gelman, A. (2006). Prior distributions for variance parameters in hierarchical models (comment on article by {Browne} and {Draper}). \emph{Bayesian Analysis}, \emph{1}(3), 515--534.
+Gelman, A. (2006). Prior distributions for variance parameters in hierarchical models (comment on article by {Browne} and {Draper}). \emph{Bayesian Analysis}, \emph{1}(3), 515--534. doi:\href{https://doi.org/10.1214/06-BA117A}{10.1214/06-BA117A}
 
 \leavevmode\hypertarget{ref-gelman2013bayesian}{}%
 Gelman, A., Carlin, J. B., Stern, H. S., Dunson, D. B., Vehtari, A., \& Rubin, D. B. (2013). \emph{Bayesian data analysis}. CRC press.
 
+\leavevmode\hypertarget{ref-gelman2006data}{}%
+Gelman, A., \& Hill, J. (2006). \emph{Data analysis using regression and multilevel/hierarchical models}. Cambridge university press.
+
 \leavevmode\hypertarget{ref-gelman1992inference}{}%
 Gelman, A., \& Rubin, D. B. (1992). Inference from iterative simulation using multiple sequences. \emph{Statistical Science}, \emph{7}(4), 457--472.
 
+\leavevmode\hypertarget{ref-gelman2020bayesian}{}%
+Gelman, A., Vehtari, A., Simpson, D., Margossian, C. C., Carpenter, B., Yao, Y., \ldots{} Modrák, M. (2020). Bayesian workflow. \emph{arXiv Preprint arXiv:2011.01808}.
+
+\leavevmode\hypertarget{ref-rstanarm2020}{}%
+Goodrich, B., Gabry, J., Ali, I., \& Brilleman, S. (2020). Rstanarm: {Bayesian} applied regression modeling via {Stan}. Retrieved from \url{https://mc-stan.org/rstanarm}
+
 \leavevmode\hypertarget{ref-green2015bayesian}{}%
-Green, P. J., Łatuszyński, K., Pereyra, M., \& Robert, C. P. (2015). Bayesian computation: A summary of the current state, and samples backwards and forwards. \emph{Statistics and Computing}, \emph{25}(4), 835--862.
+Green, P. J., Łatuszyński, K., Pereyra, M., \& Robert, C. P. (2015). Bayesian computation: A summary of the current state, and samples backwards and forwards. \emph{Statistics and Computing}, \emph{25}(4), 835--862. doi:\href{https://doi.org/10.1007/s11222-015-9574-5}{10.1007/s11222-015-9574-5}
 
 \leavevmode\hypertarget{ref-gronau2017tutorial}{}%
-Gronau, Q. F., Sarafoglou, A., Matzke, D., Ly, A., Boehm, U., Marsman, M., \ldots{} Steingroever, H. (2017). A tutorial on bridge sampling. \emph{Journal of Mathematical Psychology}, \emph{81}, 80--97.
+Gronau, Q. F., Sarafoglou, A., Matzke, D., Ly, A., Boehm, U., Marsman, M., \ldots{} Steingroever, H. (2017). A tutorial on bridge sampling. \emph{Journal of Mathematical Psychology}, \emph{81}, 80--97. doi:\href{https://doi.org/10.1016/j.jmp.2017.09.005}{10.1016/j.jmp.2017.09.005}
 
 \leavevmode\hypertarget{ref-R-bridgesampling}{}%
 Gronau, Q. F., Singmann, H., \& Wagenmakers, E.-J. (2020). {bridgesampling}: An {R} package for estimating normalizing constants. \emph{Journal of Statistical Software}, \emph{92}(10), 1--29. doi:\href{https://doi.org/10.18637/jss.v092.i10}{10.18637/jss.v092.i10}
 
 \leavevmode\hypertarget{ref-gronau2019simple}{}%
-Gronau, Q. F., Wagenmakers, E.-J., Heck, D. W., \& Matzke, D. (2019). A simple method for comparing complex models: {Bayesian} model comparison for hierarchical multinomial processing tree models using {Warp}-III bridge sampling. \emph{Psychometrika}, \emph{84}(1), 261--284.
+Gronau, Q. F., Wagenmakers, E.-J., Heck, D. W., \& Matzke, D. (2019). A simple method for comparing complex models: {Bayesian} model comparison for hierarchical multinomial processing tree models using {Warp}-III bridge sampling. \emph{Psychometrika}, \emph{84}(1), 261--284. doi:\href{https://doi.org/10.1007/s11336-018-9648-3}{10.1007/s11336-018-9648-3}
 
 \leavevmode\hypertarget{ref-R-circlize}{}%
 Gu, Z., Gu, L., Eils, R., Schlesner, M., \& Brors, B. (2014). Circlize implements and enhances circular visualization in {R}. \emph{Bioinformatics}, \emph{30}, 2811--2812.
 
 \leavevmode\hypertarget{ref-haaf2019capturing}{}%
-Haaf, J. M., Klaassen, F., \& Rouder, J. (2019). Capturing ordinal theoretical constraint in psychological science.
+Haaf, J. M., Klaassen, F., \& Rouder, J. (2019). Capturing ordinal theoretical constraint in psychological science. doi:\href{https://doi.org/10.31234/osf.io/a4xu9}{10.31234/osf.io/a4xu9}
 
 \leavevmode\hypertarget{ref-haaf2017developing}{}%
-Haaf, J. M., \& Rouder, J. N. (2017). Developing constraint in {Bayesian} mixed models. \emph{Psychological Methods}, \emph{22}(4), 779.
+Haaf, J. M., \& Rouder, J. N. (2017). Developing constraint in {Bayesian} mixed models. \emph{Psychological Methods}, \emph{22}(4), 779. doi:\href{https://doi.org/10.1037/met0000156}{10.1037/met0000156}
 
 \leavevmode\hypertarget{ref-haaf2019some}{}%
-Haaf, J. M., \& Rouder, J. N. (2019). Some do and some don't? Accounting for variability of individual difference structures. \emph{Psychonomic Bulletin \& Review}, \emph{26}(3), 772--789.
+Haaf, J. M., \& Rouder, J. N. (2019). Some do and some don't? Accounting for variability of individual difference structures. \emph{Psychonomic Bulletin \& Review}, \emph{26}(3), 772--789. doi:\href{https://doi.org/10.3758/s13423-018-1522-x}{10.3758/s13423-018-1522-x}
 
 \leavevmode\hypertarget{ref-hecht2021comparing}{}%
-Hecht, M., Weirich, S., \& Zitzmann, S. (2021). Comparing the MCMC efficiency of JAGS and stan for the multi-level intercept-only model in the covariance-and mean-based and classic parametrization. \emph{Psych}, \emph{3}(4), 751--779.
+Hecht, M., Weirich, S., \& Zitzmann, S. (2021). Comparing the MCMC efficiency of JAGS and stan for the multi-level intercept-only model in the covariance-and mean-based and classic parametrization. \emph{Psych}, \emph{3}(4), 751--779. doi:\href{https://doi.org/10.3390/psych3040048}{10.3390/psych3040048}
 
 \leavevmode\hypertarget{ref-heck2019caveat}{}%
-Heck, D. W. (2019). A caveat on the {Savage--Dickey} density ratio: The case of computing {Bayes} factors for regression parameters. \emph{British Journal of Mathematical and Statistical Psychology}, \emph{72}(2), 316--333.
+Heck, D. W. (2019). A caveat on the {Savage--Dickey} density ratio: The case of computing {Bayes} factors for regression parameters. \emph{British Journal of Mathematical and Statistical Psychology}, \emph{72}(2), 316--333. doi:\href{https://doi.org/10.1111/bmsp.12150}{10.1111/bmsp.12150}
 
 \leavevmode\hypertarget{ref-hobert1996effect}{}%
-Hobert, J. P., \& Casella, G. (1996). The effect of improper priors on {Gibbs} sampling in hierarchical linear mixed models. \emph{Journal of the American Statistical Association}, \emph{91}(436), 1461--1473.
+Hobert, J. P., \& Casella, G. (1996). The effect of improper priors on {Gibbs} sampling in hierarchical linear mixed models. \emph{Journal of the American Statistical Association}, \emph{91}(436), 1461--1473. doi:\href{https://doi.org/10.2307/2291572}{10.2307/2291572}
 
 \leavevmode\hypertarget{ref-hoffman2014no}{}%
 Hoffman, M. D., \& Gelman, A. (2014). The no-u-turn sampler: Adaptively setting path lengths in {Hamiltonian Monte Carlo}. \emph{J. Mach. Learn. Res.}, \emph{15}(1), 1593--1623.
 
 \leavevmode\hypertarget{ref-R-Rmisc}{}%
 Hope, R. M. (2013). \emph{Rmisc: Rmisc: Ryan miscellaneous}. Retrieved from \url{https://CRAN.R-project.org/package=Rmisc}
+
+\leavevmode\hypertarget{ref-hox2017multilevel}{}%
+Hox, J. J., Moerbeek, M., \& Van de Schoot, R. (2017). \emph{Multilevel analysis: Techniques and applications}. Routledge.
 
 \leavevmode\hypertarget{ref-jeffreys1961theory}{}%
 Jeffreys, H. (1961). Theory of probability.,(oxford university press: Oxford, UK).
@@ -1312,7 +1383,10 @@ Kooperberg, C. (2019). \emph{Logspline: Routines for logspline density estimatio
 Langen, J. van. (2020). Open-visualizations in r and python (Version v.1.0.4). Zenodo. doi:\href{https://doi.org/10.5281/zenodo.3715576}{10.5281/zenodo.3715576}
 
 \leavevmode\hypertarget{ref-lee2011cognitive}{}%
-Lee, M. D. (2011). How cognitive modeling can benefit from hierarchical {Bayesian} models. \emph{Journal of Mathematical Psychology}, \emph{55}(1), 1--7.
+Lee, M. D. (2011). How cognitive modeling can benefit from hierarchical {Bayesian} models. \emph{Journal of Mathematical Psychology}, \emph{55}(1), 1--7. doi:\href{https://doi.org/10.1016/j.jmp.2010.08.013}{10.1016/j.jmp.2010.08.013}
+
+\leavevmode\hypertarget{ref-lee2018determining}{}%
+Lee, M. D., \& Vanpaemel, W. (2018). Determining informative priors for cognitive models. \emph{Psychonomic Bulletin \& Review}, \emph{25}(1), 114--127. doi:\href{https://doi.org/10.3758/s13423-017-1238-3}{10.3758/s13423-017-1238-3}
 
 \leavevmode\hypertarget{ref-lee2013bayesian}{}%
 Lee, M., \& Wagenmakers, E.-J. (2013). Bayesian data analysis for cognitive science: A practical course. New York, NY: Cambridge University Press.
@@ -1345,10 +1419,10 @@ Messner, J. W., Zeileis, A., Broecker, J., \& Mayr, G. J. (2014). Probabilistic 
 Morey, R. D., \& Rouder, J. N. (2018). \emph{BayesFactor: Computation of bayes factors for common designs}. Retrieved from \url{https://CRAN.R-project.org/package=BayesFactor}
 
 \leavevmode\hypertarget{ref-morey2011using}{}%
-Morey, R. D., Rouder, J. N., Pratte, M. S., \& Speckman, P. L. (2011). Using MCMC chain outputs to efficiently estimate bayes factors. \emph{Journal of Mathematical Psychology}, \emph{55}(5), 368--378.
+Morey, R. D., Rouder, J. N., Pratte, M. S., \& Speckman, P. L. (2011). Using MCMC chain outputs to efficiently estimate bayes factors. \emph{Journal of Mathematical Psychology}, \emph{55}(5), 368--378. doi:\href{https://doi.org/10.1016/j.jmp.2011.06.004}{10.1016/j.jmp.2011.06.004}
 
 \leavevmode\hypertarget{ref-moyer1967time}{}%
-Moyer, R. S., \& Landauer, T. K. (1967). Time required for judgements of numerical inequality. \emph{Nature}, \emph{215}(5109), 1519--1520.
+Moyer, R. S., \& Landauer, T. K. (1967). Time required for judgements of numerical inequality. \emph{Nature}, \emph{215}(5109), 1519--1520. doi:\href{https://doi.org/10.1038/2151519a0}{10.1038/2151519a0}
 
 \leavevmode\hypertarget{ref-R-tibble}{}%
 Müller, K., \& Wickham, H. (2019). \emph{Tibble: Simple data frames}. Retrieved from \url{https://CRAN.R-project.org/package=tibble}
@@ -1358,6 +1432,12 @@ Neth, H., \& Gradwohl, N. (2019). \emph{Unikn: Graphical elements of the univers
 
 \leavevmode\hypertarget{ref-nicenboim2021introduction}{}%
 Nicenboim, B., Schad, D., \& Vasishth, S. (2021). An introduction to {Bayesian} data analysis for cognitive science. Under contract with Chapman; Hall/CRC Statistics in the Social and~\ldots. Retrieved from \url{https://vasishth.github.io/bayescogsci/book/}
+
+\leavevmode\hypertarget{ref-nicenboim2023introduction}{}%
+Nicenboim, B., Schad, D., \& Vasishth, S. (2023). \emph{An introduction to bayesian data analysis for cognitive science}. Chapman; Hall/CRC Statistics in the Social; Behavioral Sciences Series.
+
+\leavevmode\hypertarget{ref-pinheiro2006mixed}{}%
+Pinheiro, J., \& Bates, D. (2006). \emph{Mixed-effects models in s and s-PLUS}. Springer science \& business media.
 
 \leavevmode\hypertarget{ref-Plummer03jagsa}{}%
 Plummer, M. (2003). JAGS: A program for analysis of bayesian graphical models using gibbs sampling.
@@ -1371,50 +1451,65 @@ R Core Team. (2018). \emph{Foreign: Read data stored by 'minitab', 's', 'SAS', '
 \leavevmode\hypertarget{ref-R-base}{}%
 R Core Team. (2019). \emph{R: A language and environment for statistical computing}. Vienna, Austria: R Foundation for Statistical Computing. Retrieved from \url{https://www.R-project.org/}
 
+\leavevmode\hypertarget{ref-van2021simulation}{}%
+Ravenzwaaij, D. van, \& Etz, A. (2021). Simulation studies as a tool to understand bayes factors. \emph{Advances in Methods and Practices in Psychological Science}, \emph{4}(1), 2515245920972624. doi:\href{https://doi.org/10.1177/2515245920972624}{10.1177/2515245920972624}
+
 \leavevmode\hypertarget{ref-roos2015sensitivity}{}%
-Roos, M., Martins, T. G., Held, L., \& Rue, H. (2015). Sensitivity analysis for {Bayesian} hierarchical models. \emph{Bayesian Analysis}, \emph{10}(2), 321--349.
+Roos, M., Martins, T. G., Held, L., \& Rue, H. (2015). Sensitivity analysis for {Bayesian} hierarchical models. \emph{Bayesian Analysis}, \emph{10}(2), 321--349. doi:\href{https://doi.org/10.1214/14-BA909}{10.1214/14-BA909}
 
 \leavevmode\hypertarget{ref-rouder2014optional}{}%
-Rouder, J. N. (2014). Optional stopping: No problem for {Bayesians}. \emph{Psychonomic Bulletin \& Review}, \emph{21}(2), 301--308.
+Rouder, J. N. (2014). Optional stopping: No problem for {Bayesians}. \emph{Psychonomic Bulletin \& Review}, \emph{21}(2), 301--308. doi:\href{https://doi.org/10.3758/s13423-014-0595-4}{10.3758/s13423-014-0595-4}
 
 \leavevmode\hypertarget{ref-rouder2018power}{}%
-Rouder, J. N., \& Haaf, J. M. (2018). Power, dominance, and constraint: A note on the appeal of different design traditions. \emph{Advances in Methods and Practices in Psychological Science}, \emph{1}(1), 19--26.
+Rouder, J. N., \& Haaf, J. M. (2018). Power, dominance, and constraint: A note on the appeal of different design traditions. \emph{Advances in Methods and Practices in Psychological Science}, \emph{1}(1), 19--26. doi:\href{https://doi.org/10.1177/2515245917745058}{10.1177/2515245917745058}
 
 \leavevmode\hypertarget{ref-rouder2018theories}{}%
-Rouder, J. N., Haaf, J. M., \& Aust, F. (2018). From theories to models to predictions: A {Bayesian} model comparison approach. \emph{Communication Monographs}, \emph{85}(1), 41--56.
+Rouder, J. N., Haaf, J. M., \& Aust, F. (2018). From theories to models to predictions: A {Bayesian} model comparison approach. \emph{Communication Monographs}, \emph{85}(1), 41--56. doi:\href{https://doi.org/10.1080/03637751.2017.1394581}{10.1080/03637751.2017.1394581}
 
 \leavevmode\hypertarget{ref-rouder2005introduction}{}%
-Rouder, J. N., \& Lu, J. (2005). An introduction to {Bayesian} hierarchical models with an application in the theory of signal detection. \emph{Psychonomic Bulletin \& Review}, \emph{12}(4), 573--604.
+Rouder, J. N., \& Lu, J. (2005). An introduction to {Bayesian} hierarchical models with an application in the theory of signal detection. \emph{Psychonomic Bulletin \& Review}, \emph{12}(4), 573--604. doi:\href{https://doi.org/10.3758/BF03196750}{10.3758/BF03196750}
 
 \leavevmode\hypertarget{ref-rouder2005hierarchical}{}%
-Rouder, J. N., Lu, J., Speckman, P., Sun, D., \& Jiang, Y. (2005). A hierarchical model for estimating response time distributions. \emph{Psychonomic Bulletin \& Review}, \emph{12}(2), 195--223.
+Rouder, J. N., Lu, J., Speckman, P., Sun, D., \& Jiang, Y. (2005). A hierarchical model for estimating response time distributions. \emph{Psychonomic Bulletin \& Review}, \emph{12}(2), 195--223. doi:\href{https://doi.org/10.3758/BF03257252}{10.3758/BF03257252}
 
 \leavevmode\hypertarget{ref-rouder2018teaching}{}%
-Rouder, J. N., \& Morey, R. D. (2018). Teaching {Bayes}' theorem: Strength of evidence as predictive accuracy. \emph{The American Statistician}.
+Rouder, J. N., \& Morey, R. D. (2018). Teaching {Bayes}' theorem: Strength of evidence as predictive accuracy. \emph{The American Statistician}, \emph{73}(2), 186--190. doi:\url{https://doi.org/10.1080/00031305.2017.1341334}
 
 \leavevmode\hypertarget{ref-rouder2013hierarchical}{}%
 Rouder, J. N., Morey, R. D., \& Pratte, M. S. (2013). Hierarchical {Bayesian} models. \emph{Practice}, \emph{1}(5), 10.
 
+\leavevmode\hypertarget{ref-rouder2023principles}{}%
+Rouder, J. N., Schnuerch, M., Haaf, J. M., \& Morey, R. D. (2023). Principles of model specification in ANOVA designs. \emph{Computational Brain \& Behavior}, \emph{6}(1), 50--63. doi:\href{https://doi.org/10.1007/s42113-022-00132-7}{10.1007/s42113-022-00132-7}
+
+\leavevmode\hypertarget{ref-sarafoglou2021evaluating}{}%
+Sarafoglou, A., Haaf, J. M., Ly, A., Gronau, Q. F., Wagenmakers, E.-J., \& Marsman, M. (2021). Evaluating multinomial order restrictions with bridge sampling. \emph{Psychological Methods}. doi:\href{https://doi.org/10.1037/met0000411}{10.1037/met0000411}
+
 \leavevmode\hypertarget{ref-R-lattice}{}%
 Sarkar, D. (2008). \emph{Lattice: Multivariate data visualization with r}. New York: Springer. Retrieved from \url{http://lmdvr.r-forge.r-project.org}
 
-\leavevmode\hypertarget{ref-schad2019toward}{}%
-Schad, D. J., Betancourt, M., \& Vasishth, S. (2019). Toward a principled {Bayesian} workflow in cognitive science. \emph{arXiv Preprint arXiv:1904.12765}.
+\leavevmode\hypertarget{ref-schad2021toward}{}%
+Schad, D. J., Betancourt, M., \& Vasishth, S. (2021). Toward a principled bayesian workflow in cognitive science. \emph{Psychological Methods}, \emph{26}(1), 103. doi:\href{https://doi.org/10.1037/met0000275}{10.1037/met0000275}
 
 \leavevmode\hypertarget{ref-schad2021workflow}{}%
-Schad, D. J., Nicenboim, B., Bürkner, P.-C., Betancourt, M., \& Vasishth, S. (2021). Workflow techniques for the robust use of bayes factors. Retrieved from \url{http://arxiv.org/abs/2103.08744}
+Schad, D. J., Nicenboim, B., Bürkner, P.-C., Betancourt, M., \& Vasishth, S. (2022). Workflow techniques for the robust use of bayes factors. \emph{Psychological Methods}. American Psychological Association. doi:\href{https://doi.org/10.1037/met0000472}{10.1037/met0000472}
 
 \leavevmode\hypertarget{ref-schonbrodt2018bayes}{}%
-Schönbrodt, F. D., \& Wagenmakers, E.-J. (2018). Bayes factor design analysis: Planning for compelling evidence. \emph{Psychonomic Bulletin \& Review}, \emph{25}(1), 128--142.
+Schönbrodt, F. D., \& Wagenmakers, E.-J. (2018). Bayes factor design analysis: Planning for compelling evidence. \emph{Psychonomic Bulletin \& Review}, \emph{25}(1), 128--142. doi:\href{https://doi.org/10.3758/s13423-017-1230-y}{10.3758/s13423-017-1230-y}
 
 \leavevmode\hypertarget{ref-schonbrodt2017sequential}{}%
-Schönbrodt, F. D., Wagenmakers, E.-J., Zehetleitner, M., \& Perugini, M. (2017). Sequential hypothesis testing with {Bayes} factors: Efficiently testing mean differences. \emph{Psychological Methods}, \emph{22}(2), 322.
+Schönbrodt, F. D., Wagenmakers, E.-J., Zehetleitner, M., \& Perugini, M. (2017). Sequential hypothesis testing with {Bayes} factors: Efficiently testing mean differences. \emph{Psychological Methods}, \emph{22}(2), 322. doi:\href{https://doi.org/10.1037/met0000061}{10.1037/met0000061}
 
 \leavevmode\hypertarget{ref-schramm2019reaction}{}%
-Schramm, P., \& Rouder, J. (2019). Are reaction time transformations really beneficial?
+Schramm, P., \& Rouder, J. (2019). Are reaction time transformations really beneficial? doi:\href{https://doi.org/10.31234/osf.io/9ksa6}{10.31234/osf.io/9ksa6}
 
 \leavevmode\hypertarget{ref-shiffrin2008survey}{}%
-Shiffrin, R. M., Lee, M. D., Kim, W., \& Wagenmakers, E.-J. (2008). A survey of model evaluation approaches with a tutorial on hierarchical {Bayesian} methods. \emph{Cognitive Science}, \emph{32}(8), 1248--1284.
+Shiffrin, R. M., Lee, M. D., Kim, W., \& Wagenmakers, E.-J. (2008). A survey of model evaluation approaches with a tutorial on hierarchical {Bayesian} methods. \emph{Cognitive Science}, \emph{32}(8), 1248--1284. doi:\href{https://doi.org/10.1080/03640210802414826}{10.1080/03640210802414826}
+
+\leavevmode\hypertarget{ref-singmann2019introduction}{}%
+Singmann, H., \& Kellen, D. (2019). An introduction to mixed models for experimental psychology. In \emph{New methods in cognitive psychology} (pp. 4--31). Routledge. doi:\href{https://doi.org/10.4324/9780429318405-2}{10.4324/9780429318405-2}
+
+\leavevmode\hypertarget{ref-singmann2023statistics}{}%
+Singmann, H., Kellen, D., Cox, G. E., Chandramouli, S. H., Davis-Stober, C. P., Dunn, J. C., \ldots{} others. (2023). Statistics in the service of science: Don't let the tail wag the dog. \emph{Computational Brain \& Behavior}, \emph{6}(1), 64--83. doi:\href{https://doi.org/10.1007/s42113-022-00129-2}{10.1007/s42113-022-00129-2}
 
 \leavevmode\hypertarget{ref-sorensen2015bayesian}{}%
 Sorensen, T., \& Vasishth, S. (2015). Bayesian linear mixed models using stan: A tutorial for psychologists, linguists, and cognitive scientists. \emph{arXiv Preprint arXiv:1506.06201}.
@@ -1434,35 +1529,41 @@ Stan Development Team. (2019b). {StanHeaders}: Headers for the {R} interface to 
 \leavevmode\hypertarget{ref-R-LaplacesDemon}{}%
 Statisticat, \& LLC. (2020). \emph{LaplacesDemon: Complete environment for {Bayesian} inference}. Bayesian-Inference.com. Retrieved from \url{https://web.archive.org/web/20150206004624/http://www.bayesian-inference.com/software}
 
-\leavevmode\hypertarget{ref-Stefan_etal2021}{}%
-Stefan, A., Katsimpokis, D., Gronau, Q. F., \& Wagenmakers, E.-J. (2021). Expert agreement in prior elicitation and its effects on {Bayesian} inference. \emph{PsyArXiv Preprint}. doi:\href{https://doi.org/10.31234/osf.io/8xkqd}{10.31234/osf.io/8xkqd}
-
 \leavevmode\hypertarget{ref-stefan2019tutorial}{}%
-Stefan, A. M., Gronau, Q. F., Schönbrodt, F. D., \& Wagenmakers, E.-J. (2019). A tutorial on {Bayes} factor design analysis using an informed prior. \emph{Behavior Research Methods}, \emph{51}(3), 1042--1058.
+Stefan, A. M., Gronau, Q. F., Schönbrodt, F. D., \& Wagenmakers, E.-J. (2019). A tutorial on {Bayes} factor design analysis using an informed prior. \emph{Behavior Research Methods}, \emph{51}(3), 1042--1058. doi:\href{https://doi.org/10.3758/s13428-018-01189-8}{10.3758/s13428-018-01189-8}
+
+\leavevmode\hypertarget{ref-Stefan_etal2021}{}%
+Stefan, A. M., Katsimpokis, D., Gronau, Q. F., \& Wagenmakers, E.-J. (2022). Expert agreement in prior elicitation and its effects on bayesian inference. \emph{Psychonomic Bulletin \& Review}, \emph{29}(5), 1776--1794. doi:\href{https://doi.org/10.3758/s13423-022-02074-4}{10.3758/s13423-022-02074-4}
 
 \leavevmode\hypertarget{ref-R-gghalves}{}%
 Tiedemann, F. (2020). \emph{Gghalves: Compose half-half plots using your favourite geoms}. Retrieved from \url{https://github.com/erocoar/gghalves}
 
-\leavevmode\hypertarget{ref-van2021bayes}{}%
-van Doorn, J., Aust, F., Haaf, J. M., Stefan, A., \& Wagenmakers, E.-J. (2021). Bayes factors for mixed models. \emph{PsyArXiv Preprint}. doi:\href{https://doi.org/10.31234/osf.io/y65h8}{10.31234/osf.io/y65h8}
+\leavevmode\hypertarget{ref-van2019jasp}{}%
+van Doorn, J., van den Bergh, D., Bohm, U., Dablander, F., Derks, K., Draws, T., \ldots{} Wagenmakers, E.-J. (2021). The JASP guidelines for conducting and reporting a bayesian analysis. \emph{Psychonomic Bulletin \& Review}, \emph{28}, 813--826. doi:\href{https://doi.org/10.3758/s13423-020-01798-5}{10.3758/s13423-020-01798-5}
 
 \leavevmode\hypertarget{ref-van2018simple}{}%
-Van Ravenzwaaij, D., Cassey, P., \& Brown, S. D. (2018). A simple introduction to {Markov Chain Monte--Carlo} sampling. \emph{Psychonomic Bulletin \& Review}, \emph{25}(1), 143--154.
+Van Ravenzwaaij, D., Cassey, P., \& Brown, S. D. (2018). A simple introduction to {Markov Chain Monte--Carlo} sampling. \emph{Psychonomic Bulletin \& Review}, \emph{25}(1), 143--154. doi:\href{https://doi.org/10.3758/s13423-016-1015-8}{10.3758/s13423-016-1015-8}
 
 \leavevmode\hypertarget{ref-vasishth2021sample}{}%
-Vasishth, S., Yadav, H., Schad, D., \& Nicenboim, B. (2021). Sample size determination for bayesian hierarchical models commonly used in psycholinguistics.
-
-\leavevmode\hypertarget{ref-vehtari2019rank}{}%
-Vehtari, A., Gelman, A., Simpson, D., Carpenter, B., \& Bürkner, P.-C. (2019). \emph{arXiv Preprint arXiv:1903.08008}.
+Vasishth, S., Yadav, H., Schad, D. J., \& Nicenboim, B. (2023). Sample size determination for bayesian hierarchical models commonly used in psycholinguistics. \emph{Computational Brain \& Behavior}, \emph{6}(1), 102--126. doi:\href{https://doi.org/10.1007/s42113-021-00125-y}{10.1007/s42113-021-00125-y}
 
 \leavevmode\hypertarget{ref-Vehtari_2021}{}%
-Vehtari, A., Gelman, A., Simpson, D., Carpenter, B., \& Bürkner, P.-C. (2021). Rank-normalization, folding, and localization: An improved rˆ for assessing convergence of MCMC (with discussion). \emph{Bayesian Analysis}, \emph{16}(2). doi:\href{https://doi.org/10.1214/20-ba1221}{10.1214/20-ba1221}
+Vehtari, A., Gelman, A., Simpson, D., Carpenter, B., \& Bürkner, P.-C. (2021a). Rank-normalization, folding, and localization: An improved r{}for assessing convergence of MCMC (with discussion). \emph{Bayesian Analysis}, \emph{16}(2). doi:\href{https://doi.org/10.1214/20-ba1221}{10.1214/20-ba1221}
+
+\leavevmode\hypertarget{ref-vehtari2019rank}{}%
+Vehtari, A., Gelman, A., Simpson, D., Carpenter, B., \& Bürkner, P.-C. (2021b). Rank-normalization, folding, and localization: An improved rhat for assessing convergence of MCMC (with discussion). \emph{Bayesian Analysis}, \emph{16}(2), 667--718. doi:\href{https://doi.org/10.1214/20-BA1221}{10.1214/20-BA1221}
+
+\leavevmode\hypertarget{ref-wagenmakers2020principle}{}%
+Wagenmakers, E.-J., Lee, M. D., Rouder, J. N., \& Morey, R. D. (2020). The principle of predictive irrelevance or why intervals should not be used for model comparison featuring a point null hypothesis. \emph{The Theory of Statistics in Psychology: Applications, Use, and Misunderstandings}, 111--129. doi:\href{https://doi.org/10.1007/978-3-030-48043-1_8}{10.1007/978-3-030-48043-1\_8}
 
 \leavevmode\hypertarget{ref-wagenmakers2010bayesian}{}%
-Wagenmakers, E.-J., Lodewyckx, T., Kuriyal, H., \& Grasman, R. (2010). Bayesian hypothesis testing for psychologists: A tutorial on the {Savage--Dickey} method. \emph{Cognitive Psychology}, \emph{60}(3), 158--189.
+Wagenmakers, E.-J., Lodewyckx, T., Kuriyal, H., \& Grasman, R. (2010). Bayesian hypothesis testing for psychologists: A tutorial on the {Savage--Dickey} method. \emph{Cognitive Psychology}, \emph{60}(3), 158--189. doi:\href{https://doi.org/10.1016/j.cogpsych.2009.12.001}{10.1016/j.cogpsych.2009.12.001}
 
 \leavevmode\hypertarget{ref-wagenmakers2018bayesian}{}%
-Wagenmakers, E.-J., Marsman, M., Jamil, T., Ly, A., Verhagen, J., Love, J., \ldots{} others. (2018). Bayesian inference for psychology. Part i: Theoretical advantages and practical ramifications. \emph{Psychonomic Bulletin \& Review}, \emph{25}(1), 35--57.
+Wagenmakers, E.-J., Marsman, M., Jamil, T., Ly, A., Verhagen, J., Love, J., \ldots{} others. (2018). Bayesian inference for psychology. Part i: Theoretical advantages and practical ramifications. \emph{Psychonomic Bulletin \& Review}, \emph{25}(1), 35--57. doi:\href{https://doi.org/10.3758/s13423-017-1343-3}{10.3758/s13423-017-1343-3}
+
+\leavevmode\hypertarget{ref-west2022linear}{}%
+West, B. T., Welch, K. B., \& Galecki, A. T. (2022). \emph{Linear mixed models: A practical guide using statistical software}. Crc Press.
 
 \leavevmode\hypertarget{ref-R-plyr}{}%
 Wickham, H. (2011). The split-apply-combine strategy for data analysis. \emph{Journal of Statistical Software}, \emph{40}(1), 1--29. Retrieved from \url{http://www.jstatsoft.org/v40/i01/}

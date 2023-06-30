@@ -5,8 +5,8 @@ library(brms)
 
 # Rstan 
 # Normal model 
-# Load normal model fit 
-hier_modelc_adj_v2 <- readRDS("/Users/myrtheveenman/hier_modelc_adj09042021_v2.rds")
+# Load normal model fit - adjust myPath 
+hier_modelc_adj_v2 <- readRDS("/myPath/hier_modelc_adj09042021_v2.rds")
 
 names(hier_modelc_adj_v2)  # all parameter names 
 # Plot figure 
@@ -24,8 +24,8 @@ dev.off()
 
 
 # Log-normal model 
-# Load log-normal model fit 
-hier_logmodelc_adj13012022 <- readRDS("/Users/myrtheveenman/Documents/GitHub/multilevel-tutorial-paper/R objects/rstan/non-linear model/hier_logmodelc_adj13012022.rds")
+# Load log-normal model fit - adjust myPath 
+hier_logmodelc_adj13012022 <- readRDS("/myPath/GitHub/multilevel-tutorial-paper/K - R objects/rstan/non-linear model/hier_logmodelc_adj13012022.rds")
 
 # Save traceplots in .pdf 
 pdf("traceplots_lognormalmodel_rstan.pdf", onefile = TRUE)
@@ -36,8 +36,8 @@ dev.off()
 
 # Brms 
 # Normal model 
-# Load normal model fit 
-model_fit <- readRDS(file = "/Users/myrtheveenman/Documents/GitHub/multilevel-tutorial-paper/R objects/brms/Truncated/BRMSmodelfit18_03012022.rds") 
+# Load normal model fit - adjust myPath
+model_fit <- readRDS(file = "/myPath/GitHub/multilevel-tutorial-paper/K - R objects/brms/Truncated/BRMSmodelfit18_03012022.rds") 
 variables(model_fit)
 
 # Save traceplots in .pdf 
@@ -49,8 +49,8 @@ for(i in 1:326){
 dev.off()
 
 # Log-normal model 
-# Load log-normal model fit 
-brms_logmodel_fit <- readRDS(file = "/Users/myrtheveenman/Documents/GitHub/multilevel-tutorial-paper/R objects/brms/non-linear/brmmodel8log13012022.rds") 
+# Load log-normal model fit - adjust myPath 
+brms_logmodel_fit <- readRDS(file = "/myPath/GitHub/multilevel-tutorial-paper/K - R objects/brms/non-linear/brmmodel8log13012022.rds") 
 
 # Save traceplots in .pdf 
 pdf("traceplots_lognormalmodel_brms.pdf", onefile = TRUE)
