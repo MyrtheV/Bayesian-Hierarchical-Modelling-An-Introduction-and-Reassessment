@@ -387,7 +387,7 @@ In summary, the models are placed directly on the raw RT data. The only differen
 
 Both the normal and the log-normal models contain the following parameters: $\gamma_i$ corresponds to the participant's overall response time, $\beta_i$ corresponds to the participant's side effect, and the four $\delta_{\cdot i}$ correspond to the effects between the digits furthest away from 5 (2 or 8) and the other digits. These person-specific effects all come from parent distributions. This results in the hierarchical structure shown in Figure \@ref(fig:hierarchyplot). The figure highlights the relationship between the parameters and the data.
 
-\Revision{Up until now, we specified models without a correlation between the individual effects. This means, for instance, that we do not expect that the estimations for the individual effects $\delta_{7, i}$ and $\delta_{3, i}$ to be related. However, in cases where we would expect the estimation of individual effects to be related, we could estimate the correlation coefficient between individual effects. This would add complexity to the model. For the sake of the tutorial, we will focus on the models without individual effect correlation, but we illustrate the estimation of the model with correlation between the individual effects in} [Online Supplement C and D](https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment).  
+\Revision{Up until now, we specified models without a correlation between the individual effects. This means, for instance, that we do not expect the estimations for the individual effects $\delta_{7, i}$ and $\delta_{3, i}$ to be related. However, in cases where we would expect the estimation of individual effects to be related, we could estimate the correlation coefficient between individual effects. This would add complexity to the model. For the sake of the tutorial, we will focus on the models without individual effect correlation, but we illustrate the estimation of the model with correlation between the individual effects in} [Online Supplement C and D](https://github.com/MyrtheV/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment).  
 
 In Bayesian modeling, prior distributions are needed to complete model specification. In the next section, we will take you through the process of setting these priors, followed by sections on Bayesian estimation and hypothesis testing for both the normal and log-normal model. In every section, we will first explain the normal model, followed by an illustration of the log-normal model. 
 
@@ -469,7 +469,7 @@ The support of the prior distribution should cover all theoretically possible pa
 Note that although distributions within a distributional family share the same functional form, they can differ a lot in their shape and location. The exact appearance of a prior distribution is controlled by a set of hyperparameters, for example, the mean and variance for the location and scale of a normal prior. In the next section, we will give some guidance for specifying these hyperparameters.
 
 ```{r distritypeplot, echo=FALSE, fig.cap="Common probability density distributions that may be used as priors. Panel A shows normal distributions varying in mean and standard deviation. Panel B shows inverse gamma distributions that differ in the shape and scale parameter. Panel C shows Student's \\textit{t}-distributions that differ in the location and scale parameter. For all three \\textit{t}-distributions, the degrees of freedom are set to 3.", fig.align = "left", fig.height = 8, fig.width = 12, out.width="100%"}
-knitr::include_graphics("I - Images/Fig4_distrtypefigure_v3.png")
+knitr::include_graphics("I - Images/Fig5_distrtypefigure_v3.png")
 ``` 
 
 ## Step 2: Set Hyperparameters  
@@ -481,7 +481,7 @@ For this step, it is important to consider the scale on which variables are meas
 A key advantage of model specification with priors is that we can obtain predictions on what the data would look like that are generated from the model [@etz2018bayesian; @lee2018determining]. These prior predictions allow us to make the implications of our specified priors more concrete. Researchers can look at relevant statistic that summarize the simulated data and decide if they correspond to reasonable observations for their specific research context. If the simulated data are in line with the researchers' expectations, the priors can be used for the analysis. If the simulated data do not match the expectations, the priors have to be adjusted (Step 4).  
 
 ```{r priorpredfigurepanel, echo=FALSE, fig.cap="Side and digit effects from predicted data. Violins represent the distribution of predicted effects across 1000 simulation runs. The blue points are the average effects across simultions. Panel A shows the prior predictions for the normal model based on the default priors of \\textit{brms}. Panel B shows the prior predictions for the normal model based on the selected priors. Panel C shows the prior predictions for the log-normal model based on the priors chosen for the normal model. Panel D shows the prior predictions for the log-normal model based on the selected priors.", fig.align = "left", fig.height = 3, fig.width = 4, out.width="100%"}
-knitr::include_graphics("I - Images/Fig5_priorpredfigure_v2.png")
+knitr::include_graphics("I - Images/Fig6_priorpredfigure_v2.png")
 ```
 
 The simulation proceeds as follows: First, one random draw from each prior distribution is taken. This is plugged into the individual effect distributions (Equation (2)). Then, the probability of the model, such as specified in Equations (1) and (3), is used to simulate observations per condition. This means that for *n* participants, *n* random values for the model parameters are generated based on the priors, which will result in the *k* observations per *j* conditions. This process is repeated *m* times, where *m* is the number of simulations drawn. Note that the more simulations are conducted, the closer one gets to the full picture because enough samples from the prior distribution are needed. Finally, we can visualize the simulated data. Figure \@ref(fig:priorpredfigurepanel) shows prior predictions for the key effects from the digit classification task. For this task, we mainly care about the side effect and digit effects corresponding to the $\beta$s and the $\delta$s from the model. Here, the prior predictions for the average side effect and the average digit effect across participants are depicted.
@@ -880,7 +880,7 @@ For our example, we will use the data set by Rouder et al. (2005). The data are 
 ## Normal Model 
 
 ```{r traceplots3p, echo=FALSE, fig.align = "left", fig.height = 11, fig.width = 4, out.width="100%", fig.cap="Panel A and B show the trace plot of the digit parameter $\\mu_{\\delta_{6}}$ for both packages. Panel C shows the estimated $\\hat{R}$ for all individual effects per parameter group. The stars represent the $\\hat{R}$ of the general effects. Panel D illustrates the variation in the estimated number of effective samples per parameter group. The dashed lines represent the total number of iterations for each package. The stars represent the number of effective samples of the general effects."}
-knitr::include_graphics("I - Images/Fig8_traceplots3pnew_v2.png")
+knitr::include_graphics("I - Images/Fig9_traceplots3pnew_v2.png")
 ```
 
 ### Model Fitting 
@@ -910,7 +910,7 @@ For the symbolic distance effect, the estimated number of effective samples is p
 Considering acceptable to good convergence diagnostics, we can now interpret the estimation results. First, we present the general effects, then we visualize the individual variability of these effects.
 
 ```{r modelposteriorsmufigure3, echo=FALSE, fig.cap="Panel A shows the empirical mean RTs per digit. The standard error is represented by bars around the dots. Panel B and C show the posterior distributions for the general effects estimated by the two packages. The middle line within the distributions represents the posterior mean. The shaded area within the distributions represent 95\\% credible intervals.", fig.align = "left", fig.height = 11, fig.width = 1, out.width="100%"}
-knitr::include_graphics("I - Images/Fig9_posteriormu_v3.png")
+knitr::include_graphics("I - Images/Fig10_posteriormu_v3.png")
 ```
 
 #### General Effects 
@@ -975,7 +975,7 @@ Thanks to the hierarchical structure of the model, we can investigate whether th
 Posterior means of the variances for the digit and side effects are all very close to `r printnum(fitrstanhiertable32["g3", "Mean"], digits = 3)` which corresponds to a standard deviation of `r printnum(sqrt(fitrstanhiertable32["g3", "Mean"]), digits = 3)` seconds, that is, 141 milliseconds. Additionally, the 95% credible intervals do not contain zero. If we consider the effect of digit 7 wit an 11 millisecond general effect this is a substantial amount of individual variation. Therefore, we conclude that there are individual differences in the symbolic distance effect.  
 
 ```{r randomparfigure, echo=FALSE, fig.cap="The posterior means for individual effect parameters with 95\\% credible intervals as estimated by \\textit{rstan}, shown in increasing order. The dashed line represents the general posterior mean. Pink intervals contain zero, blue interval do not contain zero.", fig.align = "left", fig.height = 1, fig.width = 0.5, out.width="100%"}
-knitr::include_graphics("I - Images/Fig10_randompar_v2.png")
+knitr::include_graphics("I - Images/Fig11_randompar_v2.png")
 
 ```
 
@@ -986,7 +986,7 @@ The largest variation across participants can be seen for the intercept paramete
 \Revision{The individual variation can also be visualized differently, for example by connecting individual estimates for each parameter. This type of variation can reveal correlations between individual parameter estimates, for example, participants scoring high on one digit parameter may also score high on another digit parameter.} Figure \@ref(fig:modelestimatesfigure3) shows the relationship between individuals' digit effects.^[The design and code for this figure are by @j_van_langen_2020_3715576.] The posterior means of individual effects are represented by the dots. The right side of each plot represents the distribution of the individual estimates. Note that this distribution is not the posterior distribution of the general effect. It rather corresponds to the left side of Figure 6. 
 
 ```{r modelestimatesfigure3, echo=FALSE, fig.cap="Model estimates for digit effect parameters in \\textit{rstan}. The points represent the mean parameter estimates for each individual. The violin plots on the right side show the variance of the individual parameter estimates. ", fig.align = "left", fig.height = 11, fig.width = 1, out.width="75%"}
-knitr::include_graphics("I - Images/Fig11_modelestimatefigure2_onlyrstan_v2.png")
+knitr::include_graphics("I - Images/Fig12_modelestimatefigure2_onlyrstan_v2.png")
 ```
 
 ## Log-normal Model 
@@ -999,14 +999,14 @@ Before interpreting the results, we have to check if the posterior distributions
 (ref:captiontraceplotlog) Panel A and B show the trace plot of the digit parameter $\\mu_{\\delta_{6}}$ in the log-normal model for both packages. Panel C shows the estimated $\\hat{R}$ for all individual effects per parameter group. The stars represent the $\\hat{R}$ of the general effects. Panel D illustrates the variation in the estimated number of effective samples per parameter group. The dashed lines represent the total number of iterations for each package. The stars represent the number of effective samples of the general effects.
 
 ```{r traceplotlog, echo=FALSE, fig.cap="(ref:captiontraceplotlog)", fig.align = "left", fig.height = 11, fig.width = 4, out.width="100%"}
-knitr::include_graphics("I - Images/Fig12_traceplots3plog_v2.png")
+knitr::include_graphics("I - Images/Fig13_traceplots3plog_v2.png")
 ```
 
 ### Results
 #### General effects  
 We inspect the posterior distributions for the general effect parameters presented in Figure \@ref(fig:postplotlog). 
 ```{r postplotlog, echo=FALSE, fig.cap="The posterior distributions for the general effects in the log-normal model estimated by the two packages. The middle line within the distributions represents the posterior mean. The shaded area within the distributions represent 95\\% credible intervals.", fig.align = "left", fig.height = 11, fig.width = 1, out.width="100%"}
-knitr::include_graphics("I - Images/Fig13_posteriormulog_v2.png")
+knitr::include_graphics("I - Images/Fig14_posteriormulog_v2.png")
 ```
 
 ```{r geneftablelog, results = "hide", cache = TRUE, warning = F}
@@ -1091,7 +1091,7 @@ The estimated parameter values for the variance terms are very small, but differ
 Figure \@ref(fig:randomparplotlog) shows the individual estimates for the digit and side effects. The pink lines indicate that the 95% credible interval of the individual effect contains zero. The estimated general effect is represented by the dashed line. For $\beta$, $\delta_{7}$, and $\delta_{3}$, most 95% credible intervals contain zero. For $\delta_{6}$ and $\delta_{4}$, most credible intervals are entirely larger than zero, indicating an increase in RT for most participants.
 
 ```{r randomparplotlog, echo=FALSE, fig.cap="The posterior means for individual effect parameters in the log-normal model with 95\\% credible intervals as estimated by \\textit{rstan}, shown in increasing order. The dashed line represents the general posterior mean. Pink intervals contain zero, blue interval do not contain zero.", fig.align = "left", fig.height = 1, fig.width = 0.5, out.width="100%"}
-knitr::include_graphics("I - Images/Fig14_randomparlog_v2.png")
+knitr::include_graphics("I - Images/Fig15_randomparlog_v2.png")
 ```
 We can further inspect the individual estimates for the digit effects in Figure \@ref(fig:modeldigitestplotlog). The figure shows the individual estimates for the digit effects with the distribution of the variability of the individual estimates (not the posterior distribution of the general effect). The figure illustrates that there is considerable variance in the point estimates of the individual digit effects. However, compared to the normal model there is considerably more hierarchical shrinkage. \Revision{This means that in the log-normal model, the individual effects are corrected more towards the group mean, compared to the normal model. Or, the group mean in the log-normal model is not affected as much by individuals showing a divergent trend compared to the normal model. Whether we should prefer a model with more shrinkage depends on the theoretical considerations. If more individual variation is expected, less shrinkage would be preferred. However, the advantage of more shrinkage is that outliers do not influence the estimation of the effect as much. }
 
@@ -1100,7 +1100,7 @@ We can further inspect the individual estimates for the digit effects in Figure 
 The symbolic distance effect postulates that response times (RTs) are slower when digits are closer to 5 (digit effects), and that RTs may be influenced by whether the target digit is smaller or greater than 5 (side effect). Using Bayesian estimation, we are not able to directly test these hypotheses. Credible intervals often contain zero, but they always also contain lots of other values that have a chance of being the "true" parameter value, making them unsuitable to test hypotheses. Therefore, our goal for the following section is to set up a Bayesian hypothesis test for the parameters of interest in our model. Specifically, we will achieve this by comparing the predictive accuracy of a null model where we set one or some parameters to zero, and and effects models where these parameters are unconstrained. \Revision{This approach is called Bayes factor model comparison.}
 
 ```{r modeldigitestplotlog, echo=FALSE, fig.cap="Model estimates for digit effect parameters in the log-normal model in \\textit{rstan}. The points represent the mean parameter estimates for each individual. The violin plots on the right side show the variance of the individual parameter estimates.", fig.align = "left", fig.height = 11, fig.width = 1, out.width="75%"}
-knitr::include_graphics("I - Images/Fig15_inddiflogplot_onlyrstan_v2.png")
+knitr::include_graphics("I - Images/Fig16_inddiflogplot_onlyrstan_v2.png")
 ```
 
 ## Bayes factor
@@ -1132,7 +1132,7 @@ One method to compute Bayes factors is the Savage-Dickey density ratio [SDD-rati
 Figure \@ref(fig:sdratioplotall) shows a visualization of the SDD-ratio for the side parameter in the normal model of the symbolic distance effect. The posterior distribution is depicted in orange, the prior in green. The Bayes factor can be computed as a ratio of the posterior and prior density at the parameter value of zero, as depicted by the dashed line connecting the two points on the density functions.
 
 ```{r sdratioplotall, echo=FALSE, fig.cap="The prior and posterior distribution of the side parameter estimated by the \\textit{brms} package. The dots represent the height of the distributions at zero. The ratio of these dots indicates the Savage-Dickey density ratio. The Bayes factor represents the evidence for the hypothesis that the effect equals zero. A Bayes factor above one indicates that the evidence is in favor of the null hypothesis.", fig.align = "left", fig.height = 6, fig.width = 4, out.width="60%"}
-knitr::include_graphics("I - Images/Fig16_sdrplotside_v2.png")
+knitr::include_graphics("I - Images/Fig17_sdrplotside_v2.png")
 ```
 With `rstan`, the SDD-ratio can be computed by fitting a density function to the posterior distribution obtained from the MCMC samples, and comparing the value of this density function at $\mu_{\beta} = 0$ to the value of the prior distribution at $\mu_{\beta} = 0$. This is illustrated in the code block below. First, we extract the posterior samples for the parameter $\mu_{\beta}$, the general effect of side. We apply the `logspline` function [@logspline] to the samples to obtain an estimate of the log-density of the posterior distribution. The density at the zero is calculated with the `dlogspline` function. Finally, we compare the estimated density of the posterior to the density of the prior. \textcolor{blue}{This process is explained in further detail by Van Ravenzwaaij and Etz} [-@van2021simulation].  
 
@@ -1206,7 +1206,7 @@ Even though bridge sampling is a flexible method for obtaining Bayes factors, it
 We assess the stability of the obtained Bayes factor by repeating the estimating process ten times with `rstan` and `brms`, respectively. The results are shown in Figure \@ref(fig:bsbfestimatesbrmsrstan). The figure shows the evidence in favor of the null, digit and side model against the full model. All Bayes factors are larger than one. Therefore, it can be concluded that the data are more likely under less complex models. There is almost no variation in the computed Bayes factors per model, indicating that the Bayes factor estimate is stable. However, the Bayes factor estimates in `rstan` generally show stronger evidence than Bayes factor estimates based on `brms`. \Revision{It is important to note that this difference is not due to the bridge sampling function (i.e., there is a little to no variation of Bayes factor estimates within packages), but a result of a difference in parametrization. The models for} `rstan` \Revision{and} `brms` \Revision{are similar but not identical, partly due to the difference in prior specification (i.e., variances versus standard deviations).} However, for both packages, the conclusion is the same: the data are least likely to have occurred under the full model. In case the estimates are unstable, it is recommended to further increase the number of posterior samples. 
 
 ```{r bsbfestimatesbrmsrstan, echo=FALSE, fig.cap="The BF estimates of the other models (0; null, side and digit model) against the full model (1). The green triangles represent the estimates using \\textit{rstan}. The orange dots represent the \\textit{brms} estimates. The dashed line represents a $\\text{BF}_{01}$ of 1. ", fig.align = "left", fig.height = 11, fig.width = 4, out.width="70%"}
-knitr::include_graphics("I - Images/Fig17_normalbfplot01.png")
+knitr::include_graphics("I - Images/Fig18_normalbfplot01.png")
 ```
 Finally, it is time to answer our research question: Is there a symbolic distance effect? When considering all Bayes factor estimates from Figure \@ref(fig:sdratioplotall) and \@ref(fig:bsbfestimatesbrmsrstan), the null model ($\text{BF}_{max} = 232 * 10^{105}$ for `rstan`) performs best compared to the side model ($\text{BF}_{max} = 458 * 10^{68}$ for `rstan`), the digit model ($\text{BF}_{max} = 269 * 10^{31}$ for `rstan`). Therefore, the data from Rouder et al. (2005) show evidence against the symbolic distance effect. 
 
@@ -1255,7 +1255,7 @@ Full model & $0.43*10^{-158}$ & $0.47*10^{-61}$ & $0.05$\\
 The table shows that the digit model without individual digit effects from scenario 3 has the highest posterior model probability, followed by the full model without individual digit and side effects (scenario 3). This means that the data are most likely under these models than the other eight models included in the comparison. In addition, the models with smaller prior expectations for individual differences (scenario 2), have higher posterior model probabilities than the models in scenario 1. \Revision{Thus, decreasing the variability of the size of the individual digit and side effects (scenario 2), or completely removing the variance (scenario 3), results in higher posterior model probabilities.} Together with Figure \@ref(fig:randomparfigure), showing the small differences in individual effects (also illustrated by Haaf et al., 2019), this result supports the notion that side and digit effects are small and there is a lack in individual variability. 
 
 ### \Revision{Log-normal Model}
-\Revision{We can take a similar approach for the log-normal model to compare the hierarchical models on varying complexity. We evaluate their performance in two scenarios that correspond to scenario 1 and 3 for the normal model. This means that in scenario 1 for the log-normal model, we estimated a null, digit, side and full model based on the prior specified in Equation, specifying large individual differences. For scenario 2, we remove individual variability from the side, digit, and full model. This resulted in the following posterior model probabilities shown in Table} \@ref(tab:postmodproblog).
+\Revision{We can take a similar approach for the log-normal model to compare the hierarchical models on varying complexity. We evaluate their performance in two scenarios that correspond to scenario 1 and 3 for the normal model. This means that in scenario 1 for the log-normal model, we estimated a null, digit, side and full model based on the prior specified in Equation 8, specifying large individual differences. For scenario 2, we remove individual variability from the side, digit, and full model. This resulted in the following posterior model probabilities shown in Table} \@ref(tab:postmodproblog).
 
 \begin{table}[H]
 \caption{Posterior Model Probabilities Log-normal Models}
@@ -1276,7 +1276,7 @@ Full model & $11.02 * 10^7$ &  $96.84 * 10^{14}$\\
 
 \Revision{The table shows that the digit model without individual digit effects from scenario 2 has the highest posterior model probability. This is in line with our findings for the normal model. Finally, we can compare the normal model with the highest marginal likelihood to the log-normal with the highest marginal likelihood. The normal digit model from scenario 3 to the log-normal model from scenario 2. The log marginal likelihood for the normal digit model without individual differences was $6441.04$ while the log marginal likelihood for the log-normal digit model without individual differences was $10637.45$. This indicates that the Bayes factor is strongly in favor of the log-normal digit model over the normal digit model.}  
 
-The examples illustrate the benefits of comparing hierarchical models of varying complexity. While individual differences are a common phenomenon in psychology, there are instances where general effects are sufficient to describe the data adequately, or where only a random intercept, but no random slopes are necessary. As shown in Tables} \@ref(tab:postmodprob) and \@ref(tab:postmodproblog), Bayesian model comparisons can help researchers to identify the model that best describes the data. 
+The examples illustrate the benefits of comparing hierarchical models of varying complexity. While individual differences are a common phenomenon in psychology, there are instances where general effects are sufficient to describe the data adequately, or where only a random intercept, but no random slopes are necessary. As shown in Tables \@ref(tab:postmodprob) and \@ref(tab:postmodproblog), Bayesian model comparisons can help researchers to identify the model that best describes the data. 
 
 # Discussion 
 
