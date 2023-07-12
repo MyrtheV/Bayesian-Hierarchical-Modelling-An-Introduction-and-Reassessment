@@ -1,6 +1,6 @@
 # Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment
 
-Note: This version of the abstract and repository are posted prior to formal peer review. In the manuscript, changes compared to the previous version are in blue. 
+Note: This version of the abstract and repository are posted prior to formal peer review. In the tutorials, changes compared to the previous versions are in blue. 
 
 # Abstract 
 
