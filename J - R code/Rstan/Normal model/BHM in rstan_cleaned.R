@@ -30,7 +30,7 @@ datareal <- list(N = length(unique(indat1$sub)))
 datareal$All <- nrow(indat1)  # number of total observations, adding to the list for the analysis  
 
 ### Indicating which observation belongs to which person 
-sub <- rep(1:N, each = J)
+# sub <- rep(1:N, each = J)
 
 # Need a variable with group number that are crhonical (that doesn't skip numbers)
 for (j in 1:nrow(indat1)){
@@ -138,7 +138,7 @@ datareal$f3 <- f3
 ################################################################################
 library(rstan) 
 # Adjust "myPath" below to your directory  
-hier_modelc_adj_07012022 <- stan(file = "/myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/K - R objects/rstan/log-normal model/rewritestanmodel3_trunc.stan", data = datareal, 
+hier_modelc_adj_07012022 <- stan(file = "/myPath/Bayesian-Hierarchical-Modelling-An-Introduction-and-Reassessment/K - R objects/rstan/normal model/rewritestanmodel3_trunc.stan", data = datareal, 
                         iter = 4000, chains = 4,
                         # , control = list(max_treedepth = 15, adapt_delta = 0.95)
                         warmup = 1000, cores = 4)
